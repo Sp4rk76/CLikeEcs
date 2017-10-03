@@ -1,0 +1,16 @@
+{
+  "entities": [
+    {
+      "id": 1,
+      "name": "boris"
+    },
+    {
+      "id": 2,
+      "name": "swan"
+    },
+    {
+      "id": 3,
+      "name": "elli"
+    }
+  ]
+}

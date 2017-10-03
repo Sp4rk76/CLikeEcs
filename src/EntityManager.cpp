@@ -1,32 +1,8 @@
 //
-// Created by Sp4rk on 26-09-17.
+// Created by Sp4rk on 03-10-17.
 //
 
-#ifndef CLIKEECS_ENTITYMANAGER_H
-#define CLIKEECS_ENTITYMANAGER_H
-
-#include <vector>
-#include <deque>
-#include <iostream>
-#include "Entity.h"
-
-const unsigned MINIMUM_FREE_INDICES = 0;
-
-class EntityManager
-{
-public:
-    Entity create();
-
-    Entity make_entity(unsigned index);
-
-    bool alive(Entity e) const;
-
-    void destroy(Entity e);
-
-    std::vector<unsigned int> generation_; // size for index limit
-
-    std::deque<unsigned int> free_indices_;
-};
+#include "EntityManager.h"
 
 Entity EntityManager::create()
 {
@@ -66,5 +42,3 @@ void EntityManager::destroy(Entity e)
     free_indices_.push_back(index);
 }
 
-
-#endif //CLIKEECS_ENTITYMANAGER_H

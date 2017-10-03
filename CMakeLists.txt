@@ -11,11 +11,11 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin)
 
 # Standard modules directories
 set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake-modules/")
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake-modules")
 
 # Project directories
-include_directories(src/)
-include_directories(include/)
+include_directories(src)
+include_directories(include)
 
 ## SDL2
 #find_package(SDL2 REQUIRED)
@@ -30,17 +30,23 @@ include_directories(include/)
 #include_directories(${SDL2_TTF_INCLUDE_DIRS})
 
 set(SOURCE_FILES src/main.cpp
-        includes/Entity.h
-        includes/DebugNameComponentManager.h
-        includes/EntityManager.h
-        includes/InstanceData.h
-        includes/Vector3.h
-        includes/ComponentManager.h)
+        include/Entity.h
+        include/DebugNameComponentManager.h
+        include/EntityManager.h
+        include/InstanceData.h
+        include/Vector3.h
+        include/System.h
+        include/Vector2.h
+        include/Instance.h
+        include/JSONLoader.h
+        src/JSONLoader.cpp
+        src/System.cpp
+        src/EntityManager.cpp src/DebugNameComponentManager.cpp)
 
 # Executable
 add_executable(CLikeECS ${SOURCE_FILES})
 
 # Link libraries
-target_link_libraries(CLikeECS ${SDL2_LIBRARIES})
-target_link_libraries(CLikeECS ${SDL2_IMAGE_LIBRARIES})
-target_link_libraries(CLikeECS ${SDL2_TTF_LIBRARIES})
+#target_link_libraries(CLikeECS ${SDL2_LIBRARIES})
+#target_link_libraries(CLikeECS ${SDL2_IMAGE_LIBRARIES})
+#target_link_libraries(CLikeECS ${SDL2_TTF_LIBRARIES})

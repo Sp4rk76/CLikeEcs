@@ -1,0 +1,50 @@
+{
+  "components": [
+    {
+      "id": 1,
+      "entity": {
+        "id": 1,
+        "name": "boris"
+      },
+      "mass": 10,
+      "position": {
+        "x": 50,
+        "y": 50,
+        "z": 0
+      },
+      "velocity": {
+        "x": 1,
+        "y": 1,
+        "z": 0
+      },
+      "acceleration": {
+        "x": 2,
+        "y": 2,
+        "z": 0
+      }
+    },
+    {
+      "id": 2,
+      "entity": {
+        "id": 3,
+        "name": "boris"
+      },
+      "mass": 10,
+      "position": {
+        "x": 77,
+        "y": 50,
+        "z": 0
+      },
+      "velocity": {
+        "x": 10,
+        "y": 1,
+        "z": 0
+      },
+      "acceleration": {
+        "x": 20,
+        "y": 2,
+        "z": 0
+      }
+    }
+  ]
+}

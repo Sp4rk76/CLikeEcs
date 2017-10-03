@@ -10,8 +10,8 @@
 
 struct InstanceData
 {
-    unsigned size; ///< Number of used instances
-    unsigned capacity; ///< Number of allocated instances
+    unsigned size = 0; ///< Number of used instances
+    unsigned capacity = 0; ///< Number of allocated instances
     void *buffer; ///< Buffer with instance data
 
     Entity *entity;

@@ -1,29 +1,30 @@
 //
-// Created by Sp4rk on 26-09-17.
+// Created by Sp4rk on 28-09-17.
 //
 
-#ifndef CLIKEECS_VECTOR3_H
-#define CLIKEECS_VECTOR3_H
+#ifndef CLIKEECS_VECTOR2_H
+#define CLIKEECS_VECTOR2_H
 
-struct Vector3
+
+struct Vector2
 {
     float x = 0;
     float y = 0;
     float z = 0;
 
-    bool operator==(Vector3 const& other)
+    bool operator==(Vector2 const& other)
     {
         return ( (x == other.x) && (y == other.y) && (z == other.z) );
     }
 
-    Vector3 operator*(float other)
+    Vector2 operator*(float other)
     {
         x = x * other;
         y = y * other;
         z = z * other;
     }
 
-    Vector3 operator+=(Vector3 const& other)
+    Vector2 operator+=(Vector2 const& other)
     {
         x += other.x;
         y += other.y;
@@ -31,4 +32,4 @@ struct Vector3
     }
 };
 
-#endif //CLIKEECS_VECTOR3_H
+#endif //CLIKEECS_VECTOR2_H
