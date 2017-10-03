@@ -20,6 +20,8 @@ struct Instance
     int i = 1;
 }; ///< Selected Entity Instance ('i' is the Entity id (to look at))
 
+/// NOTE: This is an "example of system design"
+/// TODO: each system should have a list of registered id ?
 class System
 {
 public:
@@ -30,7 +32,6 @@ public:
     void allocate(unsigned size);
 
     Instance make_instance(int i);
-
 
     Instance lookup(Entity entity); ///< Call this function to look for an entity
 
@@ -57,12 +58,11 @@ public:
     // TODO: Create a validation function => check JSON file validity according (once !) before loading all entities/components
     void loadEntities(EntityManager &entityManager);
 
-    // TODO: Idem
-    void loadComponents();
-
     void simulate(float dt = 1);
 
     void destroy(unsigned i);
+
+    bool isValid(rapidjson::Document document);
 
     InstanceData data_;
 

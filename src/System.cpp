@@ -28,6 +28,7 @@ void System::allocate(unsigned size)
     }
 
     InstanceData newData_;
+
     const unsigned int bytes = size * (sizeof(Entity) + sizeof(float) + (3 * sizeof(Vector3)));
     newData_.buffer = malloc(bytes);
     newData_.size = data_.size;
@@ -123,82 +124,86 @@ void System::loadEntities(EntityManager &entityManager)
 
     for (auto &entity : entities)
     {
-        auto id = entity["id"].GetInt();
-        auto name = entity["name"].GetString();
-        std::cout << "id: " << id << ", " << "name: " << name << std::endl;
-
         Entity e = entityManager.create();
+        e.id = (unsigned int)entity["id"].GetInt();
 
-        e.id = (unsigned) entity["id"].GetInt();
+        auto e_mass = entity["mass"].GetFloat();
+
+///     NOTE: can't have errors from reading, except type mismath ?
+      auto e_position_x = entity["position"]["x"].GetFloat();
+      auto e_position_y = entity["position"]["y"].GetFloat();
+      auto e_position_z = entity["position"]["z"].GetFloat();
+
+      auto e_velocity_x = entity["velocity"]["x"].GetFloat();
+      auto e_velocity_y = entity["velocity"]["y"].GetFloat();
+      auto e_velocity_z = entity["velocity"]["z"].GetFloat();
+
+      auto e_acceleration_x = entity["acceleration"]["x"].GetFloat();
+      auto e_acceleration_y = entity["acceleration"]["y"].GetFloat();
+      auto e_acceleration_z = entity["acceleration"]["z"].GetFloat();
+
+        // TODO: bool function, detect invalid data for each entity
+        if(e.id <= 0 || e_mass < 0)
+        {
+            std::cout << "Error: the document has invalid values" << std::endl;
+            return;
+        }
+
         instance_ = lookup(e);
 
-        setEntity(instance_, e);
+        data_.entity[instance_.i] = e;
+
+        data_.mass[instance_.i] = e_mass;
+
+        data_.position[instance_.i].x = e_position_x;
+        data_.position[instance_.i].y = e_position_y;
+        data_.position[instance_.i].z = e_position_z;
+
+        data_.velocity[instance_.i].x = e_velocity_x;
+        data_.velocity[instance_.i].y = e_velocity_y;
+        data_.velocity[instance_.i].z = e_velocity_z;
+
+        data_.acceleration[instance_.i].x = e_acceleration_x;
+        data_.acceleration[instance_.i].y = e_acceleration_y;
+        data_.acceleration[instance_.i].z = e_acceleration_z;
+
+        auto name = entity["name"].GetString();
+        std::cout << "id: " << e.id << ", " << "name: " << name << std::endl;
     }
 
     jsonLoader_->close();
 }
 
-void System::loadComponents()
-{
-    Entity e; // fictive entity
-
-    rapidjson::Document document = jsonLoader_->read("data/components.json");
-
-    assert(document.IsObject());
-
-    auto components = document["components"].GetArray();
-
-    for (auto &component : components)
-    {
-        auto componentId = component["id"].GetInt();
-
-        auto entityId = component["entity"]["id"].GetInt();
-        auto entityName = component["entity"]["name"].GetString();
-
-        e.id = (unsigned) entityId; // fictive entity
-        instance_ = lookup(e);
-
-        data_.mass[instance_.i] = component["mass"].GetFloat();
-
-        data_.position[instance_.i].x = component["position"]["x"].GetFloat();
-        data_.position[instance_.i].y = component["position"]["y"].GetFloat();
-        data_.position[instance_.i].z = component["position"]["z"].GetFloat();
-
-        data_.velocity[instance_.i].x = component["velocity"]["x"].GetFloat();
-        data_.velocity[instance_.i].y = component["velocity"]["y"].GetFloat();
-        data_.velocity[instance_.i].z = component["velocity"]["z"].GetFloat();
-
-        data_.acceleration[instance_.i].x = component["acceleration"]["x"].GetFloat();
-        data_.acceleration[instance_.i].y = component["acceleration"]["y"].GetFloat();
-        data_.acceleration[instance_.i].z = component["acceleration"]["z"].GetFloat();
-    }
-
-    jsonLoader_->close();
-}
-
+// TODO: simulate only with registered entities
 void System::simulate(float dt)
 {
-    std::cout << data_.size << std::endl;
-    std::cout << "map : " << map_.size() << std::endl;
-    for (unsigned j = 1; j < data_.size; j++)
+    std::cout << "data size: " << data_.size << std::endl;
+    std::cout << "map size: " << map_.size() << std::endl;
+    for (auto &it : map_)
     {
-        data_.velocity[j] += (data_.acceleration[j]);
-        data_.position[j] += (data_.velocity[j]);
-        std::cout << "I = " << j << std::endl;
-        std::cout << "Simulate VELOCITY.X (e=" << data_.entity[j].index() << "): " << data_.velocity[j].x
-                  << std::endl;
-        std::cout << "Simulate POSITION.X (e=" << data_.entity[j].index() << "): " << data_.position[j].x
-                  << std::endl;
+        std::cout << "MAPPED index = " << it.second << std::endl;
+
+        data_.velocity[it.second] += (data_.acceleration[it.second]);
+        data_.position[it.second] += (data_.velocity[it.second]);
+
+        std::cout << "Simulate VELOCITY.X (e=" << data_.entity[it.second].index() << "): " << data_.velocity[it.second].x << std::endl;
+        std::cout << "Simulate POSITION.X (e=" << data_.entity[it.second].index() << "): " << data_.position[it.second].x << std::endl;
+        std::cout << "map contains (" << it.first << " ; " << it.second << ")" << std::endl;
     }
 }
 
 void System::destroy(unsigned i)
 {
+    if (i <= 0) // invalid index
+    {
+        return;
+    }
+
     unsigned last = data_.size - 1;
     std::cout << "last 'entity' to swap (id): " << last << std::endl;
 
-    unsigned e = data_.entity[i].id; // or Entity
-    unsigned last_e = data_.entity[last].id; // or Entity
+    Entity entity = data_.entity[i]; // or Entity
+    //Entity lastEntity = data_.entity[last]; // or Entity
 
     data_.entity[i] = data_.entity[last];
     data_.mass[i] = data_.mass[last];
@@ -206,10 +211,21 @@ void System::destroy(unsigned i)
     data_.velocity[i] = data_.velocity[last];
     data_.acceleration[i] = data_.acceleration[last];
 
-    map_[last_e] = i;
-    map_.erase(e);
+    std::cout << "destroy entity id = " << entity.id << std::endl;
+
+    /// ?
+    ///map_[lastEntity.id] = i;
+    map_.erase(entity.id);
 
     std::cout << "New MAP size: " << map_.size() << std::endl;
 
-    --data_.size; // or (--_n)
+    if (data_.size > 0)
+    {
+        --data_.size; // or (--_n)
+    }
+}
+
+bool System::isValid(rapidjson::Document document)
+{
+    return false;
 }

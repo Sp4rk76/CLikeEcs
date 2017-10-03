@@ -2,15 +2,63 @@
   "entities": [
     {
       "id": 1,
-      "name": "boris"
+      "name": "boris",
+      "mass": 10,
+      "position": {
+        "x": 11,
+        "y": 50,
+        "z": 0
+      },
+      "velocity": {
+        "x": 11,
+        "y": 1,
+        "z": 0
+      },
+      "acceleration": {
+        "x": 2,
+        "y": 2,
+        "z": 0
+      }
     },
     {
       "id": 2,
-      "name": "swan"
+      "name": "swan",
+      "mass": 10,
+      "position": {
+        "x": 22,
+        "y": 50,
+        "z": 0
+      },
+      "velocity": {
+        "x": 22,
+        "y": 1,
+        "z": 0
+      },
+      "acceleration": {
+        "x": 2,
+        "y": 2,
+        "z": 0
+      }
     },
     {
       "id": 3,
-      "name": "elli"
+      "name": "elli",
+      "mass": 10,
+      "position": {
+        "x": 33,
+        "y": 50,
+        "z": 0
+      },
+      "velocity": {
+        "x": 33,
+        "y": 1,
+        "z": 0
+      },
+      "acceleration": {
+        "x": 2,
+        "y": 2,
+        "z": 0
+      }
     }
   ]
 }

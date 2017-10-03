@@ -1,37 +1,29 @@
-#include <iostream>
-#include <JSONLoader.h>
 #include <EntityManager.h>
 #include <System.h>
-
-using namespace std;
-
-const unsigned MAX_ENTITIES = 2048;
 
 int main()
 {
     auto entityManager = new EntityManager();
     auto system = new System();
 
+    // allocate nb of registered entities or more ?
     system->allocate(3200);
 
     system->loadEntities(*entityManager);
-    system->loadComponents();
 
     // TODO: see if it keeps components alive !
     // NOTE: destroy 1st entity and only leave 3rd entity
-    Entity e1;
-    e1.id = 1;
-    Instance i1 = system->lookup(e1);
+    Instance i1 = system->lookup(system->data_.entity[1]);
+    Instance i2 = system->lookup(system->data_.entity[2]);
+    Instance i3 = system->lookup(system->data_.entity[3]);
+
     std::cout << system->position(i1).x << std::endl; // return 50 (from file)
-    system->destroy(i1.i); // destroy !
-    std::cout << system->position(i1).x << std::endl; // return 0 (default)
-
-
-    Entity e3;
-    e3.id = 3;
-    Instance i3 = system->lookup(e3);
+    //system->destroy(i1.i); // destroy !
+    std::cout << system->position(i2).x << std::endl; // return 0 (default)
+  //  std::cout << system->position(i2).x << std::endl; // return 0 (default)
     std::cout << system->position(i3).x << std::endl;
 
+    system->simulate();
 
     return 0;
 }
