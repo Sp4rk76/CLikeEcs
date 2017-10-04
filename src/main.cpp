@@ -19,8 +19,8 @@ int main()
 
     std::cout << system->position(i1).x << std::endl; // return 50 (from file)
     //system->destroy(i1.i); // destroy !
+    //std::cout << system->position(i1).x << std::endl; // return 0 (default)
     std::cout << system->position(i2).x << std::endl; // return 0 (default)
-  //  std::cout << system->position(i2).x << std::endl; // return 0 (default)
     std::cout << system->position(i3).x << std::endl;
 
     system->simulate();

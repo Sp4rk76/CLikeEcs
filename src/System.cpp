@@ -6,6 +6,7 @@
 
 System::System()
 {
+    Vector3 t;
     jsonLoader_ = new JSONLoader();
 }
 
@@ -113,6 +114,7 @@ void System::setAcceleration(Instance instance, Vector3 acceleration)
     data_.acceleration[instance.i] = acceleration;
 }
 
+// TODO: make JSON loading code safier
 void System::loadEntities(EntityManager &entityManager)
 {
     rapidjson::Document document = jsonLoader_->read("data/entities.json");
@@ -125,25 +127,12 @@ void System::loadEntities(EntityManager &entityManager)
     for (auto &entity : entities)
     {
         Entity e = entityManager.create();
-        e.id = (unsigned int)entity["id"].GetInt();
+        e.id = (unsigned int) entity["id"].GetInt();
 
         auto e_mass = entity["mass"].GetFloat();
 
-///     NOTE: can't have errors from reading, except type mismath ?
-      auto e_position_x = entity["position"]["x"].GetFloat();
-      auto e_position_y = entity["position"]["y"].GetFloat();
-      auto e_position_z = entity["position"]["z"].GetFloat();
-
-      auto e_velocity_x = entity["velocity"]["x"].GetFloat();
-      auto e_velocity_y = entity["velocity"]["y"].GetFloat();
-      auto e_velocity_z = entity["velocity"]["z"].GetFloat();
-
-      auto e_acceleration_x = entity["acceleration"]["x"].GetFloat();
-      auto e_acceleration_y = entity["acceleration"]["y"].GetFloat();
-      auto e_acceleration_z = entity["acceleration"]["z"].GetFloat();
-
         // TODO: bool function, detect invalid data for each entity
-        if(e.id <= 0 || e_mass < 0)
+        if (e.id <= 0 || e_mass < 0)
         {
             std::cout << "Error: the document has invalid values" << std::endl;
             return;
@@ -155,17 +144,28 @@ void System::loadEntities(EntityManager &entityManager)
 
         data_.mass[instance_.i] = e_mass;
 
-        data_.position[instance_.i].x = e_position_x;
-        data_.position[instance_.i].y = e_position_y;
-        data_.position[instance_.i].z = e_position_z;
+///     NOTE: can't have errors from reading, except type mismath ?
+        if (entity.HasMember("position"))
+        {
+            data_.position[instance_.i].x = entity["position"]["x"].GetFloat();
+            data_.position[instance_.i].y = entity["position"]["y"].GetFloat();
+            data_.position[instance_.i].z = entity["position"]["z"].GetFloat();
+        }
 
-        data_.velocity[instance_.i].x = e_velocity_x;
-        data_.velocity[instance_.i].y = e_velocity_y;
-        data_.velocity[instance_.i].z = e_velocity_z;
+        if (entity.HasMember("velocity"))
+        {
+            data_.position[instance_.i].x = entity["velocity"]["x"].GetFloat();
+            data_.position[instance_.i].y = entity["velocity"]["y"].GetFloat();
+            data_.position[instance_.i].z = entity["velocity"]["z"].GetFloat();
+        }
 
-        data_.acceleration[instance_.i].x = e_acceleration_x;
-        data_.acceleration[instance_.i].y = e_acceleration_y;
-        data_.acceleration[instance_.i].z = e_acceleration_z;
+        if (entity.HasMember("acceleration"))
+        {
+            data_.acceleration[instance_.i].x = entity["acceleration"]["x"].GetFloat();
+            data_.acceleration[instance_.i].y = entity["acceleration"]["y"].GetFloat();
+            data_.acceleration[instance_.i].z = entity["acceleration"]["z"].GetFloat();
+
+        }
 
         auto name = entity["name"].GetString();
         std::cout << "id: " << e.id << ", " << "name: " << name << std::endl;
@@ -177,19 +177,28 @@ void System::loadEntities(EntityManager &entityManager)
 // TODO: simulate only with registered entities
 void System::simulate(float dt)
 {
-    std::cout << "data size: " << data_.size << std::endl;
-    std::cout << "map size: " << map_.size() << std::endl;
-    for (auto &it : map_)
-    {
-        std::cout << "MAPPED index = " << it.second << std::endl;
 
-        data_.velocity[it.second] += (data_.acceleration[it.second]);
-        data_.position[it.second] += (data_.velocity[it.second]);
 
-        std::cout << "Simulate VELOCITY.X (e=" << data_.entity[it.second].index() << "): " << data_.velocity[it.second].x << std::endl;
-        std::cout << "Simulate POSITION.X (e=" << data_.entity[it.second].index() << "): " << data_.position[it.second].x << std::endl;
-        std::cout << "map contains (" << it.first << " ; " << it.second << ")" << std::endl;
-    }
+
+
+
+//    std::cout << "data size: " << data_.size << std::endl;
+//    std::cout << "map size: " << map_.size() << std::endl;
+//    for (auto &it : map_)
+//    {
+//        std::cout << "MAPPED index = " << it.second << std::endl;
+//
+//        std::cout << "Acceleration(x) from entity " << it.first << ": " << data_.acceleration[it.second].x << std::endl;
+//
+//        data_.velocity[it.second] += (data_.acceleration[it.second]);
+//        data_.position[it.second] += (data_.velocity[it.second]);
+//
+//        std::cout << "Simulate VELOCITY.X (e=" << data_.entity[it.second].index() << "): "
+//                  << data_.velocity[it.second].x << std::endl;
+//        std::cout << "Simulate POSITION.X (e=" << data_.entity[it.second].index() << "): "
+//                  << data_.position[it.second].x << std::endl;
+//        std::cout << "map contains (" << it.first << " ; " << it.second << ")" << std::endl;
+//    }
 }
 
 void System::destroy(unsigned i)
@@ -225,7 +234,13 @@ void System::destroy(unsigned i)
     }
 }
 
+// TODO: Implement this functionnality ?
 bool System::isValid(rapidjson::Document document)
 {
     return false;
+}
+
+bool System::isValidMask(unsigned entityMask, unsigned systemMask)
+{
+    return ((entityMask & systemMask) == systemMask);
 }

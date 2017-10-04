@@ -15,6 +15,8 @@
 
 #include "rapidjson/document.h"
 
+#define MAX_NUMBER_OF_SYSTEMS 2
+
 struct Instance
 {
     int i = 1;
@@ -63,6 +65,8 @@ public:
     void destroy(unsigned i);
 
     bool isValid(rapidjson::Document document);
+
+    bool isValidMask(unsigned entityMask, unsigned systemMask);
 
     InstanceData data_;
 
