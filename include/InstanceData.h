@@ -21,4 +21,15 @@ struct InstanceData
     Vector3 *acceleration;
 };
 
+class System
+{
+
+};
+
+struct InstanceSystem
+{
+    unsigned int n = 0;
+    void *buffer;
+};
+
 #endif //CLIKEECS_INSTANCEDATA_H

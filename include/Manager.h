@@ -24,12 +24,14 @@ struct Instance
 
 /// NOTE: This is an "example of system design"
 /// TODO: each system should have a list of registered id ?
-class System
+class Manager
 {
 public:
-    explicit System();
+    explicit Manager();
 
-    ~System();
+    explicit Manager(size_t size);
+
+    ~Manager();
 
     void allocate(unsigned size);
 
@@ -58,7 +60,7 @@ public:
     void setAcceleration(Instance instance, Vector3 acceleration);
 
     // TODO: Create a validation function => check JSON file validity according (once !) before loading all entities/components
-    void loadEntities(EntityManager &entityManager);
+    void loadEntities(EntityManager *entityManager);
 
     void simulate(float dt = 1);
 
@@ -68,9 +70,14 @@ public:
 
     bool isValidMask(unsigned entityMask, unsigned systemMask);
 
+    void testValues();
+
     InstanceData data_;
 
+    InstanceSystem systems_;
+
 private:
+
     Instance instance_;
 
     JSONLoader *jsonLoader_;

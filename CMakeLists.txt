@@ -35,12 +35,12 @@ set(SOURCE_FILES src/main.cpp
         include/EntityManager.h
         include/InstanceData.h
         include/Vector3.h
-        include/System.h
+        include/Manager.h
         include/Vector2.h
         include/Instance.h
         include/JSONLoader.h
         src/JSONLoader.cpp
-        src/System.cpp
+        src/Manager.cpp
         src/EntityManager.cpp src/DebugNameComponentManager.cpp include/Movement.h)
 
 # Executable

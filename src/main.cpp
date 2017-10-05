@@ -1,29 +1,16 @@
 #include <EntityManager.h>
-#include <System.h>
+#include <Manager.h>
 
 int main()
 {
     auto entityManager = new EntityManager();
-    auto system = new System();
+    auto manager = new Manager(3200);
 
-    // allocate nb of registered entities or more ?
-    system->allocate(3200);
+    manager->loadEntities(entityManager);
 
-    system->loadEntities(*entityManager);
+    manager->testValues();
 
-    // TODO: see if it keeps components alive !
-    // NOTE: destroy 1st entity and only leave 3rd entity
-    Instance i1 = system->lookup(system->data_.entity[1]);
-    Instance i2 = system->lookup(system->data_.entity[2]);
-    Instance i3 = system->lookup(system->data_.entity[3]);
-
-    std::cout << system->position(i1).x << std::endl; // return 50 (from file)
-    //system->destroy(i1.i); // destroy !
-    //std::cout << system->position(i1).x << std::endl; // return 0 (default)
-    std::cout << system->position(i2).x << std::endl; // return 0 (default)
-    std::cout << system->position(i3).x << std::endl;
-
-    system->simulate();
+    manager->simulate();
 
     return 0;
 }
@@ -84,7 +71,7 @@ int main()
 //std::cout << "e2 (id)= " << e2.id << std::endl;
 //std::cout << "e2 (i) = " << e2.index() << std::endl;
 
-//    System componentManager;
+//    Manager componentManager;
 //    EntityManager entityManager;
 //
 //    // Buffer Size && Allocation(for component system)

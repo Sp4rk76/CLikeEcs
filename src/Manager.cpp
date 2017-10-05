@@ -2,24 +2,35 @@
 // Created by Sp4rk on 03-10-17.
 //
 
-#include "System.h"
+#include "Manager.h"
 
-System::System()
+Manager::Manager()
 {
-    Vector3 t;
     jsonLoader_ = new JSONLoader();
 }
 
-System::~System()
+Manager::Manager(size_t size)
 {
+    allocate(size);
+    jsonLoader_ = new JSONLoader();
+}
+
+Manager::~Manager()
+{
+    free(systems_.buffer);
     free(data_.buffer);
 
     delete jsonLoader_;
     jsonLoader_ = nullptr;
 }
 
-void System::allocate(unsigned size)
+void Manager::allocate(unsigned size)
 {
+    /// for the systems
+    unsigned int sys_bytes = MAX_NUMBER_OF_SYSTEMS * (sizeof(System));
+    systems_.buffer = malloc(sys_bytes);
+
+    /// for the data
     data_.size = size;
     std::cout << data_.size << std::endl;
 
@@ -44,13 +55,13 @@ void System::allocate(unsigned size)
     data_ = newData_;
 }
 
-Instance System::make_instance(int i)
+Instance Manager::make_instance(int i)
 {
     instance_.i = i;
     return instance_;
 }
 
-Instance System::lookup(Entity entity)
+Instance Manager::lookup(Entity entity)
 {
     // TODO: pertinent ?
     if (map_.count(entity.id) == 0)
@@ -64,58 +75,59 @@ Instance System::lookup(Entity entity)
     return make_instance(map_[entity.id]);
 }
 
-Entity System::entity(Instance instance)
+Entity Manager::entity(Instance instance)
 {
     return data_.entity[instance.i];
 }
 
-void System::setEntity(Instance instance, Entity entity)
+void Manager::setEntity(Instance instance, Entity entity)
 {
     data_.entity[instance.i] = entity;
 }
 
-float System::mass(Instance instance)
+float Manager::mass(Instance instance)
 {
     return data_.mass[instance.i];
 }
 
-void System::setMass(Instance instance, float mass)
+void Manager::setMass(Instance instance, float mass)
 {
     data_.mass[instance.i] = mass;
 }
 
-Vector3 System::position(Instance instance)
+Vector3 Manager::position(Instance instance)
 {
     return data_.position[instance.i];
 }
 
-void System::setPosition(Instance instance, Vector3 position)
+void Manager::setPosition(Instance instance, Vector3 position)
 {
     data_.position[instance.i] = position;
 }
 
-Vector3 System::velocity(Instance instance)
+Vector3 Manager::velocity(Instance instance)
 {
     return data_.velocity[instance.i];
 }
 
-void System::setVelocity(Instance instance, Vector3 velocity)
+void Manager::setVelocity(Instance instance, Vector3 velocity)
 {
     data_.velocity[instance.i] = velocity;
 }
 
-Vector3 System::acceleration(Instance instance)
+Vector3 Manager::acceleration(Instance instance)
 {
     return data_.acceleration[instance.i];
 }
 
-void System::setAcceleration(Instance instance, Vector3 acceleration)
+void Manager::setAcceleration(Instance instance, Vector3 acceleration)
 {
     data_.acceleration[instance.i] = acceleration;
 }
 
 // TODO: make JSON loading code safier
-void System::loadEntities(EntityManager &entityManager)
+// TODO: Return an int => number of entities
+void Manager::loadEntities(EntityManager *entityManager)
 {
     rapidjson::Document document = jsonLoader_->read("data/entities.json");
 
@@ -126,16 +138,30 @@ void System::loadEntities(EntityManager &entityManager)
 
     for (auto &entity : entities)
     {
-        Entity e = entityManager.create();
-        e.id = (unsigned int) entity["id"].GetInt();
+        Entity e = entityManager->create();
 
+        if(!entity.HasMember("id") || !entity.HasMember("mask") || !entity.HasMember("mass"))
+        {
+            std::cout << "Error: id|mask|mass group missing in document" << std::endl;
+            return;
+        }
+
+        e.id = entity["id"].GetUint();
+        e.mask = entity["mask"].GetUint();
         auto e_mass = entity["mass"].GetFloat();
 
-        // TODO: bool function, detect invalid data for each entity
-        if (e.id <= 0 || e_mass < 0)
+        if (e.id <= 0 || e.mask <= None || e_mass < 0)
         {
             std::cout << "Error: the document has invalid values" << std::endl;
             return;
+        }
+
+        for(unsigned int i = 1; i <= systems_.n; i++)
+        {
+//            if(isValidMask(e.mask, systems_[i].required_mask))
+//            {
+//                system[i].entity_matches = e.id;
+//            }
         }
 
         instance_ = lookup(e);
@@ -145,7 +171,12 @@ void System::loadEntities(EntityManager &entityManager)
         data_.mass[instance_.i] = e_mass;
 
 ///     NOTE: can't have errors from reading, except type mismath ?
-        if (entity.HasMember("position"))
+        if (!entity.HasMember("position"))
+        {
+            std::cout << "Error: invalid position values in document" << std::endl;
+            return;
+        }
+        else
         {
             data_.position[instance_.i].x = entity["position"]["x"].GetFloat();
             data_.position[instance_.i].y = entity["position"]["y"].GetFloat();
@@ -154,6 +185,11 @@ void System::loadEntities(EntityManager &entityManager)
 
         if (entity.HasMember("velocity"))
         {
+            std::cout << "Error: invalid position values in document" << std::endl;
+            return;
+        }
+        else
+        {
             data_.position[instance_.i].x = entity["velocity"]["x"].GetFloat();
             data_.position[instance_.i].y = entity["velocity"]["y"].GetFloat();
             data_.position[instance_.i].z = entity["velocity"]["z"].GetFloat();
@@ -161,21 +197,34 @@ void System::loadEntities(EntityManager &entityManager)
 
         if (entity.HasMember("acceleration"))
         {
+            std::cout << "Error: invalid position values in document" << std::endl;
+            return;
+        }
+        else
+        {
             data_.acceleration[instance_.i].x = entity["acceleration"]["x"].GetFloat();
             data_.acceleration[instance_.i].y = entity["acceleration"]["y"].GetFloat();
             data_.acceleration[instance_.i].z = entity["acceleration"]["z"].GetFloat();
-
         }
 
-        auto name = entity["name"].GetString();
-        std::cout << "id: " << e.id << ", " << "name: " << name << std::endl;
+        /// Non-bloquant
+        if(!entity.HasMember("name"))
+        {
+            std::cout << "Entity number " << e.id << " has no name." << std::endl;
+        }
+        else
+        {
+            // TODO: declare above first
+            auto name = entity["name"].GetString();
+            std::cout << "id: " << e.id << ", " << "name: " << name << std::endl;
+        }
     }
 
     jsonLoader_->close();
 }
 
 // TODO: simulate only with registered entities
-void System::simulate(float dt)
+void Manager::simulate(float dt)
 {
 
 
@@ -201,7 +250,7 @@ void System::simulate(float dt)
 //    }
 }
 
-void System::destroy(unsigned i)
+void Manager::destroy(unsigned i)
 {
     if (i <= 0) // invalid index
     {
@@ -235,12 +284,27 @@ void System::destroy(unsigned i)
 }
 
 // TODO: Implement this functionnality ?
-bool System::isValid(rapidjson::Document document)
+bool Manager::isValid(rapidjson::Document document)
 {
     return false;
 }
 
-bool System::isValidMask(unsigned entityMask, unsigned systemMask)
+bool Manager::isValidMask(unsigned entityMask, unsigned systemMask)
 {
     return ((entityMask & systemMask) == systemMask);
+}
+
+void Manager::testValues()
+{
+    // TODO: see if it keeps components alive !
+    // NOTE: destroy 1st entity and only leave 3rd entity
+    Instance i1 = lookup(data_.entity[1]);
+    Instance i2 = lookup(data_.entity[2]);
+    Instance i3 = lookup(data_.entity[3]);
+
+    std::cout << position(i1).x << std::endl; // return 50 (from file)
+    //manager->destroy(i1.i); // destroy !
+    //std::cout << manager->position(i1).x << std::endl; // return 0 (default)
+    std::cout << position(i2).x << std::endl; // return 0 (default)
+    std::cout << position(i3).x << std::endl;
 }

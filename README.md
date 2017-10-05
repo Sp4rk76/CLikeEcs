@@ -1,2 +1,2 @@
 # CLikeEcs
-C-like Component Entity System (experimentations)
+C-like Component Entity Manager (experimentations)
