@@ -1,0 +1,8 @@
+//
+// Created by Sp4rk on 06-10-17.
+//
+
+#ifndef CLIKEECS_ENTITYMATCHER_H
+#define CLIKEECS_ENTITYMATCHER_H
+
+#endif //CLIKEECS_ENTITYMATCHER_H

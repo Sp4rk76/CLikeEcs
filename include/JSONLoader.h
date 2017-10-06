@@ -15,6 +15,8 @@ public:
 
     void close();
 
+    void free();
+
 private:
     char *buffer_ = (char *) malloc(65536 * sizeof(char));
 

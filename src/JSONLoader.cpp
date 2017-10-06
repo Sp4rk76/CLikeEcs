@@ -37,3 +37,14 @@ void JSONLoader::close()
 
     fclose(file_);
 }
+
+void JSONLoader::free()
+{
+    if(file_ != nullptr)
+    {
+        delete file_;
+        file_ = nullptr;
+    }
+
+    std::free(buffer_);
+}
