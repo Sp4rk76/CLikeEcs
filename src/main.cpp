@@ -8,7 +8,9 @@ int main()
 
     manager->loadEntities(entityManager);
 
-    manager->testValues();
+    manager->loadSystems();
+
+//    manager->testValues();
 
     manager->simulate();
 

@@ -5,35 +5,42 @@
 #ifndef CLIKEECS_SYSTEM_H
 #define CLIKEECS_SYSTEM_H
 
-#define MAX_NUMBER_OF_SYSTEMS 10
-
+#include <vector>
 #include "Entity.h"
 #include "Instance.h"
+#include "EntityMatcher.h"
 
 class System
 {
 public:
-    System();
+    explicit System();
 
-    void simulate(float dt);
+    void simulate(float dt = 1);
 
     unsigned int requiredMask();
 
-    unsigned int *entityMatches() const;
+    std::vector<std::size_t> entityMatches() const;
 
     unsigned int entityMatch(Entity *entity);
 
     unsigned int entityMatch(unsigned int matchingEntity);
 
-    void setEntityMatch(Instance instance);
+    void setEntityMatch(std::size_t id);
 
-    void unsetEntityMatch(Instance instance);
+    void unsetEntityMatch(std::size_t id);
 
-    // const ? if need to remove one component verification ? for some game it can be problematic ? => need to refresh entity subscriptions.
+    void setRequiredMask(std::size_t requiredMask);
+
+    void clear();
+
+    void free();
+
+    std::vector<std::size_t> matches_;
+
+    // Non-const: if need to remove one component verification ? for some game it can be problematic ? => need to refresh entity subscriptions.
     unsigned int requiredMask_;
-private:
 
-    unsigned int* entityMatches_;
+private:
 };
 
 #endif //CLIKEECS_SYSTEM_H

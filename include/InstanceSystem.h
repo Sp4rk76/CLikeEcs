@@ -5,14 +5,20 @@
 #ifndef CLIKEECS_INSTANCESYSTEM_H
 #define CLIKEECS_INSTANCESYSTEM_H
 
+#define MAX_NUMBER_OF_SYSTEMS 10
+#define INVALID_SYSTEM 0
+
+#include <set>
 #include "System.h"
 
 struct InstanceSystem
 {
-    unsigned n = MAX_NUMBER_OF_SYSTEMS; ///< Number of systems
+    std::set<size_t> id;
+    unsigned numSystems = 0; ///< Number of systems
+    unsigned capacity = MAX_NUMBER_OF_SYSTEMS;
     void *buffer; ///< Buffer with instance data
 
-    System* system;
+    System** systems;
 };
 
 #endif //CLIKEECS_INSTANCESYSTEM_H

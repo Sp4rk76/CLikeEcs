@@ -44,7 +44,7 @@ set(SOURCE_FILES src/main.cpp
         src/JSONLoader.cpp
         src/Manager.cpp
         src/EntityManager.cpp
-        src/DebugNameComponentManager.cpp src/System.cpp include/InstanceSystem.h)
+        src/DebugNameComponentManager.cpp src/System.cpp include/InstanceSystem.h include/EntityMatcher.h)
 
 # Executable
 add_executable(CLikeECS ${SOURCE_FILES})

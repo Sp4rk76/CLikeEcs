@@ -60,17 +60,17 @@ public:
 
     void destroy(unsigned i);
 
-    bool isValid(rapidjson::Document document);
-
     bool isValidMask(unsigned entityMask, unsigned systemMask);
 
-    void matchSystem(System *sys, Instance i);
+    void matchSystem(System *sys, std::size_t id);
+
+    void loadSystems();
 
     void testValues();
 
     InstanceData data_;
 
-    System* systems_[MAX_NUMBER_OF_SYSTEMS];
+    InstanceSystem sys_;
 private:
     Instance instance_;
 

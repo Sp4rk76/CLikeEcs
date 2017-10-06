@@ -7,7 +7,7 @@
 
 struct Instance
 {
-    int i = 1;
+    std::size_t i = 1;
 }; ///< Selected Entity Instance ('i' is the Entity id (to look at))
 
 #endif //CLIKEECS_INSTANCE_H

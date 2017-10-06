@@ -1,11 +1,19 @@
 {
-  "systems":
-  [
+  "systems": [
     {
       "id": 1,
       "name": "physics2D",
-      "requiredMask": 1,
-      "matches": [ {"id": 1} ]
+      "requiredMask": 1
+    },
+    {
+      "id": 2,
+      "name": "collision2D",
+      "requiredMask": 2
+    },
+    {
+      "id": 3,
+      "name": "renderer2D",
+      "requiredMask": 3
     }
   ]
 }

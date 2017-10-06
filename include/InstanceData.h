@@ -16,13 +16,13 @@ struct InstanceData
 {
     unsigned size = 0; ///< Number of used instances
     unsigned capacity = 0; ///< Number of allocated instances
-    void *buffer; ///< Buffer with instance data
+    void *buffer = nullptr; ///< Buffer with instance data
 
-    Entity *entity;
-    float *mass;
-    Vector3 *position;
-    Vector3 *velocity;
-    Vector3 *acceleration;
+    Entity *entity = nullptr;
+    float *mass = nullptr;
+    Vector3 *position = nullptr;
+    Vector3 *velocity = nullptr;
+    Vector3 *acceleration = nullptr;
 };
 
 #endif //CLIKEECS_INSTANCEDATA_H

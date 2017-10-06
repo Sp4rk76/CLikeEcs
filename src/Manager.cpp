@@ -5,24 +5,35 @@
 #include <System.h>
 #include "Manager.h"
 
+// TODO: custom allocation for systems ?
 Manager::Manager()
 {
+    allocate(3200);
+
+    sys_.systems = (System **) malloc(MAX_NUMBER_OF_SYSTEMS * sizeof(System *));
+
     jsonLoader_ = new JSONLoader();
 }
 
 Manager::Manager(size_t size)
 {
     allocate(size);
+
+    sys_.systems = (System **) malloc(MAX_NUMBER_OF_SYSTEMS * sizeof(System *));
+
     jsonLoader_ = new JSONLoader();
 }
 
 Manager::~Manager()
 {
-    for(auto &system : systems_)
+    for (auto n : sys_.id)
     {
-        delete system;
-        system = nullptr;
+        delete sys_.systems[n];
+        sys_.systems[n] = nullptr;
     }
+
+    delete sys_.systems;
+    sys_.systems = nullptr;
 
     free(data_.buffer);
 
@@ -71,8 +82,6 @@ Instance Manager::lookup(Entity entity)
         // TODO: Put first free entity id ?
         map_[entity.id] = entity.id;
     }
-
-    std::cout << "we map: (e ; i) as " << "(" << entity.id << " ; " << map_[entity.id] << std::endl;
 
     return make_instance(map_[entity.id]);
 }
@@ -163,22 +172,6 @@ void Manager::loadEntities(EntityManager *entityManager)
 
         data_.entity[instance_.i] = e;
 
-        for (unsigned int i = 0; i < MAX_NUMBER_OF_SYSTEMS; i++)
-        {
-            systems_[i] = new System();
-            std::cout << "Systems_.n = " << systems_[i]->requiredMask_ << std::endl;
-            std::cout << "e.mask = " << e.mask << std::endl;
-            std::cout << "systems_.system[" << i << "].requiredMask() = " << systems_[i]->requiredMask() << std::endl;
-            if (isValidMask(e.mask, systems_[i]->requiredMask()))
-            {
-                /// NOTE: register entity ID to matching systems
-                matchSystem(systems_[i], instance_);
-                std::cout << "Entity registered" << std::endl;
-
-                std::cout << "ENTITY MATCH: " << systems_[i]->entityMatch(e.id);
-            }
-        }
-
         data_.mass[instance_.i] = e_mass;
 
 ///     NOTE: can't have errors from reading, except type mismath ?
@@ -227,12 +220,91 @@ void Manager::loadEntities(EntityManager *entityManager)
     jsonLoader_->close();
 }
 
+void Manager::loadSystems()
+{
+    rapidjson::Document document = jsonLoader_->read("data/systems.json");
+
+    assert(document.IsObject());
+
+    auto root = document.GetObject();
+    auto systems = root["systems"].GetArray();
+
+    // TODO: get data from JSON
+    for (auto &system : systems)
+    {
+        size_t sys_id = 0;
+        const char *sys_name = "";
+        size_t sys_mask = None;
+
+        if (!system.HasMember("id"))
+        {
+            std::cout << "Error: Could not load system id" << std::endl;
+            continue;
+        } else // system has an id...
+        {
+            sys_id = system["id"].GetUint();
+
+            if (!system.HasMember("requiredMask"))
+            {
+                std::cout << "Warning: System has 'None' required mask" << std::endl;
+            } else
+            {
+                sys_mask = system["requiredMask"].GetUint();
+            }
+
+            if (!system.HasMember("name"))
+            {
+                std::cout << "Warning: System has no name registered" << std::endl;
+            } else
+            {
+                sys_name = system["name"].GetString();
+            }
+
+            // ..so it is "Validated"
+            sys_.id.insert(sys_id);
+            // TODO: insert name ?
+            sys_.systems[sys_id] = new System();
+            sys_.systems[sys_id]->setRequiredMask(sys_mask);
+
+            Entity e;
+
+            // get all entities
+            for (auto &it : map_)
+            {
+                e.id = map_[it.second];
+                instance_ = lookup(e);
+                e = data_.entity[instance_.i];
+
+                if (isValidMask(e.mask, sys_.systems[sys_id]->requiredMask()))
+                {
+                    std::cout << "----------" << std::endl;
+                    std::cout << "REGISTERED !" << std::endl;
+                    std::cout << "sEntity.id: " << e.id << std::endl;
+                    std::cout << "sEntity.mask: " << e.mask << std::endl;
+                    std::cout << "sRequiredMask: " << sys_.systems[sys_id]->requiredMask() << std::endl;
+                    matchSystem(sys_.systems[sys_id], e.id);
+
+
+                }
+
+            }
+        }
+    }
+
+    jsonLoader_->close();
+}
+
 // TODO: simulate only with registered entities
 void Manager::simulate(float dt)
 {
-    for (unsigned int i = 1; i <= MAX_NUMBER_OF_SYSTEMS; ++i)
+    // for each system set
+    // update system at each index found
+
+    for (auto &id : sys_.id)
     {
-        std::cout << "SIMULATION TEST !" << std::endl;
+
+        std::cout << "SYS_ID" << id << std::endl;
+        sys_.systems[id]->simulate();
     }
 
 //    std::cout << "data size: " << data_.size << std::endl;
@@ -287,12 +359,6 @@ void Manager::destroy(unsigned i)
     }
 }
 
-// TODO: Implement this functionnality ?
-bool Manager::isValid(rapidjson::Document document)
-{
-    return false;
-}
-
 bool Manager::isValidMask(unsigned entityMask, unsigned systemMask)
 {
     return ((entityMask & systemMask) == systemMask);
@@ -313,7 +379,7 @@ void Manager::testValues()
     std::cout << position(i3).x << std::endl;
 }
 
-void Manager::matchSystem(System *sys, Instance i)
+void Manager::matchSystem(System *system, std::size_t id)
 {
-    sys->setEntityMatch(i);
+    system->setEntityMatch(id);
 }
