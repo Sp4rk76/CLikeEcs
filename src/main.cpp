@@ -10,9 +10,9 @@ int main()
 
     manager->loadSystems();
 
-//    manager->testValues();
-
     manager->simulate();
+
+//  manager->testValues();
 
     return 0;
 }

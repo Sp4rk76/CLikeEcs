@@ -38,7 +38,6 @@ void EntityManager::destroy(Entity e)
 {
     const unsigned index = e.index();
     ++generation_[index];
-    std::cout << "G => " << generation_[index] << std::endl;
     free_indices_.push_back(index);
 }
 
