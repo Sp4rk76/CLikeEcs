@@ -66,6 +66,8 @@ public:
 
     void loadSystems();
 
+    void save(InstanceSystem sys);
+
     void testValues();
 
     InstanceData data_;

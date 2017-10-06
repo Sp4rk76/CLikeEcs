@@ -385,3 +385,8 @@ void Manager::matchSystem(System *system, std::size_t id)
 {
     system->setEntityMatch(id);
 }
+
+void Manager::save(InstanceSystem sys)
+{
+
+}

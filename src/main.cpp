@@ -14,6 +14,13 @@ int main()
 
 //  manager->testValues();
 
+    System s0;
+    s0.free();
+
+    auto s = new System();
+    s->free();
+
+
     return 0;
 }
 

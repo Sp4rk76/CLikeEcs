@@ -8,6 +8,8 @@
 #include <Manager.h>
 #include <algorithm>
 
+#define INVALID_MATCHING_ID 0
+
 System::System()  // Test
 {
 
@@ -52,19 +54,17 @@ unsigned int System::entityMatch(std::size_t matchingEntity)
 void System::setEntityMatch(std::size_t id)
 {
     // TODO: replace by INVALID_ENTITY
-//    if(id <= 0)
-//    {
-//        std::cout << "Error: Trying to set (register) an invalid entity to a system (invalid id)" << std::endl;
-//        return;
-//    }
-//    else
-//    {
-//        matches_[id] = id;
-//    }
+    if(id <= INVALID_MATCHING_ID)
+    {
+        std::cout << "Error: Trying to set (register) an invalid entity to a system (invalid id)" << std::endl;
+        return;
+    }
+    else
+    {
+        matches_.emplace_back(id);
+        std::cout << "MATCHING size: " << matches_.size() << std::endl;
+    }
 
-    matches_.emplace_back(id);
-
-    std::cout << "MATCHING size: " << matches_.size() << std::endl;
 }
 
 void System::unsetEntityMatch(std::size_t id)
@@ -87,6 +87,9 @@ void System::free()
     clear();
 
     requiredMask_ = 0;
+
+    delete name_;
+    name_ = "";
 }
 
 void System::setName(const char *name)
