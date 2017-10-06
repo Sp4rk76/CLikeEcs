@@ -88,3 +88,18 @@ void System::free()
 
     requiredMask_ = 0;
 }
+
+void System::setName(const char *name)
+{
+    name_ = name;
+}
+
+const char *System::name()
+{
+    if(name_ == nullptr)
+    {
+        return "";
+    }
+
+    return name_;
+}

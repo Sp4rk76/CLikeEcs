@@ -8,7 +8,6 @@
 #include <vector>
 #include "Entity.h"
 #include "Instance.h"
-#include "EntityMatcher.h"
 
 class System
 {
@@ -31,6 +30,10 @@ public:
 
     void setRequiredMask(std::size_t requiredMask);
 
+    void setName(const char* name);
+
+    const char* name();
+
     void clear();
 
     void free();
@@ -39,6 +42,8 @@ public:
 
     // Non-const: if need to remove one component verification ? for some game it can be problematic ? => need to refresh entity subscriptions.
     unsigned int requiredMask_;
+
+    const char* name_;
 
 private:
 };

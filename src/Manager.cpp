@@ -138,6 +138,7 @@ void Manager::setAcceleration(Instance instance, Vector3 acceleration)
 
 // TODO: make JSON loading code safier
 // TODO: Return an int => number of entities
+// TODO: Register entities here in the future ?.. processus should be: [ (1)loadSystems/(2)loadEntities/(2.1)registerEntity-to-System ]
 void Manager::loadEntities(EntityManager *entityManager)
 {
     rapidjson::Document document = jsonLoader_->read("data/entities.json");
@@ -220,6 +221,7 @@ void Manager::loadEntities(EntityManager *entityManager)
     jsonLoader_->close();
 }
 
+// TODO: return an integer => number of systems
 void Manager::loadSystems()
 {
     rapidjson::Document document = jsonLoader_->read("data/systems.json");
@@ -265,6 +267,7 @@ void Manager::loadSystems()
             // TODO: insert name ?
             sys_.systems[sys_id] = new System();
             sys_.systems[sys_id]->setRequiredMask(sys_mask);
+            sys_.systems[sys_id]->setName(sys_name);
 
             Entity e;
 
@@ -282,9 +285,8 @@ void Manager::loadSystems()
                     std::cout << "sEntity.id: " << e.id << std::endl;
                     std::cout << "sEntity.mask: " << e.mask << std::endl;
                     std::cout << "sRequiredMask: " << sys_.systems[sys_id]->requiredMask() << std::endl;
+                    std::cout << "sName: " << sys_.systems[sys_id]->name() << std::endl;
                     matchSystem(sys_.systems[sys_id], e.id);
-
-
                 }
 
             }
