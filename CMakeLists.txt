@@ -39,9 +39,12 @@ set(SOURCE_FILES src/main.cpp
         include/Vector2.h
         include/Instance.h
         include/JSONLoader.h
+        include/InstanceSystem.h
+        include/System.h
         src/JSONLoader.cpp
         src/Manager.cpp
-        src/EntityManager.cpp src/DebugNameComponentManager.cpp include/Movement.h)
+        src/EntityManager.cpp
+        src/DebugNameComponentManager.cpp src/System.cpp include/InstanceSystem.h)
 
 # Executable
 add_executable(CLikeECS ${SOURCE_FILES})

@@ -2,6 +2,7 @@
 // Created by Sp4rk on 03-10-17.
 //
 
+#include <System.h>
 #include "Manager.h"
 
 Manager::Manager()
@@ -17,7 +18,12 @@ Manager::Manager(size_t size)
 
 Manager::~Manager()
 {
-    free(systems_.buffer);
+    for(auto &system : systems_)
+    {
+        delete system;
+        system = nullptr;
+    }
+
     free(data_.buffer);
 
     delete jsonLoader_;
@@ -26,10 +32,6 @@ Manager::~Manager()
 
 void Manager::allocate(unsigned size)
 {
-    /// for the systems
-    unsigned int sys_bytes = MAX_NUMBER_OF_SYSTEMS * (sizeof(System));
-    systems_.buffer = malloc(sys_bytes);
-
     /// for the data
     data_.size = size;
     std::cout << data_.size << std::endl;
@@ -39,20 +41,20 @@ void Manager::allocate(unsigned size)
         std::cout << "size > data_.size !" << std::endl;
     }
 
-    InstanceData newData_;
+    InstanceData newData;
 
     const unsigned int bytes = size * (sizeof(Entity) + sizeof(float) + (3 * sizeof(Vector3)));
-    newData_.buffer = malloc(bytes);
-    newData_.size = data_.size;
-    newData_.capacity = size;
+    newData.buffer = malloc(bytes);
+    newData.size = data_.size;
+    newData.capacity = size;
 
-    newData_.entity = (Entity *) (newData_.buffer);
-    newData_.mass = (float *) (newData_.entity + size);
-    newData_.position = (Vector3 *) (newData_.mass + size);
-    newData_.velocity = newData_.position + size; // still Vector3
-    newData_.acceleration = newData_.velocity + size;
+    newData.entity = (Entity *) (newData.buffer);
+    newData.mass = (float *) (newData.entity + size);
+    newData.position = (Vector3 *) (newData.mass + size);
+    newData.velocity = newData.position + size; // still Vector3
+    newData.acceleration = newData.velocity + size;
 
-    data_ = newData_;
+    data_ = newData;
 }
 
 Instance Manager::make_instance(int i)
@@ -140,7 +142,8 @@ void Manager::loadEntities(EntityManager *entityManager)
     {
         Entity e = entityManager->create();
 
-        if(!entity.HasMember("id") || !entity.HasMember("mask") || !entity.HasMember("mass"))
+        // TODO: see if mass should be referering to physics or not
+        if (!entity.HasMember("id") || !entity.HasMember("mask") || !entity.HasMember("mass"))
         {
             std::cout << "Error: id|mask|mass group missing in document" << std::endl;
             return;
@@ -156,51 +159,53 @@ void Manager::loadEntities(EntityManager *entityManager)
             return;
         }
 
-        for(unsigned int i = 1; i <= systems_.n; i++)
-        {
-//            if(isValidMask(e.mask, systems_[i].required_mask))
-//            {
-//                system[i].entity_matches = e.id;
-//            }
-        }
-
         instance_ = lookup(e);
 
         data_.entity[instance_.i] = e;
+
+        for (unsigned int i = 0; i < MAX_NUMBER_OF_SYSTEMS; i++)
+        {
+            systems_[i] = new System();
+            std::cout << "Systems_.n = " << systems_[i]->requiredMask_ << std::endl;
+            std::cout << "e.mask = " << e.mask << std::endl;
+            std::cout << "systems_.system[" << i << "].requiredMask() = " << systems_[i]->requiredMask() << std::endl;
+            if (isValidMask(e.mask, systems_[i]->requiredMask()))
+            {
+                /// NOTE: register entity ID to matching systems
+                matchSystem(systems_[i], instance_);
+                std::cout << "Entity registered" << std::endl;
+
+                std::cout << "ENTITY MATCH: " << systems_[i]->entityMatch(e.id);
+            }
+        }
 
         data_.mass[instance_.i] = e_mass;
 
 ///     NOTE: can't have errors from reading, except type mismath ?
         if (!entity.HasMember("position"))
         {
-            std::cout << "Error: invalid position values in document" << std::endl;
-            return;
-        }
-        else
+            std::cout << "Error: missing position values in document on entity with id = " << e.id << std::endl;
+        } else
         {
             data_.position[instance_.i].x = entity["position"]["x"].GetFloat();
             data_.position[instance_.i].y = entity["position"]["y"].GetFloat();
             data_.position[instance_.i].z = entity["position"]["z"].GetFloat();
         }
 
-        if (entity.HasMember("velocity"))
+        if (!entity.HasMember("velocity"))
         {
-            std::cout << "Error: invalid position values in document" << std::endl;
-            return;
-        }
-        else
+            std::cout << "Error: missing velocity values in document on entity with id = " << e.id << std::endl;
+        } else
         {
             data_.position[instance_.i].x = entity["velocity"]["x"].GetFloat();
             data_.position[instance_.i].y = entity["velocity"]["y"].GetFloat();
             data_.position[instance_.i].z = entity["velocity"]["z"].GetFloat();
         }
 
-        if (entity.HasMember("acceleration"))
+        if (!entity.HasMember("acceleration"))
         {
-            std::cout << "Error: invalid position values in document" << std::endl;
-            return;
-        }
-        else
+            std::cout << "Error: missing acceleration values in document on entity with id = " << e.id << std::endl;
+        } else
         {
             data_.acceleration[instance_.i].x = entity["acceleration"]["x"].GetFloat();
             data_.acceleration[instance_.i].y = entity["acceleration"]["y"].GetFloat();
@@ -208,11 +213,10 @@ void Manager::loadEntities(EntityManager *entityManager)
         }
 
         /// Non-bloquant
-        if(!entity.HasMember("name"))
+        if (!entity.HasMember("name"))
         {
             std::cout << "Entity number " << e.id << " has no name." << std::endl;
-        }
-        else
+        } else
         {
             // TODO: declare above first
             auto name = entity["name"].GetString();
@@ -226,10 +230,10 @@ void Manager::loadEntities(EntityManager *entityManager)
 // TODO: simulate only with registered entities
 void Manager::simulate(float dt)
 {
-
-
-
-
+    for (unsigned int i = 1; i <= MAX_NUMBER_OF_SYSTEMS; ++i)
+    {
+        std::cout << "SIMULATION TEST !" << std::endl;
+    }
 
 //    std::cout << "data size: " << data_.size << std::endl;
 //    std::cout << "map size: " << map_.size() << std::endl;
@@ -307,4 +311,9 @@ void Manager::testValues()
     //std::cout << manager->position(i1).x << std::endl; // return 0 (default)
     std::cout << position(i2).x << std::endl; // return 0 (default)
     std::cout << position(i3).x << std::endl;
+}
+
+void Manager::matchSystem(System *sys, Instance i)
+{
+    sys->setEntityMatch(i);
 }

@@ -12,7 +12,6 @@ enum Mask
     Physics2D = 1 << 1,
 };
 
-
 const unsigned int ENTITY_INDEX_BITS = 22;
 const unsigned int ENTITY_INDEX_MASK = (1<<ENTITY_INDEX_BITS)-1;
 

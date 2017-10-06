@@ -5,8 +5,12 @@
 #ifndef CLIKEECS_INSTANCEDATA_H
 #define CLIKEECS_INSTANCEDATA_H
 
+#include <iostream>
+
 #include "Entity.h"
 #include "Vector3.h"
+
+const unsigned int MAX_ENTITY_REGISTERING = 1 << ENTITY_INDEX_BITS;
 
 struct InstanceData
 {
@@ -19,17 +23,6 @@ struct InstanceData
     Vector3 *position;
     Vector3 *velocity;
     Vector3 *acceleration;
-};
-
-class System
-{
-
-};
-
-struct InstanceSystem
-{
-    unsigned int n = 0;
-    void *buffer;
 };
 
 #endif //CLIKEECS_INSTANCEDATA_H

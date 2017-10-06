@@ -11,16 +11,10 @@
 #include "Entity.h"
 #include "Vector3.h"
 #include "InstanceData.h"
+#include "InstanceSystem.h"
 #include "EntityManager.h"
-
 #include "rapidjson/document.h"
-
-#define MAX_NUMBER_OF_SYSTEMS 2
-
-struct Instance
-{
-    int i = 1;
-}; ///< Selected Entity Instance ('i' is the Entity id (to look at))
+#include "Instance.h"
 
 /// NOTE: This is an "example of system design"
 /// TODO: each system should have a list of registered id ?
@@ -70,14 +64,14 @@ public:
 
     bool isValidMask(unsigned entityMask, unsigned systemMask);
 
+    void matchSystem(System *sys, Instance i);
+
     void testValues();
 
     InstanceData data_;
 
-    InstanceSystem systems_;
-
+    System* systems_[MAX_NUMBER_OF_SYSTEMS];
 private:
-
     Instance instance_;
 
     JSONLoader *jsonLoader_;

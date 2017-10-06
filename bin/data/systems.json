@@ -1,0 +1,11 @@
+{
+  "systems":
+  [
+    {
+      "id": 1,
+      "name": "physics2D",
+      "requiredMask": 1,
+      "matches": [ {"id": 1} ]
+    }
+  ]
+}
