@@ -51,14 +51,14 @@ void JSONHandler::save(const InstanceData &data, const char *filePath, const cha
 
     /// Write SysData here !
     writer.StartObject();
-    writer.Key("systems");
+    writer.Key("entities");
     writer.StartArray();
 
 
     writer.EndArray();
     writer.EndObject();
 
-//    write(filePath, mode, stringBuffer.GetString());
+    write(filePath, mode, stringBuffer.GetString());
 }
 
 void JSONHandler::save(const InstanceSystem &sys, const char *filePath, const char *mode)

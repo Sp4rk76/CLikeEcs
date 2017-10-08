@@ -374,5 +374,6 @@ void Manager::save(/* all E & S */)
 {
     // TODO: verify data integrity ?
     jsonHandler_->querySave(sys_);
+    jsonHandler_->querySave(data_);
 
 }
