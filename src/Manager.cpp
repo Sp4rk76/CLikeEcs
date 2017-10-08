@@ -3,6 +3,8 @@
 //
 
 #include <System.h>
+#include <fstream>
+#include <string>
 #include "Manager.h"
 
 // TODO: custom allocation for systems ?
@@ -12,7 +14,7 @@ Manager::Manager()
 
     sys_.systems = (System **) malloc(MAX_NUMBER_OF_SYSTEMS * sizeof(System *));
 
-    jsonLoader_ = new JSONLoader();
+    jsonHandler_ = new JSONHandler();
 }
 
 Manager::Manager(size_t size)
@@ -21,7 +23,7 @@ Manager::Manager(size_t size)
 
     sys_.systems = (System **) malloc(MAX_NUMBER_OF_SYSTEMS * sizeof(System *));
 
-    jsonLoader_ = new JSONLoader();
+    jsonHandler_ = new JSONHandler();
 }
 
 Manager::~Manager()
@@ -37,8 +39,10 @@ Manager::~Manager()
 
     free(data_.buffer);
 
-    delete jsonLoader_;
-    jsonLoader_ = nullptr;
+    // TODO: call jsonHandler_->close, which calls free itself ?
+    jsonHandler_->free();
+    delete jsonHandler_;
+    jsonHandler_ = nullptr;
 }
 
 void Manager::allocate(unsigned size)
@@ -141,7 +145,7 @@ void Manager::setAcceleration(Instance instance, Vector3 acceleration)
 // TODO: Register entities here in the future ?.. processus should be: [ (1)loadSystems/(2)loadEntities/(2.1)registerEntity-to-System ]
 void Manager::loadEntities(EntityManager *entityManager)
 {
-    rapidjson::Document document = jsonLoader_->read("data/entities.json");
+    rapidjson::Document document = jsonHandler_->read("data/entities.json");
 
     assert(document.IsObject());
 
@@ -218,13 +222,13 @@ void Manager::loadEntities(EntityManager *entityManager)
         }
     }
 
-    jsonLoader_->close();
+    jsonHandler_->close();
 }
 
 // TODO: return an integer => number of systems
 void Manager::loadSystems()
 {
-    rapidjson::Document document = jsonLoader_->read("data/systems.json");
+    rapidjson::Document document = jsonHandler_->read("data/systems.json");
 
     assert(document.IsObject());
 
@@ -235,7 +239,7 @@ void Manager::loadSystems()
     for (auto &system : systems)
     {
         size_t sys_id = 0;
-        const char *sys_name = "";
+        std::string sys_name;
         size_t sys_mask = None;
 
         if (!system.HasMember("id"))
@@ -259,7 +263,7 @@ void Manager::loadSystems()
                 std::cout << "Warning: System has no name registered" << std::endl;
             } else
             {
-                sys_name = system["name"].GetString();
+                sys_name = (system["name"].GetString());
             }
 
             // ..so it is "Validated"
@@ -293,39 +297,19 @@ void Manager::loadSystems()
         }
     }
 
-    jsonLoader_->close();
+    jsonHandler_->close();
 }
 
 // TODO: simulate only with registered entities
 void Manager::simulate(float dt)
 {
     // for each system set
-    // update system at each index found
-
     for (auto &id : sys_.id)
     {
-
+        // update system at each index found
         std::cout << "SYS_ID" << id << std::endl;
         sys_.systems[id]->simulate();
     }
-
-//    std::cout << "data size: " << data_.size << std::endl;
-//    std::cout << "map size: " << map_.size() << std::endl;
-//    for (auto &it : map_)
-//    {
-//        std::cout << "MAPPED index = " << it.second << std::endl;
-//
-//        std::cout << "Acceleration(x) from entity " << it.first << ": " << data_.acceleration[it.second].x << std::endl;
-//
-//        data_.velocity[it.second] += (data_.acceleration[it.second]);
-//        data_.position[it.second] += (data_.velocity[it.second]);
-//
-//        std::cout << "Simulate VELOCITY.X (e=" << data_.entity[it.second].index() << "): "
-//                  << data_.velocity[it.second].x << std::endl;
-//        std::cout << "Simulate POSITION.X (e=" << data_.entity[it.second].index() << "): "
-//                  << data_.position[it.second].x << std::endl;
-//        std::cout << "map contains (" << it.first << " ; " << it.second << ")" << std::endl;
-//    }
 }
 
 void Manager::destroy(unsigned i)
@@ -386,7 +370,9 @@ void Manager::matchSystem(System *system, std::size_t id)
     system->setEntityMatch(id);
 }
 
-void Manager::save(InstanceSystem sys)
+void Manager::save(/* all E & S */)
 {
+    // TODO: verify data integrity ?
+    jsonHandler_->querySave(sys_);
 
 }

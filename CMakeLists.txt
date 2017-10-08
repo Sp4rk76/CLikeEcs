@@ -14,8 +14,10 @@ set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake-modules")
 
 # Project directories
+include_directories(bin)
 include_directories(src)
 include_directories(include)
+
 
 ## SDL2
 #find_package(SDL2 REQUIRED)
@@ -29,7 +31,7 @@ include_directories(include)
 #find_package(SDL2_ttf REQUIRED)
 #include_directories(${SDL2_TTF_INCLUDE_DIRS})
 
-set(SOURCE_FILES src/main.cpp
+set(SOURCE_FILES
         include/Entity.h
         include/DebugNameComponentManager.h
         include/EntityManager.h
@@ -38,13 +40,16 @@ set(SOURCE_FILES src/main.cpp
         include/Manager.h
         include/Vector2.h
         include/Instance.h
-        include/JSONLoader.h
+        include/JSONHandler.h
         include/InstanceSystem.h
         include/System.h
-        src/JSONLoader.cpp
+        include/InstanceSystem.h
+        src/JSONHandler.cpp
         src/Manager.cpp
         src/EntityManager.cpp
-        src/DebugNameComponentManager.cpp src/System.cpp include/InstanceSystem.h include/EntityMatcher.h)
+        src/DebugNameComponentManager.cpp
+        src/System.cpp
+        src/main.cpp include/StringFormatter.h)
 
 # Executable
 add_executable(CLikeECS ${SOURCE_FILES})

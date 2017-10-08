@@ -1,5 +1,9 @@
 #include <EntityManager.h>
 #include <Manager.h>
+#include <rapidjson/stringbuffer.h>
+#include <cstdio>
+
+#include "rapidjson/prettywriter.h"
 
 int main()
 {
@@ -12,14 +16,10 @@ int main()
 
     manager->simulate();
 
+    manager->save();
+
+
 //  manager->testValues();
-
-    System s0;
-    s0.free();
-
-    auto s = new System();
-    s->free();
-
 
     return 0;
 }

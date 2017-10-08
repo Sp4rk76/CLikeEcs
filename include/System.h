@@ -6,6 +6,7 @@
 #define CLIKEECS_SYSTEM_H
 
 #include <vector>
+#include <iostream>
 #include "Entity.h"
 #include "Instance.h"
 
@@ -30,9 +31,9 @@ public:
 
     void setRequiredMask(std::size_t requiredMask);
 
-    void setName(const char* name);
+    void setName(const std::string& name);
 
-    const char* name();
+    std::string name() const;
 
     void clear();
 
@@ -43,7 +44,7 @@ public:
     // Non-const: if need to remove one component verification ? for some game it can be problematic ? => need to refresh entity subscriptions.
     unsigned int requiredMask_;
 
-    const char* name_;
+    std::string name_;
 
 private:
 };

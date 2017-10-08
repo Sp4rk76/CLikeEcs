@@ -56,6 +56,8 @@ public:
     // TODO: Create a validation function => check JSON file validity according (once !) before loading all entities/components
     void loadEntities(EntityManager *entityManager);
 
+    void save(/* all E & S */);
+
     void simulate(float dt = 1);
 
     void destroy(unsigned i);
@@ -66,8 +68,6 @@ public:
 
     void loadSystems();
 
-    void save(InstanceSystem sys);
-
     void testValues();
 
     InstanceData data_;
@@ -76,7 +76,7 @@ public:
 private:
     Instance instance_;
 
-    JSONLoader *jsonLoader_;
+    JSONHandler *jsonHandler_;
 
     std::map<unsigned, unsigned> map_; // Entity component
 };

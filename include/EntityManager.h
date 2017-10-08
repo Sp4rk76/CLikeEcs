@@ -9,7 +9,7 @@
 #include <deque>
 #include <iostream>
 #include "Entity.h"
-#include "JSONLoader.h"
+#include "JSONHandler.h"
 
 const unsigned MINIMUM_FREE_INDICES = 0;
 

@@ -88,21 +88,15 @@ void System::free()
 
     requiredMask_ = 0;
 
-    delete name_;
-    name_ = "";
+//    delete name_;
 }
 
-void System::setName(const char *name)
+void System::setName(const std::string& name)
 {
     name_ = name;
 }
 
-const char *System::name()
+std::string System::name() const
 {
-    if(name_ == nullptr)
-    {
-        return "";
-    }
-
     return name_;
 }
