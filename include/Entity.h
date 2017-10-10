@@ -27,6 +27,7 @@ struct Entity
 {
     unsigned int id = 0;
     unsigned int mask = None;
+    const char* name;
 
     unsigned int index() const { return id & ENTITY_INDEX_MASK; }
     unsigned int generation() const { return (id >> ENTITY_INDEX_BITS) & ENTITY_GENERATION_MASK; }

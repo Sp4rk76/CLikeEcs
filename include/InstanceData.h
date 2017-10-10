@@ -9,6 +9,7 @@
 
 #include "Entity.h"
 #include "Vector3.h"
+#include <set>
 
 const unsigned int MAX_ENTITY_REGISTERING = 1 << ENTITY_INDEX_BITS;
 
@@ -17,6 +18,8 @@ struct InstanceData
     unsigned size = 0; ///< Number of used instances
     unsigned capacity = 0; ///< Number of allocated instances
     void *buffer = nullptr; ///< Buffer with instance data
+
+    std::set<size_t> reg_entities;
 
     Entity *entity = nullptr;
     float *mass = nullptr;
