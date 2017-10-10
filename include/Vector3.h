@@ -7,6 +7,13 @@
 
 struct Vector3
 {
+    Vector3(float xi, float yi, float zi)
+    {
+        x = xi;
+        y = yi;
+        z = zi;
+    }
+
     float x = 0;
     float y = 0;
     float z = 0;

@@ -166,15 +166,6 @@ void Manager::loadEntities(EntityManager *entityManager)
         e.id = entity["id"].GetUint();
         e.mask = entity["mask"].GetUint();
 
-        /// Non-bloquant
-        if (!entity.HasMember("name"))
-        {
-            std::cout << "Entity number " << e.id << " has no name." << std::endl;
-        } else
-        {
-            e.name = entity["name"].GetString();
-        }
-
         auto e_mass = entity["mass"].GetFloat();
 
         if (e.id <= 0 || e.mask <= None || e_mass < 0)
@@ -219,6 +210,8 @@ void Manager::loadEntities(EntityManager *entityManager)
             data_.acceleration[instance_.i].y = entity["acceleration"]["y"].GetFloat();
             data_.acceleration[instance_.i].z = entity["acceleration"]["z"].GetFloat();
         }
+
+
     }
 
     jsonHandler_->close();
@@ -311,7 +304,7 @@ void Manager::simulate(float dt)
     }
 }
 
-// TODO: correct this bullshit code
+// TODO: correct this bullshit code .. ?
 void Manager::destroy(unsigned i)
 {
     if (i <= 0) // invalid index
@@ -337,7 +330,7 @@ void Manager::destroy(unsigned i)
     ///data_.reg_entities[lastEntity.id] = i;
     data_.reg_entities.erase(entity.id);
 
-    std::cout << "New MAP size: " << data_.reg_entities.size() << std::endl;
+    std::cout << "Entity Registry size: " << data_.reg_entities.size() << std::endl;
 
     if (data_.size > 0)
     {

@@ -5,6 +5,9 @@
 #ifndef CLIKEECS_ENTITY_H
 #define CLIKEECS_ENTITY_H
 
+#include <string>
+#include <malloc.h>
+
 enum Mask
 {
     None = 0,
@@ -18,16 +21,16 @@ const unsigned int ENTITY_INDEX_MASK = (1<<ENTITY_INDEX_BITS)-1;
 const unsigned int ENTITY_GENERATION_BITS = 8;
 const unsigned int ENTITY_GENERATION_MASK = (1 << ENTITY_GENERATION_BITS)-1;
 
+
+//TODO: name should be added and treated in DebugNameComponentManager
 // ( (EntityMask == SystemMask) + SystemId)
 // On a alors:
 // (1) + SystemId
 // Remarque: l'ID commence à 1
-
 struct Entity
 {
     unsigned int id = 0;
     unsigned int mask = None;
-    const char* name;
 
     unsigned int index() const { return id & ENTITY_INDEX_MASK; }
     unsigned int generation() const { return (id >> ENTITY_INDEX_BITS) & ENTITY_GENERATION_MASK; }

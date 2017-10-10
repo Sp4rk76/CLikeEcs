@@ -54,6 +54,54 @@ void JSONHandler::save(const InstanceData &data, const char *filePath, const cha
     writer.Key("entities");
     writer.StartArray();
 
+    for(auto& id : data.reg_entities)
+    {
+        writer.StartObject();
+
+        writer.Key("id");
+        writer.Uint(id);
+//      writer.Key("name");
+//      writer.String((data.entity[id].name).c_str());
+        writer.Key("mask");
+        writer.Uint(data.entity[id].mask);
+        writer.Key("mass");
+        writer.Double(data.mass[id]);
+
+        // Position
+        writer.Key("position");
+        writer.StartObject();
+        writer.Key("x");
+        writer.Double(data.position[id].x);
+        writer.Key("y");
+        writer.Double(data.position[id].y);
+        writer.Key("z");
+        writer.Double(data.position[id].z);
+        writer.EndObject();
+
+        // Velocity
+        writer.Key("velocity");
+        writer.StartObject();
+        writer.Key("x");
+        writer.Double(data.velocity[id].x);
+        writer.Key("y");
+        writer.Double(data.velocity[id].y);
+        writer.Key("z");
+        writer.Double(data.velocity[id].z);
+        writer.EndObject();
+
+        // Acceleration
+        writer.Key("acceleration");
+        writer.StartObject();
+        writer.Key("x");
+        writer.Double(data.acceleration[id].x);
+        writer.Key("y");
+        writer.Double(data.acceleration[id].y);
+        writer.Key("z");
+        writer.Double(data.acceleration[id].z);
+        writer.EndObject();
+
+        writer.EndObject();
+    }
 
     writer.EndArray();
     writer.EndObject();

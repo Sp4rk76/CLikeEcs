@@ -12,6 +12,14 @@ int main()
 
     manager->loadEntities(entityManager);
 
+    /// Some tests
+    auto e = entityManager->create();
+    auto inst = manager->lookup(e);
+    manager->setEntity(inst, e);
+    manager->setMass(inst, 5);
+    manager->setPosition(inst, Vector3(80, 55, -5));
+    ///
+
     manager->loadSystems();
 
     manager->simulate();
