@@ -50,23 +50,14 @@ Manager::~Manager()
 
 void Manager::allocate(unsigned size)
 {
-    /// for the data
     data_.size = size;
     std::cout << "Allocated data size: " << data_.size << std::endl;
 
-//    if (size > data_.size)
-//    {
-//        std::cout << "size > data_.size !" << std::endl;
-//    }
-
     InstanceData newData;
-
-    std::cout << "sizeof VECTOR3 = " << sizeof(Vector3) << std::endl;
 
     const unsigned int bytes = size * (sizeof(Entity) + sizeof(float) + (3 * sizeof(Vector3)));
     newData.buffer = malloc(bytes);
     newData.size = data_.size;
-//    newData.capacity = size;
 
     newData.entity = (Entity *) (newData.buffer);
     newData.mass = (float *) (newData.entity + size);
