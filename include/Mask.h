@@ -14,8 +14,7 @@ enum Mask
     Acceleration = 1 << 3,
 };
 
-#define DEFAULT_POSITION 0
-#define DEFAULT_VELOCITY 0
-#define DEFAULT_ACCELERATION 0
+
+#define DEFAULT 0
 
 #endif //CLIKEECS_MASK_H

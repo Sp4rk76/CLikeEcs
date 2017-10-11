@@ -1,38 +1,35 @@
 #include <EntityManager.h>
 #include <Manager.h>
 #include <cstdio>
+#include <SystemManager.h>
 
 int main()
 {
     auto entityManager = new EntityManager();
+    auto systemManager = new SystemManager();
     auto manager = new Manager(4);
 
-//    manager->allocate(4);
-    manager->loadEntities(entityManager);
-
-//    /// Some tests
-//    auto e = entityManager->create();
-//    manager->register_as(e);
-//    manager->setEntity(e);
-//    manager->setMass(e, 5);
-//    manager->setPosition(e, Vector3(80, 55, -5));
-//    manager->setVelocity(e, Vector3(80, 55, -5));
-//    manager->setAcceleration(e, Vector3(80, 55, -5));
-//    ///
+//    manager->loadEntities(entityManager);
 //
-//    entityManager->destroy(e); // destroy entity 4
-//    manager->destroy(e.id); // destroy components bound to entity 4
-//    printf("ALIVE ? %d\n", entityManager->alive(e));
-    //manager->register_as(entityManager->create());
+//    manager->loadSystems();
+//
+////    manager->simulate();
+//
+////    manager->testValues();
+//
+//    manager->save();
 
-    manager->loadSystems();
+    /// TEST Systems
+    auto s1 = systemManager->create((Position | Velocity | Acceleration));
+    std::cout << "Running ? " << s1.running() << std::endl;
+    std::cout << "ID: " << s1.id() << std::endl;
+    systemManager->destroy(s1);
+    std::cout << "Running ? " << s1.running() << std::endl;
+    std::cout << "ID: " << s1.id() << std::endl;
 
-//    manager->simulate();
-
-    manager->save();
-
-
-//  manager->testValues();
+    System* s = new System();
+    s->set_id(0);
+    manager->system(s);
 
     return 0;
 }

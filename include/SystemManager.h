@@ -11,8 +11,6 @@
 #include "Mask.h"
 #include "System.h"
 
-const size_t MINIMUM_FREE_INDICES = 0;
-
 class SystemManager
 {
 public:

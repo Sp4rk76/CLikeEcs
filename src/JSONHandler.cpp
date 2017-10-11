@@ -131,7 +131,7 @@ void JSONHandler::save(const InstanceSystem &sys, const char *filePath, const ch
     writer.StartArray();
 
     // For each system
-    for (auto &id : sys.id)
+    for (auto &id : sys.reg_systems)
     {
         // TODO: check if system is null ?
         auto s = sys.systems[id];

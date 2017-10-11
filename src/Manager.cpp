@@ -13,6 +13,8 @@ Manager::Manager()
 
     setDefaultEntity();
 
+    setDefaultSystem();
+
     sys_.systems = (System **) malloc(MAX_NUMBER_OF_SYSTEMS * sizeof(System *));
 
     jsonHandler_ = new JSONHandler();
@@ -22,16 +24,18 @@ Manager::Manager(size_t size)
 {
     allocate(size);
 
+    sys_.systems = (System **) malloc(MAX_NUMBER_OF_SYSTEMS * sizeof(System *));
+
     setDefaultEntity();
 
-    sys_.systems = (System **) malloc(MAX_NUMBER_OF_SYSTEMS * sizeof(System *));
+    setDefaultSystem();
 
     jsonHandler_ = new JSONHandler();
 }
 
 Manager::~Manager()
 {
-    for (auto n : sys_.id)
+    for (auto n : sys_.reg_systems)
     {
         delete sys_.systems[n];
         sys_.systems[n] = nullptr;
@@ -68,20 +72,29 @@ void Manager::allocate(unsigned size)
     data_ = newData;
 }
 
-//Entity Manager::make_instance(int i)
-//{
-//    instance_.i = i;
-//    return instance_;
-//}
-
-void Manager::register_as(Entity entity)
+void Manager::queryRegistration(Entity &entity)
 {
-    // TODO: pertinent ?
     if (data_.reg_entities.count(entity.id) == 0)
     {
-        // TODO: Put first free entity id ?
         data_.reg_entities.insert(entity.id);
     }
+}
+void Manager::queryRegistration(System &system)
+{
+    if (sys_.reg_systems.count(system.id()) == 0)
+    {
+        sys_.reg_systems.insert(system.id());
+    }
+}
+
+System* Manager::system(System *system)
+{
+    return sys_.systems[system->id()];
+}
+
+void Manager::setSystem(System *system)
+{
+    sys_.systems[system->id()] = system;
 }
 
 Entity Manager::entity(Entity entity)
@@ -203,7 +216,7 @@ void Manager::loadEntities(EntityManager *entityManager)
             data_.acceleration[e.id].z = entity["acceleration"]["z"].GetFloat();
         }
 
-        register_as(e);
+        queryRegistration(e);
     }
 
     jsonHandler_->close();
@@ -251,11 +264,15 @@ void Manager::loadSystems()
             }
 
             // ..so it is "Validated"
-            sys_.id.insert(sys_id);
-            // TODO: insert name ?
-            sys_.systems[sys_id] = new System();
-            sys_.systems[sys_id]->setRequiredMask(sys_mask);
-            sys_.systems[sys_id]->setName(sys_name);
+            auto s = new System();
+            s->set_id(sys_id);
+            s->setRequiredMask(sys_mask);
+            s->setName(sys_name);
+
+            setSystem(s);
+            queryRegistration(*s);
+
+
 
             Entity e;
 
@@ -283,7 +300,7 @@ void Manager::loadSystems()
 void Manager::simulate(float dt)
 {
     // for each system set
-    for (auto &id : sys_.id)
+    for (auto &id : sys_.reg_systems)
     {
         // update system at each index found
         std::cout << "SYS_ID" << id << std::endl;
@@ -300,6 +317,7 @@ void Manager::destroy(unsigned i)
     }
 
     data_.entity[i] = data_.entity[INVALID_ENTITY];
+    data_.mass[i] = data_.mass[INVALID_ENTITY];
     data_.position[i] = data_.position[INVALID_ENTITY];
     data_.velocity[i] = data_.velocity[INVALID_ENTITY];
     data_.acceleration[i] = data_.acceleration[INVALID_ENTITY];
@@ -310,21 +328,6 @@ void Manager::destroy(unsigned i)
 bool Manager::isValidMask(unsigned entityMask, unsigned systemMask)
 {
     return ((entityMask & systemMask) == systemMask);
-}
-
-void Manager::testValues()
-{
-    // TODO: see if it keeps components alive !
-    // NOTE: destroy 1st entity and only leave 3rd entity
-//    Instance i1 = lookup(data_.entity[1]);
-//    Instance i2 = lookup(data_.entity[2]);
-//    Instance i3 = lookup(data_.entity[3]);
-//
-//    std::cout << position(i1).x << std::endl; // return 50 (from file)
-//    //manager->destroy(i1.i); // destroy !
-//    //std::cout << manager->position(i1).x << std::endl; // return 0 (default)
-//    std::cout << position(i2).x << std::endl; // return 0 (default)
-//    std::cout << position(i3).x << std::endl;
 }
 
 void Manager::matchSystem(System *system, std::size_t id)
@@ -353,26 +356,41 @@ size_t Manager::mask(Entity entity)
 void Manager::setDefaultEntity()
 {
     Entity default_entity = Entity();
-    default_entity.id = INVALID_ENTITY;
+    default_entity.id = DEFAULT;
     default_entity.mask = None;
 
+    float default_mass = DEFAULT;
+
     Vector3 default_position = Vector3();
-    default_position.x = DEFAULT_POSITION;
-    default_position.y = DEFAULT_POSITION;
-    default_position.z = DEFAULT_POSITION;
+    default_position.x = DEFAULT;
+    default_position.y = DEFAULT;
+    default_position.z = DEFAULT;
 
     Vector3 default_velocity = Vector3();
-    default_velocity.x = DEFAULT_VELOCITY;
-    default_velocity.y = DEFAULT_VELOCITY;
-    default_velocity.z = DEFAULT_VELOCITY;
+    default_velocity.x = DEFAULT;
+    default_velocity.y = DEFAULT;
+    default_velocity.z = DEFAULT;
 
     Vector3 default_acceleration = Vector3();
-    default_acceleration.x = DEFAULT_ACCELERATION;
-    default_acceleration.y = DEFAULT_ACCELERATION;
-    default_acceleration.z = DEFAULT_ACCELERATION;
+    default_acceleration.x = DEFAULT;
+    default_acceleration.y = DEFAULT;
+    default_acceleration.z = DEFAULT;
 
     setEntity(default_entity);
+    setMass(default_entity, default_mass);
     setPosition(default_entity, default_position);
     setVelocity(default_entity, default_velocity);
     setAcceleration(default_entity, default_acceleration);
 }
+
+void Manager::setDefaultSystem()
+{
+    auto default_system = new System();
+    default_system->set_id(DEFAULT);
+    default_system->setRequiredMask(DEFAULT);
+    default_system->setName("DEFAULT");
+
+    setSystem(default_system);
+}
+
+

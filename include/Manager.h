@@ -33,7 +33,9 @@ public:
 
 //    Entity make_instance(int i);
 
-    void register_as(Entity entity); ///< Call this function to look for an entity
+    void queryRegistration(Entity &entity);
+
+    void queryRegistration(System &system);
 
     Entity entity(Entity entity);
 
@@ -72,21 +74,22 @@ public:
 
     void matchSystem(System *sys, std::size_t id);
 
+    System* system(System *system);
+
+    void setSystem(System *system);
+
     void setDefaultEntity();
+
+    void setDefaultSystem();
 
     void loadSystems();
 
-    void testValues();
-
+private:
     InstanceData data_;
 
     InstanceSystem sys_;
-private:
-//    Instance instance_;
 
     JSONHandler *jsonHandler_;
-
-//    std::map<unsigned, unsigned> map_; // Entity component
 };
 
 
