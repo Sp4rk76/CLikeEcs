@@ -54,17 +54,14 @@ unsigned int System::entityMatch(std::size_t matchingEntity)
 void System::setEntityMatch(std::size_t id)
 {
     // TODO: replace by INVALID_ENTITY
-    if(id <= INVALID_MATCHING_ID)
+    if (id <= INVALID_MATCHING_ID)
     {
         std::cout << "Error: Trying to set (register) an invalid entity to a system (invalid id)" << std::endl;
         return;
-    }
-    else
+    } else
     {
         matches_.emplace_back(id);
-        std::cout << "MATCHING size: " << matches_.size() << std::endl;
     }
-
 }
 
 void System::unsetEntityMatch(std::size_t id)
@@ -91,7 +88,7 @@ void System::free()
 //    delete name_;
 }
 
-void System::setName(const std::string& name)
+void System::setName(const std::string &name)
 {
     name_ = name;
 }

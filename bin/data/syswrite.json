@@ -3,17 +3,17 @@
         {
             "id": 1,
             "name": "physics2D",
-            "requiredMask": 1
+            "requiredMask": 14
         },
         {
             "id": 2,
             "name": "collision2D",
-            "requiredMask": 2
+            "requiredMask": 6
         },
         {
             "id": 3,
             "name": "renderer2D",
-            "requiredMask": 3
+            "requiredMask": 2
         }
     ]
 }
