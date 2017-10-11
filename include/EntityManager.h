@@ -22,9 +22,9 @@ public:
         generation_.emplace_back(0);
     }
 
-    Entity create();
+    Entity create(size_t mask = None);
 
-    Entity make_entity(unsigned index);
+    Entity make_entity(unsigned index, size_t mask);
 
     bool alive(Entity &e) const;
 

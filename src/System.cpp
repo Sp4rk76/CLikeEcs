@@ -15,6 +15,9 @@ System::System()  // Test
 
     ///NOTE: as matches_ begin to 0 index, to get real entity index,
     /// we need to do "entity_index - 1";
+    id_ = 0;
+    name_ = "";
+    requiredMask_ = DEFAULT;
 }
 
 void System::simulate(float dt)

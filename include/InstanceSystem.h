@@ -15,10 +15,9 @@ struct InstanceSystem
 {
     std::set<size_t> reg_systems;
     unsigned numSystems = 0; ///< Number of systems
-    unsigned capacity = MAX_NUMBER_OF_SYSTEMS;
-    void *buffer; ///< Buffer with instance data
+    unsigned size = MAX_NUMBER_OF_SYSTEMS;
 
-    System** systems;
+    System** systems = nullptr;
 };
 
 #endif //CLIKEECS_INSTANCESYSTEM_H

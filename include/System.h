@@ -10,25 +10,25 @@
 #include "Entity.h"
 #include "Instance.h"
 
-const unsigned int SYSTEM_INDEX_BITS = 22;
-
-const unsigned int SYSTEM_INDEX_MASK = (1 << SYSTEM_INDEX_BITS) - 1;
-
-const unsigned int SYSTEM_GENERATION_BITS = 8;
-
-const unsigned int SYSTEM_GENERATION_MASK = (1 << SYSTEM_GENERATION_BITS) - 1;
-
 class System
 {
 public:
+    const unsigned int SYSTEM_INDEX_BITS = 22;
+
+    const unsigned int SYSTEM_INDEX_MASK = (unsigned int)(1 << SYSTEM_INDEX_BITS) - 1;
+
+    const unsigned int SYSTEM_GENERATION_BITS = 8;
+
+    const unsigned int SYSTEM_GENERATION_MASK = (unsigned int)(1 << SYSTEM_GENERATION_BITS) - 1;
+
     unsigned int set_id(size_t id)
     { id_ = id; }
 
     unsigned int id() const
-    { return id_ & ENTITY_INDEX_MASK; }
+    { return id_ & SYSTEM_INDEX_MASK; }
 
     unsigned int generation() const
-    { return (id_ >> ENTITY_INDEX_BITS) & ENTITY_GENERATION_MASK; }
+    { return (id_ >> SYSTEM_INDEX_BITS) & SYSTEM_GENERATION_MASK; }
 
     void start()
     { running_ = true; }

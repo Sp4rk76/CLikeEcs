@@ -13,6 +13,7 @@
 #include "InstanceData.h"
 #include "InstanceSystem.h"
 #include "EntityManager.h"
+#include <SystemManager.h>
 #include "rapidjson/document.h"
 #include "Instance.h"
 
@@ -33,9 +34,9 @@ public:
 
 //    Entity make_instance(int i);
 
-    void queryRegistration(Entity &entity);
+    void queryRegistration(Entity entity);
 
-    void queryRegistration(System &system);
+    void queryRegistration(System *system);
 
     Entity entity(Entity entity);
 
@@ -82,7 +83,7 @@ public:
 
     void setDefaultSystem();
 
-    void loadSystems();
+    void loadSystems(SystemManager *systemManager);
 
 private:
     InstanceData data_;

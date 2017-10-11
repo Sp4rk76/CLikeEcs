@@ -72,18 +72,18 @@ void Manager::allocate(unsigned size)
     data_ = newData;
 }
 
-void Manager::queryRegistration(Entity &entity)
+void Manager::queryRegistration(Entity entity)
 {
     if (data_.reg_entities.count(entity.id) == 0)
     {
         data_.reg_entities.insert(entity.id);
     }
 }
-void Manager::queryRegistration(System &system)
+void Manager::queryRegistration(System *system)
 {
-    if (sys_.reg_systems.count(system.id()) == 0)
+    if (sys_.reg_systems.count(system->id()) == 0)
     {
-        sys_.reg_systems.insert(system.id());
+        sys_.reg_systems.insert(system->id());
     }
 }
 
@@ -146,6 +146,13 @@ void Manager::setAcceleration(Entity entity, Vector3 acceleration)
 {
     data_.acceleration[entity.id] = acceleration;
 }
+
+/// NOTE:
+/// when Entity is set, query match entity to all systems
+/// when System is set (or started), query match system to all entities
+
+/// when Entity is destroyed, unmatch entity from all matching systems
+/// when System is destroyed (or stopped), unmatch system to all matching entities
 
 // TODO: make JSON loading code safier
 // TODO: Return an int => number of entities
@@ -223,7 +230,7 @@ void Manager::loadEntities(EntityManager *entityManager)
 }
 
 // TODO: return an integer => number of systems
-void Manager::loadSystems()
+void Manager::loadSystems(SystemManager *systemManager)
 {
     rapidjson::Document document = jsonHandler_->read("data/systems.json");
 
@@ -264,15 +271,13 @@ void Manager::loadSystems()
             }
 
             // ..so it is "Validated"
-            auto s = new System();
+            auto s = systemManager->create();
             s->set_id(sys_id);
             s->setRequiredMask(sys_mask);
             s->setName(sys_name);
 
             setSystem(s);
-            queryRegistration(*s);
-
-
+            queryRegistration(s);
 
             Entity e;
 
@@ -392,5 +397,4 @@ void Manager::setDefaultSystem()
 
     setSystem(default_system);
 }
-
 

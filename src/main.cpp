@@ -1,7 +1,4 @@
-#include <EntityManager.h>
 #include <Manager.h>
-#include <cstdio>
-#include <SystemManager.h>
 
 int main()
 {
@@ -9,27 +6,19 @@ int main()
     auto systemManager = new SystemManager();
     auto manager = new Manager(4);
 
-//    manager->loadEntities(entityManager);
-//
-//    manager->loadSystems();
-//
-////    manager->simulate();
-//
-////    manager->testValues();
-//
-//    manager->save();
+    manager->loadEntities(entityManager);
+
+    manager->loadSystems(systemManager);
+
+    manager->simulate();
 
     /// TEST Systems
-    auto s1 = systemManager->create((Position | Velocity | Acceleration));
-    std::cout << "Running ? " << s1.running() << std::endl;
-    std::cout << "ID: " << s1.id() << std::endl;
-    systemManager->destroy(s1);
-    std::cout << "Running ? " << s1.running() << std::endl;
-    std::cout << "ID: " << s1.id() << std::endl;
+    auto system = systemManager->create((Position | Velocity | Acceleration)); // id & mask defined in
+    system->setName("CustomSystem");
+    manager->setSystem(system);
+    manager->queryRegistration(system);
 
-    System* s = new System();
-    s->set_id(0);
-    manager->system(s);
+    manager->save();
 
     return 0;
 }

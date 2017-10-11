@@ -14,6 +14,11 @@
             "id": 3,
             "name": "renderer2D",
             "requiredMask": 2
+        },
+        {
+            "id": 4,
+            "name": "CustomSystem",
+            "requiredMask": 14
         }
     ]
 }

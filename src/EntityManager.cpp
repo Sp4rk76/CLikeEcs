@@ -4,7 +4,7 @@
 
 #include "EntityManager.h"
 
-Entity EntityManager::create()
+Entity EntityManager::create(size_t mask)
 {
     unsigned int index = 0;
     if (!free_indices_.empty())
@@ -17,15 +17,17 @@ Entity EntityManager::create()
         index = generation_.size() - 1;
     }
 
-    return make_entity(index);
+    return make_entity(index, mask);
 }
 
-Entity EntityManager::make_entity(unsigned index)
+Entity EntityManager::make_entity(unsigned index, size_t mask)
 {
     generation_[index] = 0;
 
     Entity entity;
     entity.id = index;
+    entity.mask = mask;
+
     return entity;
 }
 
@@ -39,5 +41,9 @@ void EntityManager::destroy(Entity &e)
     const unsigned index = e.index();
     ++generation_[index];
     free_indices_.push_back(index);
+
+    // TODO: review ?
+    e.id = DEFAULT;
+    e.mask = DEFAULT;
 }
 
