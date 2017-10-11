@@ -26,9 +26,9 @@ public:
 
     Entity make_entity(unsigned index);
 
-    bool alive(Entity e) const;
+    bool alive(Entity &e) const;
 
-    void destroy(Entity e);
+    void destroy(Entity &e);
 
 private:
     std::vector<unsigned char> generation_; // size for index limit

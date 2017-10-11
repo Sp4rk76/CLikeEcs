@@ -29,12 +29,12 @@ Entity EntityManager::make_entity(unsigned index)
     return entity;
 }
 
-bool EntityManager::alive(Entity e) const
+bool EntityManager::alive(Entity &e) const
 {
     return generation_[e.index()] == e.generation();
 }
 
-void EntityManager::destroy(Entity e)
+void EntityManager::destroy(Entity &e)
 {
     const unsigned index = e.index();
     ++generation_[index];

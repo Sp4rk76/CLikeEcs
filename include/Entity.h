@@ -15,6 +15,7 @@ const unsigned int ENTITY_INDEX_MASK = (1<<ENTITY_INDEX_BITS)-1;
 const unsigned int ENTITY_GENERATION_BITS = 8;
 const unsigned int ENTITY_GENERATION_MASK = (1 << ENTITY_GENERATION_BITS)-1;
 
+#define INVALID_INDEX 0;
 
 //TODO: name should be added and treated in DebugNameComponentManager
 // ( (EntityMask == SystemMask) + SystemId)
@@ -23,7 +24,7 @@ const unsigned int ENTITY_GENERATION_MASK = (1 << ENTITY_GENERATION_BITS)-1;
 // Remarque: l'ID commence à 1
 struct Entity
 {
-    unsigned int id = 0;
+    unsigned int id = INVALID_INDEX;
     unsigned int mask = None;
 
     unsigned int index() const { return id & ENTITY_INDEX_MASK; }
