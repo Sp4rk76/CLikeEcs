@@ -276,15 +276,11 @@ void Manager::loadSystems()
 
                 if (isValidMask(e.mask, sys_.systems[sys_id]->requiredMask()))
                 {
-                    std::cout << "----------" << std::endl;
-                    std::cout << "REGISTERED !" << std::endl;
-                    std::cout << "sEntity.id: " << e.id << std::endl;
-                    std::cout << "sEntity.mask: " << e.mask << std::endl;
-                    std::cout << "sRequiredMask: " << sys_.systems[sys_id]->requiredMask() << std::endl;
-                    std::cout << "sName: " << sys_.systems[sys_id]->name() << std::endl;
+                    std::cout << "Register entity " << e.id << "(" << e.mask << ")" << " to System '"
+                              << sys_.systems[sys_id]->name() << "'(" << sys_.systems[sys_id]->requiredMask() << ")"
+                              << std::endl;
                     matchSystem(sys_.systems[sys_id], e.id);
                 }
-
             }
         }
     }
