@@ -7,6 +7,7 @@ int main()
     auto entityManager = new EntityManager();
     auto manager = new Manager();
 
+    manager->allocate(4);
     manager->loadEntities(entityManager);
 
 //    /// Some tests
@@ -26,7 +27,7 @@ int main()
 
     manager->loadSystems();
 
-    manager->simulate();
+//    manager->simulate();
 
     manager->save();
 
