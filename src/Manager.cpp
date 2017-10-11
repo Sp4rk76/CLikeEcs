@@ -4,13 +4,14 @@
 
 #include <System.h>
 #include <fstream>
-#include <string>
 #include "Manager.h"
 
 // TODO: custom allocation for systems ?
 Manager::Manager()
 {
     allocate(3200);
+
+    setDefaultEntity();
 
     sys_.systems = (System **) malloc(MAX_NUMBER_OF_SYSTEMS * sizeof(System *));
 
@@ -20,6 +21,8 @@ Manager::Manager()
 Manager::Manager(size_t size)
 {
     allocate(size);
+
+    setDefaultEntity();
 
     sys_.systems = (System **) malloc(MAX_NUMBER_OF_SYSTEMS * sizeof(System *));
 
@@ -49,19 +52,21 @@ void Manager::allocate(unsigned size)
 {
     /// for the data
     data_.size = size;
-    std::cout << data_.size << std::endl;
+    std::cout << "Allocated data size: " << data_.size << std::endl;
 
-    if (size > data_.size)
-    {
-        std::cout << "size > data_.size !" << std::endl;
-    }
+//    if (size > data_.size)
+//    {
+//        std::cout << "size > data_.size !" << std::endl;
+//    }
 
     InstanceData newData;
+
+    std::cout << "sizeof VECTOR3 = " << sizeof(Vector3) << std::endl;
 
     const unsigned int bytes = size * (sizeof(Entity) + sizeof(float) + (3 * sizeof(Vector3)));
     newData.buffer = malloc(bytes);
     newData.size = data_.size;
-    newData.capacity = size;
+//    newData.capacity = size;
 
     newData.entity = (Entity *) (newData.buffer);
     newData.mass = (float *) (newData.entity + size);
@@ -72,13 +77,13 @@ void Manager::allocate(unsigned size)
     data_ = newData;
 }
 
-Instance Manager::make_instance(int i)
-{
-    instance_.i = i;
-    return instance_;
-}
+//Entity Manager::make_instance(int i)
+//{
+//    instance_.i = i;
+//    return instance_;
+//}
 
-Instance Manager::lookup(Entity entity)
+void Manager::register_as(Entity entity)
 {
     // TODO: pertinent ?
     if (data_.reg_entities.count(entity.id) == 0)
@@ -86,58 +91,56 @@ Instance Manager::lookup(Entity entity)
         // TODO: Put first free entity id ?
         data_.reg_entities.insert(entity.id);
     }
-
-    return make_instance(*(data_.reg_entities.find(entity.id)));
 }
 
-Entity Manager::entity(Instance instance)
+Entity Manager::entity(Entity entity)
 {
-    return data_.entity[instance.i];
+    return data_.entity[entity.id];
 }
 
-void Manager::setEntity(Instance instance, Entity entity)
+void Manager::setEntity(Entity entity)
 {
-    data_.entity[instance.i] = entity;
+    data_.entity[entity.id] = entity;
 }
 
-float Manager::mass(Instance instance)
+float Manager::mass(Entity entity)
 {
-    return data_.mass[instance.i];
+    return data_.mass[entity.id];
 }
 
-void Manager::setMass(Instance instance, float mass)
+void Manager::setMass(Entity entity, float mass)
 {
-    data_.mass[instance.i] = mass;
+    data_.mass[entity.id] = mass;
 }
 
-Vector3 Manager::position(Instance instance)
+Vector3 Manager::position(Entity entity)
 {
-    return data_.position[instance.i];
+    return data_.position[entity.id];
 }
 
-void Manager::setPosition(Instance instance, Vector3 position)
+void Manager::setPosition(Entity entity, Vector3 position)
 {
-    data_.position[instance.i] = position;
+    data_.position[entity.id] = position;
 }
 
-Vector3 Manager::velocity(Instance instance)
+Vector3 Manager::velocity(Entity entity)
 {
-    return data_.velocity[instance.i];
+    return data_.velocity[entity.id];
 }
 
-void Manager::setVelocity(Instance instance, Vector3 velocity)
+void Manager::setVelocity(Entity entity, Vector3 velocity)
 {
-    data_.velocity[instance.i] = velocity;
+    data_.velocity[entity.id] = velocity;
 }
 
-Vector3 Manager::acceleration(Instance instance)
+Vector3 Manager::acceleration(Entity entity)
 {
-    return data_.acceleration[instance.i];
+    return data_.acceleration[entity.id];
 }
 
-void Manager::setAcceleration(Instance instance, Vector3 acceleration)
+void Manager::setAcceleration(Entity entity, Vector3 acceleration)
 {
-    data_.acceleration[instance.i] = acceleration;
+    data_.acceleration[entity.id] = acceleration;
 }
 
 // TODO: make JSON loading code safier
@@ -174,11 +177,9 @@ void Manager::loadEntities(EntityManager *entityManager)
             return;
         }
 
-        instance_ = lookup(e);
+        data_.entity[e.id] = e;
 
-        data_.entity[instance_.i] = e;
-
-        data_.mass[instance_.i] = e_mass;
+        data_.mass[e.id] = e_mass;
 
 ///     NOTE: can't have errors from reading, except type mismath ?
         if (!entity.HasMember("position"))
@@ -186,9 +187,9 @@ void Manager::loadEntities(EntityManager *entityManager)
             std::cout << "Error: missing position values in document on entity with id = " << e.id << std::endl;
         } else
         {
-            data_.position[instance_.i].x = entity["position"]["x"].GetFloat();
-            data_.position[instance_.i].y = entity["position"]["y"].GetFloat();
-            data_.position[instance_.i].z = entity["position"]["z"].GetFloat();
+            data_.position[e.id].x = entity["position"]["x"].GetFloat();
+            data_.position[e.id].y = entity["position"]["y"].GetFloat();
+            data_.position[e.id].z = entity["position"]["z"].GetFloat();
         }
 
         if (!entity.HasMember("velocity"))
@@ -196,9 +197,9 @@ void Manager::loadEntities(EntityManager *entityManager)
             std::cout << "Error: missing velocity values in document on entity with id = " << e.id << std::endl;
         } else
         {
-            data_.position[instance_.i].x = entity["velocity"]["x"].GetFloat();
-            data_.position[instance_.i].y = entity["velocity"]["y"].GetFloat();
-            data_.position[instance_.i].z = entity["velocity"]["z"].GetFloat();
+            data_.velocity[e.id].x = entity["velocity"]["x"].GetFloat();
+            data_.velocity[e.id].y = entity["velocity"]["y"].GetFloat();
+            data_.velocity[e.id].z = entity["velocity"]["z"].GetFloat();
         }
 
         if (!entity.HasMember("acceleration"))
@@ -206,12 +207,12 @@ void Manager::loadEntities(EntityManager *entityManager)
             std::cout << "Error: missing acceleration values in document on entity with id = " << e.id << std::endl;
         } else
         {
-            data_.acceleration[instance_.i].x = entity["acceleration"]["x"].GetFloat();
-            data_.acceleration[instance_.i].y = entity["acceleration"]["y"].GetFloat();
-            data_.acceleration[instance_.i].z = entity["acceleration"]["z"].GetFloat();
+            data_.acceleration[e.id].x = entity["acceleration"]["x"].GetFloat();
+            data_.acceleration[e.id].y = entity["acceleration"]["y"].GetFloat();
+            data_.acceleration[e.id].z = entity["acceleration"]["z"].GetFloat();
         }
 
-
+        register_as(e);
     }
 
     jsonHandler_->close();
@@ -271,8 +272,7 @@ void Manager::loadSystems()
             for (auto &reg_id : data_.reg_entities)
             {
                 e.id = *(data_.reg_entities.find(reg_id));
-                instance_ = lookup(e);
-                e = data_.entity[instance_.i];
+                e = data_.entity[e.id];
 
                 if (isValidMask(e.mask, sys_.systems[sys_id]->requiredMask()))
                 {
@@ -304,7 +304,7 @@ void Manager::simulate(float dt)
     }
 }
 
-// TODO: correct this bullshit code .. ?
+// TODO: "erase" entity at index (i) => resert/invalid entity
 void Manager::destroy(unsigned i)
 {
     if (i <= 0) // invalid index
@@ -312,30 +312,12 @@ void Manager::destroy(unsigned i)
         return;
     }
 
-    unsigned last = data_.size - 1;
-    std::cout << "last 'entity' to swap (id): " << last << std::endl;
+    data_.entity[i] = data_.entity[INVALID_ENTITY];
+    data_.position[i] = data_.position[INVALID_ENTITY];
+    data_.velocity[i] = data_.velocity[INVALID_ENTITY];
+    data_.acceleration[i] = data_.acceleration[INVALID_ENTITY];
 
-    Entity entity = data_.entity[i]; // or Entity
-    //Entity lastEntity = data_.entity[last]; // or Entity
-
-    data_.entity[i] = data_.entity[last];
-    data_.mass[i] = data_.mass[last];
-    data_.position[i] = data_.position[last];
-    data_.velocity[i] = data_.velocity[last];
-    data_.acceleration[i] = data_.acceleration[last];
-
-    std::cout << "destroy entity id = " << entity.id << std::endl;
-
-    /// ?
-    ///data_.reg_entities[lastEntity.id] = i;
-    data_.reg_entities.erase(entity.id);
-
-    std::cout << "Entity Registry size: " << data_.reg_entities.size() << std::endl;
-
-    if (data_.size > 0)
-    {
-        --data_.size; // or (--_n)
-    }
+    data_.reg_entities.erase(i);
 }
 
 bool Manager::isValidMask(unsigned entityMask, unsigned systemMask)
@@ -347,15 +329,15 @@ void Manager::testValues()
 {
     // TODO: see if it keeps components alive !
     // NOTE: destroy 1st entity and only leave 3rd entity
-    Instance i1 = lookup(data_.entity[1]);
-    Instance i2 = lookup(data_.entity[2]);
-    Instance i3 = lookup(data_.entity[3]);
-
-    std::cout << position(i1).x << std::endl; // return 50 (from file)
-    //manager->destroy(i1.i); // destroy !
-    //std::cout << manager->position(i1).x << std::endl; // return 0 (default)
-    std::cout << position(i2).x << std::endl; // return 0 (default)
-    std::cout << position(i3).x << std::endl;
+//    Instance i1 = lookup(data_.entity[1]);
+//    Instance i2 = lookup(data_.entity[2]);
+//    Instance i3 = lookup(data_.entity[3]);
+//
+//    std::cout << position(i1).x << std::endl; // return 50 (from file)
+//    //manager->destroy(i1.i); // destroy !
+//    //std::cout << manager->position(i1).x << std::endl; // return 0 (default)
+//    std::cout << position(i2).x << std::endl; // return 0 (default)
+//    std::cout << position(i3).x << std::endl;
 }
 
 void Manager::matchSystem(System *system, std::size_t id)
@@ -369,4 +351,41 @@ void Manager::save(/* all E & S */)
     jsonHandler_->querySave(sys_);
     jsonHandler_->querySave(data_);
 
+}
+
+void Manager::setMask(Entity entity, size_t mask)
+{
+    data_.entity[entity.id].mask = mask;
+}
+
+size_t Manager::mask(Entity entity)
+{
+    return data_.entity[entity.id].mask;
+}
+
+void Manager::setDefaultEntity()
+{
+    Entity default_entity = Entity();
+    default_entity.id = INVALID_ENTITY;
+    default_entity.mask = None;
+
+    Vector3 default_position = Vector3();
+    default_position.x = DEFAULT_POSITION;
+    default_position.y = DEFAULT_POSITION;
+    default_position.z = DEFAULT_POSITION;
+
+    Vector3 default_velocity = Vector3();
+    default_velocity.x = DEFAULT_VELOCITY;
+    default_velocity.y = DEFAULT_VELOCITY;
+    default_velocity.z = DEFAULT_VELOCITY;
+
+    Vector3 default_acceleration = Vector3();
+    default_acceleration.x = DEFAULT_ACCELERATION;
+    default_acceleration.y = DEFAULT_ACCELERATION;
+    default_acceleration.z = DEFAULT_ACCELERATION;
+
+    setEntity(default_entity);
+    setPosition(default_entity, default_position);
+    setVelocity(default_entity, default_velocity);
+    setAcceleration(default_entity, default_acceleration);
 }

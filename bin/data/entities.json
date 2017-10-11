@@ -18,7 +18,7 @@
     },
     {
       "id": 2,
-      "mask": 1,
+      "mask": 6,
       "name": "swan",
       "mass": 10,
       "position": {
@@ -39,7 +39,7 @@
     },
     {
       "id": 3,
-      "mask": 1,
+      "mask": 14,
       "name": "elli",
       "mass": 10,
       "position": {

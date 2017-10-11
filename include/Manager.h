@@ -16,6 +16,8 @@
 #include "rapidjson/document.h"
 #include "Instance.h"
 
+#define INVALID_ENTITY 0
+
 /// NOTE: This is an "example of system design"
 /// TODO: each system should have a list of registered id ?
 class Manager
@@ -29,29 +31,33 @@ public:
 
     void allocate(unsigned size);
 
-    Instance make_instance(int i);
+//    Entity make_instance(int i);
 
-    Instance lookup(Entity entity); ///< Call this function to look for an entity
+    void register_as(Entity entity); ///< Call this function to look for an entity
 
-    Entity entity(Instance instance);
+    Entity entity(Entity entity);
 
-    void setEntity(Instance instance, Entity entity);
+    void setMask(Entity entity, size_t mask);
 
-    float mass(Instance instance);
+    size_t mask(Entity entity);
 
-    void setMass(Instance instance, float mass);
+    void setEntity(Entity entity);
 
-    Vector3 position(Instance instance);
+    float mass(Entity entity);
 
-    void setPosition(Instance instance, Vector3 position);
+    void setMass(Entity entity, float mass);
 
-    Vector3 velocity(Instance instance);
+    Vector3 position(Entity entity);
 
-    void setVelocity(Instance instance, Vector3 velocity);
+    void setPosition(Entity entity, Vector3 position);
 
-    Vector3 acceleration(Instance instance);
+    Vector3 velocity(Entity entity);
 
-    void setAcceleration(Instance instance, Vector3 acceleration);
+    void setVelocity(Entity entity, Vector3 velocity);
+
+    Vector3 acceleration(Entity entity);
+
+    void setAcceleration(Entity entity, Vector3 acceleration);
 
     // TODO: Create a validation function => check JSON file validity according (once !) before loading all entities/components
     void loadEntities(EntityManager *entityManager);
@@ -66,6 +72,8 @@ public:
 
     void matchSystem(System *sys, std::size_t id);
 
+    void setDefaultEntity();
+
     void loadSystems();
 
     void testValues();
@@ -74,11 +82,11 @@ public:
 
     InstanceSystem sys_;
 private:
-    Instance instance_;
+//    Instance instance_;
 
     JSONHandler *jsonHandler_;
 
-    std::map<unsigned, unsigned> map_; // Entity component
+//    std::map<unsigned, unsigned> map_; // Entity component
 };
 
 

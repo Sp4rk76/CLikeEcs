@@ -27,6 +27,8 @@ public:
 
     bool canWrite(const char *filePath, const char *mode);
 
+    bool match(size_t entityMask, size_t requiredMask);
+
     bool isNullOrEmpty(const char *data);
 
     void close();

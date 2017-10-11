@@ -49,7 +49,7 @@ set(SOURCE_FILES
         src/EntityManager.cpp
         src/DebugNameComponentManager.cpp
         src/System.cpp
-        src/main.cpp include/StringFormatter.h)
+        src/main.cpp include/Mask.h)
 
 # Executable
 add_executable(CLikeECS ${SOURCE_FILES})

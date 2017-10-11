@@ -7,13 +7,7 @@
 
 #include <string>
 #include <malloc.h>
-
-enum Mask
-{
-    None = 0,
-    Base = 1 << 0,
-    Physics2D = 1 << 1,
-};
+#include "Mask.h"
 
 const unsigned int ENTITY_INDEX_BITS = 22;
 const unsigned int ENTITY_INDEX_MASK = (1<<ENTITY_INDEX_BITS)-1;

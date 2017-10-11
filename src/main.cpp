@@ -1,24 +1,28 @@
 #include <EntityManager.h>
 #include <Manager.h>
-#include <rapidjson/stringbuffer.h>
 #include <cstdio>
-
-#include "rapidjson/prettywriter.h"
 
 int main()
 {
     auto entityManager = new EntityManager();
-    auto manager = new Manager(3200);
+    auto manager = new Manager();
 
     manager->loadEntities(entityManager);
 
-    /// Some tests
-    auto e = entityManager->create();
-    auto inst = manager->lookup(e);
-    manager->setEntity(inst, e);
-    manager->setMass(inst, 5);
-    manager->setPosition(inst, Vector3(80, 55, -5));
-    ///
+//    /// Some tests
+//    auto e = entityManager->create();
+//    manager->register_as(e);
+//    manager->setEntity(e);
+//    manager->setMass(e, 5);
+//    manager->setPosition(e, Vector3(80, 55, -5));
+//    manager->setVelocity(e, Vector3(80, 55, -5));
+//    manager->setAcceleration(e, Vector3(80, 55, -5));
+//    ///
+//
+//    entityManager->destroy(e); // destroy entity 4
+//    manager->destroy(e.id); // destroy components bound to entity 4
+//    printf("ALIVE ? %d\n", entityManager->alive(e));
+    //manager->register_as(entityManager->create());
 
     manager->loadSystems();
 
