@@ -13,7 +13,7 @@
 
 struct InstanceSystem
 {
-    std::set<size_t> id;
+    std::set<size_t> reg_systems;
     unsigned numSystems = 0; ///< Number of systems
     unsigned capacity = MAX_NUMBER_OF_SYSTEMS;
     void *buffer; ///< Buffer with instance data
