@@ -34,7 +34,7 @@ public:
 
 //    Entity make_instance(int i);
 
-    void queryRegistration(Entity entity);
+    void queryRegistration(Entity &entity);
 
     void queryRegistration(System *system);
 
@@ -44,7 +44,7 @@ public:
 
     size_t mask(Entity entity);
 
-    void setEntity(Entity entity);
+    void setEntity(Entity &entity);
 
     float mass(Entity entity);
 
@@ -52,18 +52,20 @@ public:
 
     Vector3 position(Entity entity);
 
-    void setPosition(Entity entity, Vector3 position);
+    void setPosition(Entity &entity, Vector3 &position);
 
     Vector3 velocity(Entity entity);
 
-    void setVelocity(Entity entity, Vector3 velocity);
+    void setVelocity(Entity &entity, Vector3 &velocity);
 
     Vector3 acceleration(Entity entity);
 
-    void setAcceleration(Entity entity, Vector3 acceleration);
+    void setAcceleration(Entity &entity, Vector3 &acceleration);
 
     // TODO: Create a validation function => check JSON file validity according (once !) before loading all entities/components
-    void loadEntities(EntityManager *entityManager);
+    size_t loadEntities(EntityManager *entityManager);
+
+    size_t loadSystems(SystemManager *systemManager);
 
     void save(/* all E & S */);
 
@@ -75,15 +77,13 @@ public:
 
     void matchSystem(System *sys, std::size_t id);
 
-    System* system(System *system);
+    System *system(System *system);
 
     void setSystem(System *system);
 
     void setDefaultEntity();
 
     void setDefaultSystem();
-
-    void loadSystems(SystemManager *systemManager);
 
 private:
     InstanceData data_;

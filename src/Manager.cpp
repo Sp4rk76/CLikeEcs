@@ -72,22 +72,49 @@ void Manager::allocate(unsigned size)
     data_ = newData;
 }
 
-void Manager::queryRegistration(Entity entity)
+void Manager::queryRegistration(Entity &entity)
 {
     if (data_.reg_entities.count(entity.id) == 0)
     {
         data_.reg_entities.insert(entity.id);
     }
+
+    // TODO: query match all systems
+    for (auto &reg_id : sys_.reg_systems)
+    {
+        auto& system = sys_.systems[reg_id];
+
+        if (isValidMask(entity.mask, system->requiredMask()))
+        {
+            matchSystem(system, entity.id);
+        }
+    }
 }
+
 void Manager::queryRegistration(System *system)
 {
     if (sys_.reg_systems.count(system->id()) == 0)
     {
         sys_.reg_systems.insert(system->id());
     }
+
+    // TODO: query match all entities
+    for(auto& reg_id : data_.reg_entities)
+    {
+        auto& entity = data_.entity[reg_id];
+
+        if(isValidMask(entity.mask, system->requiredMask()))
+        {
+            std::cout << "Register entity " << entity.id << "(" << entity.mask << ")" << " to System '"
+                      << system->name() << "'(" << system->requiredMask() << ")"
+                      << std::endl;
+
+            matchSystem(system, entity.id);
+        }
+    }
 }
 
-System* Manager::system(System *system)
+System *Manager::system(System *system)
 {
     return sys_.systems[system->id()];
 }
@@ -95,6 +122,8 @@ System* Manager::system(System *system)
 void Manager::setSystem(System *system)
 {
     sys_.systems[system->id()] = system;
+
+    queryRegistration(system);
 }
 
 Entity Manager::entity(Entity entity)
@@ -102,9 +131,11 @@ Entity Manager::entity(Entity entity)
     return data_.entity[entity.id];
 }
 
-void Manager::setEntity(Entity entity)
+void Manager::setEntity(Entity &entity)
 {
     data_.entity[entity.id] = entity;
+
+    queryRegistration(entity);
 }
 
 float Manager::mass(Entity entity)
@@ -122,7 +153,7 @@ Vector3 Manager::position(Entity entity)
     return data_.position[entity.id];
 }
 
-void Manager::setPosition(Entity entity, Vector3 position)
+void Manager::setPosition(Entity &entity, Vector3 &position)
 {
     data_.position[entity.id] = position;
 }
@@ -132,7 +163,7 @@ Vector3 Manager::velocity(Entity entity)
     return data_.velocity[entity.id];
 }
 
-void Manager::setVelocity(Entity entity, Vector3 velocity)
+void Manager::setVelocity(Entity &entity, Vector3 &velocity)
 {
     data_.velocity[entity.id] = velocity;
 }
@@ -142,7 +173,7 @@ Vector3 Manager::acceleration(Entity entity)
     return data_.acceleration[entity.id];
 }
 
-void Manager::setAcceleration(Entity entity, Vector3 acceleration)
+void Manager::setAcceleration(Entity &entity, Vector3 &acceleration)
 {
     data_.acceleration[entity.id] = acceleration;
 }
@@ -151,14 +182,18 @@ void Manager::setAcceleration(Entity entity, Vector3 acceleration)
 /// when Entity is set, query match entity to all systems
 /// when System is set (or started), query match system to all entities
 
+/// 1. set entity | 2. register entity to all systems
+
 /// when Entity is destroyed, unmatch entity from all matching systems
 /// when System is destroyed (or stopped), unmatch system to all matching entities
 
 // TODO: make JSON loading code safier
 // TODO: Return an int => number of entities
 // TODO: Register entities here in the future ?.. processus should be: [ (1)loadSystems/(2)loadEntities/(2.1)registerEntity-to-System ]
-void Manager::loadEntities(EntityManager *entityManager)
+size_t Manager::loadEntities(EntityManager *entityManager)
 {
+    size_t loadedEntities = 0;
+
     rapidjson::Document document = jsonHandler_->read("data/entities.json");
 
     assert(document.IsObject());
@@ -174,7 +209,7 @@ void Manager::loadEntities(EntityManager *entityManager)
         if (!entity.HasMember("id") || !entity.HasMember("mask") || !entity.HasMember("mass"))
         {
             std::cout << "Error: id|mask|mass group missing in document" << std::endl;
-            return;
+            return 0;
         }
 
         e.id = entity["id"].GetUint();
@@ -185,10 +220,8 @@ void Manager::loadEntities(EntityManager *entityManager)
         if (e.id <= 0 || e.mask <= None || e_mass < 0)
         {
             std::cout << "Error: the document has invalid values" << std::endl;
-            return;
+            return 0;
         }
-
-        data_.entity[e.id] = e;
 
         data_.mass[e.id] = e_mass;
 
@@ -223,15 +256,21 @@ void Manager::loadEntities(EntityManager *entityManager)
             data_.acceleration[e.id].z = entity["acceleration"]["z"].GetFloat();
         }
 
-        queryRegistration(e);
+        setEntity(e);
+
+        loadedEntities++;
     }
 
     jsonHandler_->close();
+
+    return loadedEntities;
 }
 
 // TODO: return an integer => number of systems
-void Manager::loadSystems(SystemManager *systemManager)
+size_t Manager::loadSystems(SystemManager *systemManager)
 {
+    size_t loadedSystems = 0;
+
     rapidjson::Document document = jsonHandler_->read("data/systems.json");
 
     assert(document.IsObject());
@@ -277,28 +316,14 @@ void Manager::loadSystems(SystemManager *systemManager)
             s->setName(sys_name);
 
             setSystem(s);
-            queryRegistration(s);
-
-            Entity e;
-
-            // get all entities
-            for (auto &reg_id : data_.reg_entities)
-            {
-                e.id = *(data_.reg_entities.find(reg_id));
-                e = data_.entity[e.id];
-
-                if (isValidMask(e.mask, sys_.systems[sys_id]->requiredMask()))
-                {
-                    std::cout << "Register entity " << e.id << "(" << e.mask << ")" << " to System '"
-                              << sys_.systems[sys_id]->name() << "'(" << sys_.systems[sys_id]->requiredMask() << ")"
-                              << std::endl;
-                    matchSystem(sys_.systems[sys_id], e.id);
-                }
-            }
         }
+
+        loadedSystems++;
     }
 
     jsonHandler_->close();
+
+    return loadedSystems;
 }
 
 // TODO: simulate only with registered entities
@@ -345,7 +370,6 @@ void Manager::save(/* all E & S */)
     // TODO: verify data integrity ?
     jsonHandler_->querySave(sys_);
     jsonHandler_->querySave(data_);
-
 }
 
 void Manager::setMask(Entity entity, size_t mask)
@@ -381,11 +405,12 @@ void Manager::setDefaultEntity()
     default_acceleration.y = DEFAULT;
     default_acceleration.z = DEFAULT;
 
-    setEntity(default_entity);
-    setMass(default_entity, default_mass);
-    setPosition(default_entity, default_position);
-    setVelocity(default_entity, default_velocity);
-    setAcceleration(default_entity, default_acceleration);
+//    setEntity(default_entity);
+    data_.entity[DEFAULT] = default_entity;
+    data_.mass[DEFAULT] = default_mass;
+    data_.position[DEFAULT] = default_position;
+    data_.velocity[DEFAULT] = default_velocity;
+    data_.acceleration[DEFAULT] = default_acceleration;
 }
 
 void Manager::setDefaultSystem()
@@ -395,6 +420,7 @@ void Manager::setDefaultSystem()
     default_system->setRequiredMask(DEFAULT);
     default_system->setName("DEFAULT");
 
-    setSystem(default_system);
+//    setSystem(default_system);
+    sys_.systems[DEFAULT] = default_system;
 }
 

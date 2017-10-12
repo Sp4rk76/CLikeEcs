@@ -6,17 +6,18 @@ int main()
     auto systemManager = new SystemManager();
     auto manager = new Manager(4);
 
-    manager->loadEntities(entityManager);
+    size_t loaded_entities = manager->loadEntities(entityManager);
+    std::cout << "Loaded Entities: " << loaded_entities << std::endl;
 
-    manager->loadSystems(systemManager);
+    size_t loaded_systems = manager->loadSystems(systemManager);
+    std::cout << "Loaded Systems: " << loaded_systems << std::endl;
 
-    manager->simulate();
+//    manager->simulate();
 
     /// TEST Systems
-    auto system = systemManager->create((Position | Velocity | Acceleration)); // id & mask defined in
+    auto system = systemManager->create((Position)); // id & mask defined in
     system->setName("CustomSystem");
     manager->setSystem(system);
-    manager->queryRegistration(system);
 
     manager->save();
 

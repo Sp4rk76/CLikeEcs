@@ -18,7 +18,7 @@
         {
             "id": 4,
             "name": "CustomSystem",
-            "requiredMask": 14
+            "requiredMask": 2
         }
     ]
 }
