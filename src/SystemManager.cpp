@@ -4,38 +4,9 @@
 
 #include "SystemManager.h"
 
-System* SystemManager::create(size_t mask)
-{
-    size_t index = 0;
-
-    if (!free_indices_.empty())
-    {
-        index = free_indices_.front();
-        free_indices_.pop_front();
-    } else
-    {
-        generation_.emplace_back(0);
-        index = generation_.size() - 1;
-    }
-
-    return make_system(index, mask);
-}
-
 SystemManager::SystemManager()
 {
     generation_.emplace_back(0);
-}
-
-System* SystemManager::make_system(size_t index, size_t mask)
-{
-    generation_[index] = 0;
-
-    auto system = new System();
-    system->set_id(index);
-    system->setRequiredMask(mask);
-    system->start();
-
-    return system;
 }
 
 bool SystemManager::alive(System &system)

@@ -2,8 +2,9 @@
 // Created by Sp4rk on 03-10-17.
 //
 
-#include <System.h>
 #include <fstream>
+#include <Physics2D.h>
+#include <DefaultSystem.h>
 #include "Manager.h"
 
 // TODO: custom allocation for systems ?
@@ -57,19 +58,15 @@ void Manager::allocate(unsigned size)
     data_.size = size;
     std::cout << "Allocated data size: " << data_.size << std::endl;
 
-    InstanceData newData;
-
     const unsigned int bytes = size * (sizeof(Entity) + sizeof(float) + (3 * sizeof(Vector3)));
-    newData.buffer = malloc(bytes);
-    newData.size = data_.size;
+    data_.buffer = malloc(bytes);
+    data_.size = data_.size;
 
-    newData.entity = (Entity *) (newData.buffer);
-    newData.mass = (float *) (newData.entity + size);
-    newData.position = (Vector3 *) (newData.mass + size);
-    newData.velocity = newData.position + size; // still Vector3
-    newData.acceleration = newData.velocity + size;
-
-    data_ = newData;
+    data_.entity = (Entity *) (data_.buffer);
+    data_.mass = (float *) (data_.entity + size);
+    data_.position = (Vector3 *) (data_.mass + size);
+    data_.velocity = data_.position + size; // still Vector3
+    data_.acceleration = data_.velocity + size;
 }
 
 void Manager::queryRegistration(Entity &entity)
@@ -79,14 +76,22 @@ void Manager::queryRegistration(Entity &entity)
         data_.reg_entities.insert(entity.id);
     }
 
-    // TODO: query match all systems
     for (auto &reg_id : sys_.reg_systems)
     {
-        auto& system = sys_.systems[reg_id];
+        auto &system = sys_.systems[reg_id];
 
-        if (isValidMask(entity.mask, system->requiredMask()))
+        // TODO: check if the entity is already in the system to query
+
+        if (system->entityMatches().count(entity.id) == 0) // entity not already registered
         {
-            matchSystem(system, entity.id);
+            if (isValidMask(entity.mask, system->requiredMask()))
+            {
+                std::cout << "Register entity " << entity.id << "(" << entity.mask << ")" << " to System '"
+                          << system->name() << "'(" << system->requiredMask() << ")"
+                          << std::endl;
+
+                matchSystem(system, entity.id);
+            }
         }
     }
 }
@@ -98,18 +103,21 @@ void Manager::queryRegistration(System *system)
         sys_.reg_systems.insert(system->id());
     }
 
-    // TODO: query match all entities
-    for(auto& reg_id : data_.reg_entities)
+    for (auto &reg_id : data_.reg_entities)
     {
-        auto& entity = data_.entity[reg_id];
+        auto &entity = data_.entity[reg_id];
 
-        if(isValidMask(entity.mask, system->requiredMask()))
+        if (system->entityMatches().count(entity.id) == 0) // entity not already registered
         {
-            std::cout << "Register entity " << entity.id << "(" << entity.mask << ")" << " to System '"
-                      << system->name() << "'(" << system->requiredMask() << ")"
-                      << std::endl;
+            if (isValidMask(entity.mask, system->requiredMask()))
+            {
+                // TODO: check if entity is already registered
+                std::cout << "Register entity " << entity.id << "(" << entity.mask << ")" << " to System '"
+                          << system->name() << "'(" << system->requiredMask() << ")"
+                          << std::endl;
 
-            matchSystem(system, entity.id);
+                matchSystem(system, entity.id);
+            }
         }
     }
 }
@@ -121,6 +129,8 @@ System *Manager::system(System *system)
 
 void Manager::setSystem(System *system)
 {
+    system->setData(&data_);
+
     sys_.systems[system->id()] = system;
 
     queryRegistration(system);
@@ -310,10 +320,20 @@ size_t Manager::loadSystems(SystemManager *systemManager)
             }
 
             // ..so it is "Validated"
-            auto s = systemManager->create();
-            s->set_id(sys_id);
-            s->setRequiredMask(sys_mask);
-            s->setName(sys_name);
+
+            System *s = nullptr;
+            if(sys_name == "physics2D")
+            {
+                s = systemManager->create<Physics2D>(&data_, Position);
+                configureSystem(s, sys_id, sys_mask, sys_name);
+            }
+            else
+            {
+                // TODO: test this ...
+                s = systemManager->create<DefaultSystem>(nullptr, None);
+                configureSystem(s, sys_id, sys_mask, sys_name);
+            }
+
 
             setSystem(s);
         }
@@ -326,14 +346,11 @@ size_t Manager::loadSystems(SystemManager *systemManager)
     return loadedSystems;
 }
 
-// TODO: simulate only with registered entities
 void Manager::simulate(float dt)
 {
-    // for each system set
     for (auto &id : sys_.reg_systems)
     {
         // update system at each index found
-        std::cout << "SYS_ID" << id << std::endl;
         sys_.systems[id]->simulate();
     }
 }
@@ -405,7 +422,6 @@ void Manager::setDefaultEntity()
     default_acceleration.y = DEFAULT;
     default_acceleration.z = DEFAULT;
 
-//    setEntity(default_entity);
     data_.entity[DEFAULT] = default_entity;
     data_.mass[DEFAULT] = default_mass;
     data_.position[DEFAULT] = default_position;
@@ -415,12 +431,24 @@ void Manager::setDefaultEntity()
 
 void Manager::setDefaultSystem()
 {
-    auto default_system = new System();
+    // TODO: pass data pertinent ?
+    auto default_system = new DefaultSystem(nullptr); // TODO: leave this to null ?
     default_system->set_id(DEFAULT);
     default_system->setRequiredMask(DEFAULT);
     default_system->setName("DEFAULT");
 
-//    setSystem(default_system);
     sys_.systems[DEFAULT] = default_system;
+}
+
+InstanceData *Manager::data()
+{
+    return &data_;
+}
+
+void Manager::configureSystem(System *s, size_t sys_id, size_t sys_mask, std::string& sys_name)
+{
+    s->set_id(sys_id);
+    s->setRequiredMask(sys_mask);
+    s->setName(sys_name);
 }
 

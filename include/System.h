@@ -5,10 +5,11 @@
 #ifndef CLIKEECS_SYSTEM_H
 #define CLIKEECS_SYSTEM_H
 
-#include <vector>
 #include <iostream>
+#include <map>
 #include "Entity.h"
 #include "Instance.h"
+#include "InstanceData.h"
 
 class System
 {
@@ -21,31 +22,29 @@ public:
 
     const unsigned int SYSTEM_GENERATION_MASK = (unsigned int)(1 << SYSTEM_GENERATION_BITS) - 1;
 
-    unsigned int set_id(size_t id)
-    { id_ = id; }
+    unsigned int set_id(size_t id) { id_ = id; }
 
-    unsigned int id() const
-    { return id_ & SYSTEM_INDEX_MASK; }
+    unsigned int id() const { return id_ & SYSTEM_INDEX_MASK; }
 
-    unsigned int generation() const
-    { return (id_ >> SYSTEM_INDEX_BITS) & SYSTEM_GENERATION_MASK; }
+    unsigned int generation() const { return (id_ >> SYSTEM_INDEX_BITS) & SYSTEM_GENERATION_MASK; }
 
-    void start()
-    { running_ = true; }
+    void start();
 
-    void stop()
-    { running_ = false; }
+    void stop();
 
-    bool running()
-    { return running_; }
+    bool running();
 
-    explicit System();
+    explicit System(InstanceData *data);
 
-    void simulate(float dt = 1);
+    ~System();
+
+    // NOTE: this method is polymorphic
+    // It can be redefined by children;
+    virtual void simulate(float dt = 1) = 0;
 
     unsigned int requiredMask();
 
-    std::vector<std::size_t> entityMatches() const;
+    std::set<size_t> entityMatches();
 
     unsigned int entityMatch(Entity *entity);
 
@@ -65,7 +64,9 @@ public:
 
     void free();
 
-    std::vector<std::size_t> matches_;
+    void setData(InstanceData *instanceData);
+
+    std::set<size_t> matches_;
 
     // Non-const: if need to remove one component verification ? for some game it can be problematic ? => need to refresh entity subscriptions.
     unsigned int requiredMask_;
@@ -74,7 +75,9 @@ public:
 
     unsigned int id_ = INVALID_INDEX;
 
-    bool running_ = false;
+    bool running_;
+
+    InstanceData *data_;
 
 
 private:

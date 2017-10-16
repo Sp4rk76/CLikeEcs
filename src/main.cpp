@@ -1,4 +1,5 @@
 #include <Manager.h>
+#include <Physics2D.h>
 
 int main()
 {
@@ -12,12 +13,12 @@ int main()
     size_t loaded_systems = manager->loadSystems(systemManager);
     std::cout << "Loaded Systems: " << loaded_systems << std::endl;
 
-//    manager->simulate();
-
     /// TEST Systems
-    auto system = systemManager->create((Position)); // id & mask defined in
-    system->setName("CustomSystem");
-    manager->setSystem(system);
+//    auto system = systemManager->create<Physics2D>(manager->data(), Position); // id & mask defined in
+//    system->setName("CustomSystem");
+//    manager->setSystem(system);
+
+    manager->simulate();
 
     manager->save();
 

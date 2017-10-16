@@ -49,7 +49,7 @@ set(SOURCE_FILES
         src/EntityManager.cpp
         src/DebugNameComponentManager.cpp
         src/System.cpp
-        src/main.cpp include/Mask.h include/SystemManager.h src/SystemManager.cpp include/EntityCache.h)
+        src/main.cpp include/Mask.h include/SystemManager.h src/SystemManager.cpp include/EntityCache.h include/Physics2D.h src/Physics2D.cpp include/DefaultSystem.h src/DefaultSystem.cpp)
 
 # Executable
 add_executable(CLikeECS ${SOURCE_FILES})

@@ -6,32 +6,22 @@
 #include <iostream>
 #include <System.h>
 #include <Manager.h>
-#include <algorithm>
 
-#define INVALID_MATCHING_ID 0
-
-System::System()  // Test
+// TODO: check try/catch on data !
+System::System(InstanceData *data)  // Test
 {
-
-    ///NOTE: as matches_ begin to 0 index, to get real entity index,
-    /// we need to do "entity_index - 1";
+    data_ = data;
     id_ = 0;
     name_ = "";
     requiredMask_ = DEFAULT;
+    running_ = false;
+    data_ = nullptr;
 }
 
-void System::simulate(float dt)
+System::~System()
 {
-    // For each entity match
-    for (auto entity : matches_)
-    {
-        std::cout << "simulate entity => " << entity << std::endl;
-    }
-
-    // simulate entity
-
-
-    std::cout << "Simulate this system !" << std::endl;
+    delete data_;
+    data_ = nullptr;
 }
 
 unsigned int System::requiredMask()
@@ -39,37 +29,38 @@ unsigned int System::requiredMask()
     return requiredMask_;
 }
 
-std::vector<size_t> System::entityMatches() const
+std::set<size_t> System::entityMatches()
 {
     return matches_;
 }
 
 unsigned int System::entityMatch(Entity *entity)
 {
-    return matches_[entity->id - 1];
+    /// NOTE: O(n) temporal complexity
+    return *matches_.find(entity->id);
 }
 
-unsigned int System::entityMatch(std::size_t matchingEntity)
+unsigned int System::entityMatch(std::size_t id)
 {
-    return matches_[matchingEntity - 1];
+    return *matches_.find(id);
 }
 
 void System::setEntityMatch(std::size_t id)
 {
-    // TODO: replace by INVALID_ENTITY
-    if (id <= INVALID_MATCHING_ID)
+    if (id <= DEFAULT)
     {
         std::cout << "Error: Trying to set (register) an invalid entity to a system (invalid id)" << std::endl;
         return;
     } else
     {
-        matches_.emplace_back(id);
+        /// NOTE: O(1) temporal complexity ?
+        matches_.insert(id);
     }
 }
 
 void System::unsetEntityMatch(std::size_t id)
 {
-    matches_.erase(std::remove(matches_.begin(), matches_.end(), id), matches_.end());
+    matches_.erase(id);
 }
 
 void System::setRequiredMask(std::size_t requiredMask)
@@ -87,8 +78,6 @@ void System::free()
     clear();
 
     requiredMask_ = 0;
-
-//    delete name_;
 }
 
 void System::setName(const std::string &name)
@@ -99,4 +88,30 @@ void System::setName(const std::string &name)
 std::string System::name() const
 {
     return name_;
+}
+
+void System::setData(InstanceData *instanceData)
+{
+    if (instanceData == nullptr)
+    {
+        std::cout << "Error: cannot assign null data as system data" << std::endl;
+        return;
+    }
+
+    data_ = instanceData;
+}
+
+void System::start()
+{
+    running_ = true;
+}
+
+void System::stop()
+{
+    running_ = false;
+}
+
+bool System::running()
+{
+    return running_;
 }
