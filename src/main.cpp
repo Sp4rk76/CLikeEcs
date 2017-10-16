@@ -14,9 +14,11 @@ int main()
     std::cout << "Loaded Systems: " << loaded_systems << std::endl;
 
     /// TEST Systems
-//    auto system = systemManager->create<Physics2D>(manager->data(), Position); // id & mask defined in
-//    system->setName("CustomSystem");
-//    manager->setSystem(system);
+    auto system = systemManager->create<Physics2D>(manager->data(), Position); // id & mask defined in
+    system->setName("CustomSystem");
+    manager->setSystem(system);
+
+    std::cout << "FUCK name physics : " << manager->sys_.systems[2]->name() << std::endl;
 
     manager->simulate();
 

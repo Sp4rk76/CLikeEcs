@@ -32,8 +32,6 @@ public:
 
     void allocate(unsigned size);
 
-//    Entity make_instance(int i);
-
     void queryRegistration(Entity &entity);
 
     void queryRegistration(System *system);
@@ -89,10 +87,10 @@ public:
 
     void configureSystem(System *s, size_t sys_id, size_t sys_mask, std::string& sys_name);
 
-private:
-    InstanceData data_;
-
     InstanceSystem sys_;
+private:
+
+    InstanceData data_;
 
     JSONHandler *jsonHandler_;
 };

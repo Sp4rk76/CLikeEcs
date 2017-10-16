@@ -432,7 +432,7 @@ void Manager::setDefaultEntity()
 void Manager::setDefaultSystem()
 {
     // TODO: pass data pertinent ?
-    auto default_system = new DefaultSystem(nullptr); // TODO: leave this to null ?
+    auto default_system = new DefaultSystem(&data_); // TODO: leave this to null ?
     default_system->set_id(DEFAULT);
     default_system->setRequiredMask(DEFAULT);
     default_system->setName("DEFAULT");
