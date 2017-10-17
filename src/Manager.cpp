@@ -61,7 +61,6 @@ void Manager::allocate(unsigned size)
 
     const unsigned int bytes = size * (sizeof(Entity) + sizeof(float) + (3 * sizeof(Vector3)));
     data_.buffer = malloc(bytes);
-    data_.size = data_.size;
 
     data_.entity = (Entity *) (data_.buffer);
     data_.mass = (float *) (data_.entity + size);
@@ -132,6 +131,8 @@ void Manager::setSystem(System *system)
 {
     system->setData(&data_);
 
+    system->start();
+
     sys_.systems[system->id()] = system;
 
     queryRegistration(system);
@@ -189,18 +190,7 @@ void Manager::setAcceleration(Entity &entity, Vector3 &acceleration)
     data_.acceleration[entity.id] = acceleration;
 }
 
-/// NOTE:
-/// when Entity is set, query match entity to all systems
-/// when System is set (or started), query match system to all entities
-
-/// 1. set entity | 2. register entity to all systems
-
-/// when Entity is destroyed, unmatch entity from all matching systems
-/// when System is destroyed (or stopped), unmatch system to all matching entities
-
 // TODO: make JSON loading code safier
-// TODO: Return an int => number of entities
-// TODO: Register entities here in the future ?.. processus should be: [ (1)loadSystems/(2)loadEntities/(2.1)registerEntity-to-System ]
 size_t Manager::loadEntities(EntityManager *entityManager)
 {
     size_t loadedEntities = 0;
@@ -277,7 +267,7 @@ size_t Manager::loadEntities(EntityManager *entityManager)
     return loadedEntities;
 }
 
-// TODO: return an integer => number of systems
+// TODO: improve "human langage style" when writing JSON masks
 size_t Manager::loadSystems(SystemManager *systemManager)
 {
     size_t loadedSystems = 0;
@@ -310,7 +300,11 @@ size_t Manager::loadSystems(SystemManager *systemManager)
             } else
             {
                 sys_mask = system["requiredMask"].GetUint();
-//                for(auto &component : )
+//                auto maskArray = system["requiredMask"].GetArray();
+//                for(auto maskPart = maskArray.Begin(); maskPart != maskArray.End(); maskPart++)
+//                {
+//                    sys_mask += maskMapper.get(maskPart->GetString());
+//                }
             }
 
             if (!system.HasMember("name"))
@@ -323,17 +317,16 @@ size_t Manager::loadSystems(SystemManager *systemManager)
 
             // ..so it is "Validated"
 
-            MaskMapper *maskMapper = new MaskMapper();
             System *s = nullptr;
             if(sys_name == "physics2D")
             {
-                s = systemManager->create<Physics2D>(&data_, maskMapper->get("physics2D"));
+                s = systemManager->create<Physics2D>(&data_, sys_mask);
 
             }
             if(sys_name == "renderer2D")
             {
                 // TODO: test this ...
-                s = systemManager->create<Renderer2D>(&data_, maskMapper->get("renderer2D"));
+                s = systemManager->create<Renderer2D>(&data_, sys_mask);
             }
             else
             {
@@ -366,14 +359,16 @@ void Manager::simulate(float dt)
 }
 
 // TODO: "erase" entity at index (i) => resert/invalid entity
-void Manager::destroy(unsigned i)
+void Manager::destroyEC(unsigned i)
 {
     if (i <= 0) // invalid index
     {
         return;
     }
 
+    // TODO: it do a "hole in the array" (Useless Occupied Memory)
     data_.entity[i] = data_.entity[INVALID_ENTITY];
+    data_.entity[i].mask = None; // Reset mask
     data_.mass[i] = data_.mass[INVALID_ENTITY];
     data_.position[i] = data_.position[INVALID_ENTITY];
     data_.velocity[i] = data_.velocity[INVALID_ENTITY];

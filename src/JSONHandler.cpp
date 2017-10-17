@@ -141,8 +141,23 @@ void JSONHandler::save(const InstanceSystem &sys, const char *filePath, const ch
         writer.Uint(id);
         writer.Key("name");
         writer.String((s->name()).c_str());
+
         writer.Key("requiredMask");
         writer.Uint(s->requiredMask());
+//        writer.StartArray();
+//        size_t sys_mask = s->requiredMask();
+//        size_t base_mask = 1;
+//        while(sys_mask > 0 && base_mask < Total)
+//        {
+//            if((base_mask & sys_mask) == sys_mask)
+//            {
+//                sys_mask -= base_mask;
+//                writer.String((maskMapper.getReverse(base_mask)).c_str());
+//        }
+//            base_mask <<= 1;
+//        }
+//        writer.EndArray();
+
         writer.EndObject();
     }
 

@@ -109,6 +109,7 @@ void System::start()
 void System::stop()
 {
     running_ = false;
+    matches_.clear();
 }
 
 bool System::running()

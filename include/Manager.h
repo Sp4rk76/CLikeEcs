@@ -68,7 +68,7 @@ public:
 
     void simulate(float dt = 1);
 
-    void destroy(unsigned i);
+    void destroyEC(unsigned id);
 
     bool isValidMask(unsigned entityMask, unsigned systemMask);
 

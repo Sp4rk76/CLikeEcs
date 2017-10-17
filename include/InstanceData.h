@@ -13,12 +13,14 @@
 #include "Transform.h"
 #include <set>
 
-const unsigned int MAX_ENTITY_REGISTERING = 1 << ENTITY_INDEX_BITS;
-
+// TODO (suggestion): can improve performance by iterating over entities from 1 to n - 1 instead of a set of reg_entities;
+// TODO: Pb: in this case, we have to keep a map of <EntityID,InstanceID> to retrieve the real entity[InstanceID] with the entity id (EntityID);
+/// ex: it would give:
+/// Instance inst = map[entity.id];
+/// data_.entity[inst];
 struct InstanceData
 {
-    unsigned size = 0; ///< Number of used instances
-    unsigned capacity = 0; ///< Number of allocated instances
+    unsigned size = 0; ///< Max instanciable instances
     void *buffer = nullptr; ///< Buffer with instance data
 
     std::set<size_t> reg_entities;

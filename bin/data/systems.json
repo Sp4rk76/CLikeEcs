@@ -8,7 +8,7 @@
     {
       "id": 2,
       "name": "renderer2D",
-      "requiredMask": 6
+      "requiredMask": 18
     }
   ]
 }

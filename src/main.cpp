@@ -26,9 +26,14 @@ int main()
     auto e = entityManager->create(2);
     manager->setEntity(e);
 
+//    manager->destroy(4);
+    std::cout << manager->data()->entity[4].id << std::endl;
+
     manager->simulate();
 
     manager->save();
+
+    std::cout << "SIZE: " << manager->data()->size << std::endl;
 
     return 0;
 }
