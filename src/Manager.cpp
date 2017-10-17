@@ -5,6 +5,7 @@
 #include <fstream>
 #include <Physics2D.h>
 #include <DefaultSystem.h>
+#include <Renderer2D.h>
 #include "Manager.h"
 
 // TODO: custom allocation for systems ?
@@ -321,19 +322,25 @@ size_t Manager::loadSystems(SystemManager *systemManager)
 
             // ..so it is "Validated"
 
+            MaskMapper *maskMapper = new MaskMapper();
             System *s = nullptr;
             if(sys_name == "physics2D")
             {
-                s = systemManager->create<Physics2D>(&data_, Position);
-                configureSystem(s, sys_id, sys_mask, sys_name);
+                s = systemManager->create<Physics2D>(&data_, maskMapper->get("physics2D"));
+
+            }
+            if(sys_name == "renderer2D")
+            {
+                // TODO: test this ...
+                s = systemManager->create<Renderer2D>(&data_, maskMapper->get("renderer2D"));
             }
             else
             {
-                // TODO: test this ...
-                s = systemManager->create<DefaultSystem>(nullptr, None);
-                configureSystem(s, sys_id, sys_mask, sys_name);
+                // TODO: idem...
+                s = systemManager->create<DefaultSystem>(&data_, None);
             }
 
+            configureSystem(s, sys_id, sys_mask, sys_name);
 
             setSystem(s);
         }

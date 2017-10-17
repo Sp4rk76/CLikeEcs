@@ -5,7 +5,7 @@ int main()
 {
     auto entityManager = new EntityManager();
     auto systemManager = new SystemManager();
-    auto manager = new Manager(4);
+    auto manager = new Manager(5);
 
     size_t loaded_entities = manager->loadEntities(entityManager);
     std::cout << "Loaded Entities: " << loaded_entities << std::endl;
@@ -18,7 +18,10 @@ int main()
     system->setName("CustomSystem");
     manager->setSystem(system);
 
-    std::cout << "FUCK name physics : " << manager->sys_.systems[2]->name() << std::endl;
+    for(int i = 0; i < manager->sys_.reg_systems.size(); i++)
+    {
+        std::cout << "System Name : " << manager->sys_.systems[i]->name() << std::endl;
+    }
 
     manager->simulate();
 

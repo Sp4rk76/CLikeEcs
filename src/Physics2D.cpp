@@ -11,7 +11,7 @@ void Physics2D::simulate(float dt)
     // For each entity match
     for (auto &entity : matches_)
     {
-        std::cout << "PHYSICS simulation !" << std::endl;
+        std::cout << "PHYSICS simulation for system (id: " << id_ << ")" << std::endl;
 
         position = &data_->position[entity];
         velocity = &data_->velocity[entity];

@@ -7,8 +7,6 @@
 
 #include <iostream>
 #include <map>
-#include "Entity.h"
-#include "Instance.h"
 #include "InstanceData.h"
 
 class System
@@ -16,11 +14,11 @@ class System
 public:
     const unsigned int SYSTEM_INDEX_BITS = 22;
 
-    const unsigned int SYSTEM_INDEX_MASK = (unsigned int)(1 << SYSTEM_INDEX_BITS) - 1;
+    const int SYSTEM_INDEX_MASK = (1 << SYSTEM_INDEX_BITS) - 1;
 
     const unsigned int SYSTEM_GENERATION_BITS = 8;
 
-    const unsigned int SYSTEM_GENERATION_MASK = (unsigned int)(1 << SYSTEM_GENERATION_BITS) - 1;
+    const int SYSTEM_GENERATION_MASK = (1 << SYSTEM_GENERATION_BITS) - 1;
 
     unsigned int set_id(size_t id) { id_ = id; }
 
