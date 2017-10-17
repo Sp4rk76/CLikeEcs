@@ -310,6 +310,7 @@ size_t Manager::loadSystems(SystemManager *systemManager)
             } else
             {
                 sys_mask = system["requiredMask"].GetUint();
+//                for(auto &component : )
             }
 
             if (!system.HasMember("name"))
@@ -360,7 +361,7 @@ void Manager::simulate(float dt)
     for (auto &id : sys_.reg_systems)
     {
         // update system at each index found
-        sys_.systems[id]->simulate();
+        sys_.systems[id]->simulate(1);
     }
 }
 
@@ -452,4 +453,9 @@ void Manager::setDefaultSystem()
 InstanceData *Manager::data()
 {
     return &data_;
+}
+
+InstanceSystem *Manager::sys()
+{
+    return &sys_;
 }

@@ -85,10 +85,12 @@ public:
 
     InstanceData *data();
 
-    InstanceSystem sys_;
-private:
+    InstanceSystem *sys();
 
+private:
     InstanceData data_;
+
+    InstanceSystem sys_;
 
     JSONHandler *jsonHandler_;
 };

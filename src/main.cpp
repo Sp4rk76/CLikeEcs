@@ -18,10 +18,13 @@ int main()
     system->setName("CustomSystem");
     manager->setSystem(system);
 
-    for(int i = 0; i < manager->sys_.reg_systems.size(); i++)
+    for(int i = 0; i < manager->sys()->reg_systems.size(); i++)
     {
-        std::cout << "System Name : " << manager->sys_.systems[i]->name() << std::endl;
+        std::cout << "System Name : " << manager->sys()->systems[i]->name() << std::endl;
     }
+
+    auto e = entityManager->create(2);
+    manager->setEntity(e);
 
     manager->simulate();
 

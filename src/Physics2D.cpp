@@ -23,12 +23,15 @@ void Physics2D::simulate(float dt)
         std::cout << "simulate entity => " << entity << std::endl;
     }
 
+    std::cout << "Simulate this system !" << std::endl;
+}
+
+Physics2D::~Physics2D()
+{
     delete position;
     delete velocity;
     delete acceleration;
     position = nullptr;
     velocity = nullptr;
     acceleration = nullptr;
-
-    std::cout << "Simulate this system !" << std::endl;
 }

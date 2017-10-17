@@ -11,6 +11,7 @@ class Physics2D : public System
 {
 public:
     explicit Physics2D(InstanceData *data);
+    ~Physics2D();
     void simulate(float dt) override;
 private:
     Vector3 *position = nullptr;

@@ -34,11 +34,11 @@ public:
 
     explicit System(InstanceData *data);
 
-    ~System();
+    virtual ~System();
 
     // NOTE: this method is polymorphic
     // It can be redefined by children;
-    virtual void simulate(float dt = 1) = 0;
+    virtual void simulate(float dt) = 0;
 
     unsigned int requiredMask();
 
