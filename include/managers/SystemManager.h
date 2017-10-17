@@ -8,8 +8,8 @@
 #include <cstring>
 #include <vector>
 #include <deque>
-#include "Mask.h"
-#include "System.h"
+#include "entities/Mask.h"
+#include "systems/System.h"
 
 class SystemManager
 {

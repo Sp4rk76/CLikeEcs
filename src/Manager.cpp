@@ -3,10 +3,10 @@
 //
 
 #include <fstream>
-#include <Physics2D.h>
-#include <DefaultSystem.h>
-#include <Renderer2D.h>
-#include "Manager.h"
+#include <systems/Physics2D.h>
+#include <systems/DefaultSystem.h>
+#include <systems/Renderer2D.h>
+#include "managers/Manager.h"
 
 // TODO: custom allocation for systems ?
 Manager::Manager()

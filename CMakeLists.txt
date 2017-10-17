@@ -32,37 +32,37 @@ include_directories(include)
 #include_directories(${SDL2_TTF_INCLUDE_DIRS})
 
 set(SOURCE_FILES
-        include/Entity.h
-        include/DebugNameComponentManager.h
-        include/EntityManager.h
-        include/InstanceData.h
-        include/Vector3.h
-        include/Manager.h
-        include/Vector2.h
-        include/JSONHandler.h
-        include/InstanceSystem.h
-        include/System.h
-        include/InstanceSystem.h
+        include/entities/Entity.h
+        include/utils/DebugNameComponentManager.h
+        include/managers/EntityManager.h
+        include/managers/InstanceData.h
+        include/components/Vector3.h
+        include/managers/Manager.h
+        include/components/Vector2.h
+        include/utils/JSONHandler.h
+        include/managers/InstanceSystem.h
+        include/systems/System.h
+        include/managers/InstanceSystem.h
         src/JSONHandler.cpp
         src/Manager.cpp
         src/EntityManager.cpp
         src/DebugNameComponentManager.cpp
         src/System.cpp
         src/main.cpp
-        include/Mask.h
-        include/SystemManager.h
+        include/entities/Mask.h
+        include/managers/SystemManager.h
         src/SystemManager.cpp
-        include/Physics2D.h
+        include/systems/Physics2D.h
         src/Physics2D.cpp
-        include/DefaultSystem.h
+        include/systems/DefaultSystem.h
         src/DefaultSystem.cpp
-        include/Sprite.h
-        include/Renderer2D.h
-        include/Transform.h
+        include/components/Sprite.h
+        include/systems/Renderer2D.h
+        include/components/Transform.h
         src/Renderer2D.cpp
-        include/Transform.h
+        include/components/Transform.h
         src/Vector3.cpp
-        include/MaskMapper.h src/MaskMapper.cpp)
+        include/utils/MaskMapper.h src/MaskMapper.cpp)
 
 # Executable
 add_executable(CLikeECS ${SOURCE_FILES})

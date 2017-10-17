@@ -2,7 +2,7 @@
 // Created by Sp4rk on 12-10-17.
 //
 
-#include "Physics2D.h"
+#include "systems/Physics2D.h"
 
 Physics2D::Physics2D(InstanceData *data) : System(data) { }
 

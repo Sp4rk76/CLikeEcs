@@ -8,8 +8,8 @@
 #include <vector>
 #include <deque>
 #include <iostream>
-#include "Entity.h"
-#include "JSONHandler.h"
+#include "entities/Entity.h"
+#include "utils/JSONHandler.h"
 
 const unsigned MINIMUM_FREE_INDICES = 0;
 

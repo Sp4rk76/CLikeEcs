@@ -2,7 +2,7 @@
 // Created by Sp4rk on 17-10-17.
 //
 
-#include "Vector3.h"
+#include "components/Vector3.h"
 
 Vector3::Vector3()
 {

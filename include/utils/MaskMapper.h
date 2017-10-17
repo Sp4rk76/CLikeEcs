@@ -7,7 +7,7 @@
 
 #include <map>
 #include <iostream>
-#include "Mask.h"
+#include "entities/Mask.h"
 
 class MaskMapper
 {
@@ -15,21 +15,17 @@ public:
     typedef std::map<std::string, size_t> MaskMap;
     typedef std::map<size_t, std::string> ReverseMaskMap;
 
-    class MaskMapper
-    {
-    public:
-        MaskMapper();
+    MaskMapper();
 
-        void loadMaps();
+    void loadMaps();
 
-        size_t get(const std::string &maskString);
+    size_t get(const std::string &maskString);
 
-        std::string getReverse(size_t maskValue);
+    std::string getReverse(size_t maskValue);
 
-    private:
-        MaskMap masks_;
-        ReverseMaskMap reverseMasks_;
-    };
+private:
+    MaskMap masks_;
+    ReverseMaskMap reverseMasks_;
 };
 
 #endif //CLIKEECS_MASKMAPPER_H

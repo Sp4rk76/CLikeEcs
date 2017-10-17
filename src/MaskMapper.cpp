@@ -2,14 +2,14 @@
 // Created by Sp4rk on 18-10-17.
 //
 
-#include "MaskMapper.h"
+#include "utils/MaskMapper.h"
 
-MaskMapper::MaskMapper::MaskMapper()
+MaskMapper::MaskMapper()
 {
     loadMaps();
 }
 
-void MaskMapper::MaskMapper::loadMaps()
+void MaskMapper::loadMaps()
 {
     masks_["none"] = None;
     masks_["transform"] = Transform;
@@ -29,7 +29,7 @@ void MaskMapper::MaskMapper::loadMaps()
     reverseMasks_[(Position | Sprite)] = "renderer2D";
 }
 
-size_t MaskMapper::MaskMapper::get(const std::string &maskString)
+size_t MaskMapper::get(const std::string &maskString)
 {
     if (masks_.count(maskString) == 0) // not found
     {
@@ -39,7 +39,7 @@ size_t MaskMapper::MaskMapper::get(const std::string &maskString)
     return masks_[maskString];
 }
 
-std::string MaskMapper::MaskMapper::getReverse(size_t maskValue)
+std::string MaskMapper::getReverse(size_t maskValue)
 {
     if (reverseMasks_.count(maskValue) == 0) // not found
     {

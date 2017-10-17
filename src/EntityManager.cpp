@@ -2,7 +2,7 @@
 // Created by Sp4rk on 03-10-17.
 //
 
-#include "EntityManager.h"
+#include "managers/EntityManager.h"
 
 Entity EntityManager::create(size_t mask)
 {

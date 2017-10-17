@@ -1,5 +1,5 @@
-#include <Manager.h>
-#include <Physics2D.h>
+#include <managers/Manager.h>
+#include <systems/Physics2D.h>
 
 int main()
 {

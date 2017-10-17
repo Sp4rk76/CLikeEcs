@@ -3,8 +3,8 @@
 //
 
 
-#include <InstanceData.h>
-#include <DefaultSystem.h>
+#include <managers/InstanceData.h>
+#include <systems/DefaultSystem.h>
 
 DefaultSystem::DefaultSystem(InstanceData *data) : System(data)
 {

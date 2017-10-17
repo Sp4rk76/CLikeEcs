@@ -2,7 +2,7 @@
 // Created by Sp4rk on 03-10-17.
 //
 
-#include "DebugNameComponentManager.h"
+#include "utils/DebugNameComponentManager.h"
 
 void DebugNameComponentManager::set_debug_name(Entity entity, const char *name)
 {

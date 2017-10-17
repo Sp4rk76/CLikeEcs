@@ -2,7 +2,7 @@
 // Created by Sp4rk on 03-10-17.
 //
 
-#include "JSONHandler.h"
+#include "utils/JSONHandler.h"
 #include <cstdio>
 #include <fstream>
 #include "rapidjson/fwd.h"

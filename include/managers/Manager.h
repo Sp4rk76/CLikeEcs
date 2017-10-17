@@ -8,12 +8,12 @@
 #include <map>
 #include <cstring>
 #include <cstdlib>
-#include "Entity.h"
-#include "Vector3.h"
+#include "entities/Entity.h"
+#include "components/Vector3.h"
 #include "InstanceData.h"
-#include "InstanceSystem.h"
+#include "managers/InstanceSystem.h"
 #include "EntityManager.h"
-#include <SystemManager.h>
+#include <managers/SystemManager.h>
 #include "rapidjson/document.h"
 
 #define INVALID_ENTITY 0

@@ -4,8 +4,8 @@
 
 #include <malloc.h>
 #include <iostream>
-#include <System.h>
-#include <Manager.h>
+#include <systems/System.h>
+#include <managers/Manager.h>
 
 // TODO: check try/catch on data !
 System::System(InstanceData *data)  // Test

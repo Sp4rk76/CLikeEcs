@@ -9,7 +9,7 @@
 #define INVALID_SYSTEM 0
 
 #include <set>
-#include "System.h"
+#include "systems/System.h"
 
 struct InstanceSystem
 {

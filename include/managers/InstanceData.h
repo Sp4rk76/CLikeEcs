@@ -7,10 +7,10 @@
 
 #include <iostream>
 
-#include "Vector3.h"
-#include "Entity.h"
-#include "Sprite.h"
-#include "Transform.h"
+#include "components/Vector3.h"
+#include "entities/Entity.h"
+#include "components/Sprite.h"
+#include "components/Transform.h"
 #include <set>
 
 // TODO (suggestion): can improve performance by iterating over entities from 1 to n - 1 instead of a set of reg_entities;

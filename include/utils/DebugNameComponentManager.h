@@ -6,7 +6,7 @@
 #define CLIKEECS_DEBUGNAMECOMPONENTMANAGER_H
 
 #include <malloc.h>
-#include "Entity.h"
+#include "entities/Entity.h"
 
 class DebugNameComponentManager
 {
