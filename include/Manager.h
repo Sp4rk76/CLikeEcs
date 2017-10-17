@@ -85,8 +85,6 @@ public:
 
     InstanceData *data();
 
-    void configureSystem(System *s, size_t sys_id, size_t sys_mask, std::string& sys_name);
-
     InstanceSystem sys_;
 private:
 

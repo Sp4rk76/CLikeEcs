@@ -340,7 +340,9 @@ size_t Manager::loadSystems(SystemManager *systemManager)
                 s = systemManager->create<DefaultSystem>(&data_, None);
             }
 
-            configureSystem(s, sys_id, sys_mask, sys_name);
+            s->set_id(sys_id);
+            s->setRequiredMask(sys_mask);
+            s->setName(sys_name);
 
             setSystem(s);
         }
@@ -451,11 +453,3 @@ InstanceData *Manager::data()
 {
     return &data_;
 }
-
-void Manager::configureSystem(System *s, size_t sys_id, size_t sys_mask, std::string& sys_name)
-{
-    s->set_id(sys_id);
-    s->setRequiredMask(sys_mask);
-    s->setName(sys_name);
-}
-
