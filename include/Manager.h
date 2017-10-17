@@ -15,7 +15,6 @@
 #include "EntityManager.h"
 #include <SystemManager.h>
 #include "rapidjson/document.h"
-#include "Instance.h"
 
 #define INVALID_ENTITY 0
 
