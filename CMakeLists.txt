@@ -39,30 +39,30 @@ set(SOURCE_FILES
         include/components/Vector3.h
         include/managers/Manager.h
         include/components/Vector2.h
-        include/utils/JSONHandler.h
+        include/managers/JSONHandler.h
         include/managers/InstanceSystem.h
         include/systems/System.h
         include/managers/InstanceSystem.h
-        src/JSONHandler.cpp
-        src/Manager.cpp
-        src/EntityManager.cpp
-        src/DebugNameComponentManager.cpp
-        src/System.cpp
+        src/managers/JSONHandler.cpp
+        src/managers/Manager.cpp
+        src/managers/EntityManager.cpp
+        src/utils/DebugNameComponentManager.cpp
+        src/systems/System.cpp
         src/main.cpp
         include/entities/Mask.h
         include/managers/SystemManager.h
-        src/SystemManager.cpp
+        src/managers/SystemManager.cpp
         include/systems/Physics2D.h
-        src/Physics2D.cpp
+        src/systems/Physics2D.cpp
         include/systems/DefaultSystem.h
-        src/DefaultSystem.cpp
+        src/systems/DefaultSystem.cpp
         include/components/Sprite.h
         include/systems/Renderer2D.h
         include/components/Transform.h
-        src/Renderer2D.cpp
+        src/systems/Renderer2D.cpp
         include/components/Transform.h
-        src/Vector3.cpp
-        include/utils/MaskMapper.h src/MaskMapper.cpp)
+        src/components/Vector3.cpp
+        include/utils/MaskMapper.h src/utils/MaskMapper.cpp)
 
 # Executable
 add_executable(CLikeECS ${SOURCE_FILES})

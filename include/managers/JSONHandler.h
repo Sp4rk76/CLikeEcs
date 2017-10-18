@@ -6,8 +6,8 @@
 #define CLIKEECS_JSONLOADER_H
 
 #include "rapidjson/document.h"
-#include "managers/InstanceSystem.h"
-#include "managers/InstanceData.h"
+#include "InstanceSystem.h"
+#include "InstanceData.h"
 
 class JSONHandler
 {

@@ -11,7 +11,7 @@
 #include "entities/Entity.h"
 #include "components/Vector3.h"
 #include "InstanceData.h"
-#include "managers/InstanceSystem.h"
+#include "InstanceSystem.h"
 #include "EntityManager.h"
 #include <managers/SystemManager.h>
 #include "rapidjson/document.h"
