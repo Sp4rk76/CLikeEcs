@@ -37,25 +37,25 @@ public:
 
     Entity entity(Entity entity);
 
-    void setMask(Entity entity, size_t mask);
-
     size_t mask(Entity entity);
-
-    void setEntity(Entity &entity);
 
     float mass(Entity entity);
 
-    void setMass(Entity entity, float mass);
-
     Vector3 position(Entity entity);
-
-    void setPosition(Entity &entity, Vector3 &position);
 
     Vector3 velocity(Entity entity);
 
-    void setVelocity(Entity &entity, Vector3 &velocity);
-
     Vector3 acceleration(Entity entity);
+
+    void setEntity(Entity &entity);
+
+    void setMask(Entity entity, size_t mask);
+
+    void setMass(Entity entity, float mass);
+
+    void setPosition(Entity &entity, Vector3 &position);
+
+    void setVelocity(Entity &entity, Vector3 &velocity);
 
     void setAcceleration(Entity &entity, Vector3 &acceleration);
 

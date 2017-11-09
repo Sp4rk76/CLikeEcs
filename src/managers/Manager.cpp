@@ -122,25 +122,29 @@ void Manager::queryRegistration(System *system)
     }
 }
 
-System *Manager::system(System *system)
-{
-    return sys_.systems[system->id()];
-}
-
-void Manager::setSystem(System *system)
-{
-    system->setData(&data_);
-
-    system->start();
-
-    sys_.systems[system->id()] = system;
-
-    queryRegistration(system);
-}
-
 Entity Manager::entity(Entity entity)
 {
     return data_.entity[entity.id];
+}
+
+float Manager::mass(Entity entity)
+{
+    return data_.mass[entity.id];
+}
+
+Vector3 Manager::position(Entity entity)
+{
+    return data_.position[entity.id];
+}
+
+Vector3 Manager::velocity(Entity entity)
+{
+    return data_.velocity[entity.id];
+}
+
+Vector3 Manager::acceleration(Entity entity)
+{
+    return data_.acceleration[entity.id];
 }
 
 void Manager::setEntity(Entity &entity)
@@ -150,19 +154,9 @@ void Manager::setEntity(Entity &entity)
     queryRegistration(entity);
 }
 
-float Manager::mass(Entity entity)
-{
-    return data_.mass[entity.id];
-}
-
 void Manager::setMass(Entity entity, float mass)
 {
     data_.mass[entity.id] = mass;
-}
-
-Vector3 Manager::position(Entity entity)
-{
-    return data_.position[entity.id];
 }
 
 void Manager::setPosition(Entity &entity, Vector3 &position)
@@ -170,19 +164,9 @@ void Manager::setPosition(Entity &entity, Vector3 &position)
     data_.position[entity.id] = position;
 }
 
-Vector3 Manager::velocity(Entity entity)
-{
-    return data_.velocity[entity.id];
-}
-
 void Manager::setVelocity(Entity &entity, Vector3 &velocity)
 {
     data_.velocity[entity.id] = velocity;
-}
-
-Vector3 Manager::acceleration(Entity entity)
-{
-    return data_.acceleration[entity.id];
 }
 
 void Manager::setAcceleration(Entity &entity, Vector3 &acceleration)
@@ -347,6 +331,22 @@ size_t Manager::loadSystems(SystemManager *systemManager)
     jsonHandler_->close();
 
     return loadedSystems;
+}
+
+System *Manager::system(System *system)
+{
+    return sys_.systems[system->id()];
+}
+
+void Manager::setSystem(System *system)
+{
+    system->setData(&data_);
+
+    system->start();
+
+    sys_.systems[system->id()] = system;
+
+    queryRegistration(system);
 }
 
 void Manager::simulate(float dt)
