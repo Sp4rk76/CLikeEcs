@@ -13,19 +13,15 @@ int main()
     size_t loaded_systems = manager->loadSystems(systemManager);
     std::cout << "Loaded Systems: " << loaded_systems << std::endl;
 
-    /// TEST Systems
-    auto system = systemManager->create<Physics2D>(manager->data(), Position); // id & mask defined in
-    system->setName("CustomSystem");
-    manager->setSystem(system);
-
-    for(int i = 0; i < manager->sys()->reg_systems.size(); i++)
-    {
-        std::cout << "System Name : " << manager->sys()->systems[i]->name() << std::endl;
-    }
-
-    auto e = entityManager->create(2);
-    manager->setEntityInstance(e.id, manager->generateInstanceId());
-    manager->setEntity(manager->lookup(e.id), e);
+//    /// TEST Systems
+//    auto system = systemManager->create<Physics2D>(manager->data(), Position); // id & mask defined in
+//    system->setName("CustomSystem");
+//    manager->setSystem(system);
+//
+//    for(int i = 0; i < manager->sys()->reg_systems.size(); i++)
+//    {
+//        std::cout << "System Name : " << manager->sys()->systems[i]->name() << std::endl;
+//    }
 
     manager->simulate();
 
@@ -35,8 +31,15 @@ int main()
     manager->destroyEC(2);
     manager->destroyEC(3);
     manager->destroyEC(1);
+
+    auto toto = entityManager->create(14);
+    auto new_instance_id = manager->generateInstanceId();
+    manager->setEntityInstance(toto.id, new_instance_id);
+    manager->setEntity(new_instance_id, toto);
     manager->destroyEC(4);
-//    manager->destroyEC(0);
+
+
+
 
     for(auto& x : manager->entity_instances)
     {

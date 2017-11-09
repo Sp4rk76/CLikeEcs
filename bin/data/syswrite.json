@@ -9,11 +9,6 @@
             "id": 2,
             "name": "renderer2D",
             "requiredMask": 18
-        },
-        {
-            "id": 4,
-            "name": "CustomSystem",
-            "requiredMask": 2
         }
     ]
 }

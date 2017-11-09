@@ -372,6 +372,12 @@ void Manager::simulate(float dt)
 ///*** VIP NOTE: The parameter is considered as an INSTANCE ID, not an ENTITY ID, so to use it, a lookup has to be made first ***///
 void Manager::destroyEC(size_t entity_id)
 {
+    /// NOTE: Entity's id NOT EXISTS in map
+    if(entity_id <= 0 || !entity_instances.find(entity_id)->first)
+    {
+        return;
+    }
+
     int id = lookup(entity_id);
 
     if (id > data_.n) // invalid index
@@ -392,10 +398,12 @@ void Manager::destroyEC(size_t entity_id)
     data_.velocity[id] = data_.velocity[last];
     data_.acceleration[id] = data_.acceleration[last];
 
-    entity_instances[last_entity_id] = (size_t) id; // update "entityID<->instanceID map" /// ?
-    entity_instances.erase(inst); /// ??
+    /// NOTE: This trick finds the updated instance_id for the given entity
+    // std::cout << "("<< entity_instances.find(last_entity_id)->second <<")" << std::endl;
+    instance_ids.erase(entity_instances.find(last_entity_id)->second);
 
-    instance_ids.erase(inst);
+    entity_instances[last_entity_id] = (size_t) id; // update "entityID<->instanceID map" /// ?
+    entity_instances.erase(inst);
 
     // TODO: see if it is useful to keep it or not...
     /// NOTE: in case of "YES", be careful while dealing with this register
@@ -430,6 +438,7 @@ size_t Manager::mask(size_t instance_id)
 {
     return data_.entity[instance_id].mask;
 }
+
 
 void Manager::setDefaultSystem()
 {

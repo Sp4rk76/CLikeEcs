@@ -83,8 +83,6 @@ public:
 
     void setSystem(System *system);
 
-    void setDefaultEntity();
-
     void setDefaultSystem();
 
     InstanceData *data();
