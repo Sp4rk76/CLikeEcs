@@ -5,7 +5,7 @@ int main()
 {
     auto entityManager = new EntityManager();
     auto systemManager = new SystemManager();
-    auto manager = new Manager(5);
+    auto manager = new Manager(10);
 
     size_t loaded_entities = manager->loadEntities(entityManager);
     std::cout << "Loaded Entities: " << loaded_entities << std::endl;
@@ -24,19 +24,43 @@ int main()
     }
 
     auto e = entityManager->create(2);
-    manager->setEntity(e);
-
-//    manager->destroy(4);
-    std::cout << manager->data()->entity[4].id << std::endl;
+    manager->setEntityInstance(e.id, manager->generateInstanceId());
+    manager->setEntity(manager->lookup(e.id), e);
 
     manager->simulate();
 
     manager->save();
 
-    std::cout << "SIZE: " << manager->data()->size << std::endl;
+    // TODO: Modify destroyEC method to properly delete an entity
+    manager->destroyEC(2);
+    manager->destroyEC(3);
+    manager->destroyEC(1);
+    manager->destroyEC(4);
+//    manager->destroyEC(0);
+
+    for(auto& x : manager->entity_instances)
+    {
+        std::cout << "E = " << x.first << " ; " << " I = " << x.second << std::endl;
+    }
+
+    std::cout << "Instance_IDs | ";
+    for(auto& op : manager->instance_ids)
+    {
+        std::cout << op << " | ";
+    }
+    std::cout << std::endl;
+
+    std::cout << "reg_entities | ";
+    for(auto& op : manager->data()->reg_entities)
+    {
+        std::cout << op << " | ";
+    }
+    std::cout << std::endl;
 
     return 0;
 }
+
+// TODO: when setting a new Entity instance in map, check if it already exists !
 
 
 

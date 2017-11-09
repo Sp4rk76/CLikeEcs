@@ -18,6 +18,8 @@
 
 #define INVALID_ENTITY 0
 
+typedef std::map<size_t, size_t> EntityInstanceMap;
+
 /// NOTE: This is an "example of system design"
 /// TODO: each system should have a list of registered id ?
 class Manager
@@ -35,29 +37,32 @@ public:
 
     void queryRegistration(System *system);
 
-    Entity entity(Entity entity);
+    size_t lookup(size_t entity_id);
 
-    size_t mask(Entity entity);
+    Entity entity(size_t instance_id);
 
-    float mass(Entity entity);
+    size_t mask(size_t instance_id);
 
-    Vector3 position(Entity entity);
+    float mass(size_t instance_id);
 
-    Vector3 velocity(Entity entity);
+    Vector3 position(size_t instance_id);
 
-    Vector3 acceleration(Entity entity);
+    Vector3 velocity(size_t instance_id);
 
-    void setEntity(Entity &entity);
+    Vector3 acceleration(size_t instance_id);
 
-    void setMask(Entity entity, size_t mask);
+    //TODO: signature validity ? viable ?
+    void setEntity(int instance_id, Entity &entity);
 
-    void setMass(Entity entity, float mass);
+    void setMask(size_t instance_id, size_t &mask);
 
-    void setPosition(Entity &entity, Vector3 &position);
+    void setMass(size_t instance_id, float &mass);
 
-    void setVelocity(Entity &entity, Vector3 &velocity);
+    void setPosition(size_t instance_id, Vector3 &position);
 
-    void setAcceleration(Entity &entity, Vector3 &acceleration);
+    void setVelocity(size_t instance_id, Vector3 &velocity);
+
+    void setAcceleration(size_t instance_id, Vector3 &acceleration);
 
     // TODO: Create a validation function => check JSON file validity according (once !) before loading all entities/components
     size_t loadEntities(EntityManager *entityManager);
@@ -85,6 +90,14 @@ public:
     InstanceData *data();
 
     InstanceSystem *sys();
+
+    EntityInstanceMap entity_instances = EntityInstanceMap();
+
+    void setEntityInstance(size_t entity_id, int instance_id);
+
+    int generateInstanceId();
+
+    std::set<int> instance_ids;
 
 private:
     InstanceData data_;

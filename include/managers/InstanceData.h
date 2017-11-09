@@ -20,7 +20,8 @@
 /// data_.entity[inst];
 struct InstanceData
 {
-    unsigned size = 0; ///< Max instanciable instances
+    size_t n = 0;
+    size_t size = 0; ///< Max instanciable instances
     void *buffer = nullptr; ///< Buffer with instance data
 
     std::set<size_t> reg_entities;
