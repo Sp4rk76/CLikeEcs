@@ -76,8 +76,6 @@ public:
     bool running_;
 
     InstanceData *data_;
-
-
 private:
 };
 

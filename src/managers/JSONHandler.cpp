@@ -54,14 +54,14 @@ void JSONHandler::save(const InstanceData &data, const char *filePath, const cha
     writer.Key("entities");
     writer.StartArray();
 
-    for (auto &id : data.reg_entities)
+    for (size_t id = 0; id < data.n; ++id)
     {
         size_t e_mask = data.entity[id].mask;
 
         writer.StartObject();
 
         writer.Key("id");
-        writer.Uint(id);
+        writer.Uint(id + 1);
 //      writer.Key("name");
 //      writer.String((data.entity[id].name).c_str());
         writer.Key("mask");

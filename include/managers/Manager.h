@@ -54,9 +54,9 @@ public:
     //TODO: signature validity ? viable ?
     void setEntity(int instance_id, Entity &entity);
 
-    void setMask(size_t instance_id, size_t &mask);
+    void setMask(size_t instance_id, size_t mask);
 
-    void setMass(size_t instance_id, float &mass);
+    void setMass(size_t instance_id, float mass);
 
     void setPosition(size_t instance_id, Vector3 &position);
 

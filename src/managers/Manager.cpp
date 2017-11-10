@@ -57,7 +57,7 @@ Manager::~Manager()
 
 void Manager::allocate(unsigned size)
 {
-    data_.n = 1;
+    data_.n = 0;
     data_.size = size;
     std::cout << "Allocated data size: " << data_.size << std::endl;
 
@@ -153,7 +153,7 @@ void Manager::setEntity(int instance_id, Entity &entity)
     queryRegistration(entity);
 }
 
-void Manager::setMass(size_t instance_id, float &mass)
+void Manager::setMass(size_t instance_id, float mass)
 {
     data_.mass[instance_id] = mass;
 }
@@ -404,7 +404,7 @@ void Manager::save(/* all E & S */)
     jsonHandler_->querySave(data_);
 }
 
-void Manager::setMask(size_t instance_id, size_t &mask)
+void Manager::setMask(size_t instance_id, size_t mask)
 {
     data_.entity[instance_id].mask = mask;
 }
