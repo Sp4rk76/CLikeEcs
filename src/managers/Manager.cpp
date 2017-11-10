@@ -27,9 +27,6 @@ Manager::Manager(size_t size)
 
     sys_.systems = (System **) malloc(MAX_NUMBER_OF_SYSTEMS * sizeof(System *));
 
-    // defualt entity ?
-
-
     // TODO: solve this case ?
     setDefaultSystem();
 

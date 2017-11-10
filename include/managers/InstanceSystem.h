@@ -6,7 +6,6 @@
 #define CLIKEECS_INSTANCESYSTEM_H
 
 #define MAX_NUMBER_OF_SYSTEMS 10
-#define INVALID_SYSTEM 0
 
 #include <set>
 #include "systems/System.h"
@@ -14,8 +13,8 @@
 struct InstanceSystem
 {
     std::set<size_t> reg_systems;
-    unsigned numSystems = 0; ///< Number of systems
-    unsigned size = MAX_NUMBER_OF_SYSTEMS;
+
+    size_t size = MAX_NUMBER_OF_SYSTEMS;
 
     System** systems = nullptr;
 };
