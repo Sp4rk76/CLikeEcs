@@ -19,7 +19,7 @@ public:
     EntityManager()
     {
         // TODO: Change smth here?
-        generation_.emplace_back(0);
+         generation_.emplace_back(0);
     }
 
     Entity create(size_t mask = None);

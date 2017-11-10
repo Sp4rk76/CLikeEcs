@@ -27,6 +27,9 @@ Manager::Manager(size_t size)
 
     sys_.systems = (System **) malloc(MAX_NUMBER_OF_SYSTEMS * sizeof(System *));
 
+    // defualt entity ?
+
+
     // TODO: solve this case ?
     setDefaultSystem();
 
@@ -54,7 +57,7 @@ Manager::~Manager()
 
 void Manager::allocate(unsigned size)
 {
-    data_.n = 0;
+    data_.n = 1;
     data_.size = size;
     std::cout << "Allocated data size: " << data_.size << std::endl;
 
@@ -70,55 +73,43 @@ void Manager::allocate(unsigned size)
 
 void Manager::queryRegistration(Entity &entity)
 {
-    if (data_.reg_entities.count(entity.id) == 0)
-    {
-        data_.reg_entities.insert(entity.id);
-    }
+    /// NOTE: std::set has only 1 unique Key => no need for existence check
+    data_.reg_entities.insert(entity.id);
 
-    for (auto &reg_id : sys_.reg_systems)
+    for (auto &system_id : sys_.reg_systems)
     {
-        auto &system = sys_.systems[reg_id];
+        auto &system = sys_.systems[system_id];
 
         // TODO: check if the entity is already in the system to query
-
-        if (system->entityMatches().count(entity.id) == 0) // entity not already registered
+        if (isValidMask(entity.mask, system->requiredMask()))
         {
-            if (isValidMask(entity.mask, system->requiredMask()))
-            {
-                std::cout << "Register entity " << entity.id << "(" << entity.mask << ")" << " to System '"
-                          << system->name() << "'(" << system->requiredMask() << ")"
-                          << std::endl;
-
-                matchSystem(system, entity.id);
-            }
+            // TODO: unset this (only here for debug purposes)
+            std::cout << "Register entity " << entity.id << "(" << entity.mask << ")" << " to System '"
+                      << system->name() << "'(" << system->requiredMask() << ")"
+                      << std::endl;
+            matchSystem(system, entity.id);
         }
     }
 }
 
 void Manager::queryRegistration(System *system)
 {
-    if (sys_.reg_systems.count(system->id()) == 0)
-    {
-        sys_.reg_systems.insert(system->id());
-    }
+    sys_.reg_systems.insert(system->id());
 
     for (auto &reg_id : data_.reg_entities)
     {
         auto &entity = data_.entity[reg_id];
 
-        if (system->entityMatches().count(entity.id) == 0) // entity not already registered
+        if (isValidMask(entity.mask, system->requiredMask()))
         {
-            if (isValidMask(entity.mask, system->requiredMask()))
-            {
-                // TODO: check if entity is already registered
-                std::cout << "Register entity " << entity.id << "(" << entity.mask << ")" << " to System '"
-                          << system->name() << "'(" << system->requiredMask() << ")"
-                          << std::endl;
-
-                matchSystem(system, entity.id);
-            }
+            // TODO: unset this (only here for debug purposes)
+            std::cout << "Register entity " << entity.id << "(" << entity.mask << ")" << " to System '"
+                      << system->name() << "'(" << system->requiredMask() << ")"
+                      << std::endl;
+            matchSystem(system, entity.id);
         }
     }
+
 }
 
 size_t Manager::lookup(size_t entity_id)
@@ -152,6 +143,7 @@ Vector3 Manager::acceleration(size_t instance_id)
 }
 
 // TODO: check for method signature validity
+/// NOTE: It is possible to SET an Entity since we have its ID and MASK
 void Manager::setEntity(int instance_id, Entity &entity)
 {
     /// NOTE: instance id should be registered first !
@@ -256,6 +248,8 @@ size_t Manager::loadEntities(EntityManager *entityManager)
         }
 
         setEntity(generated_id, e);
+
+        loadedEntities++;
     }
 
     jsonHandler_->close();
@@ -370,46 +364,27 @@ void Manager::simulate(float dt)
 }
 
 ///*** VIP NOTE: The parameter is considered as an INSTANCE ID, not an ENTITY ID, so to use it, a lookup has to be made first ***///
-void Manager::destroyEC(size_t entity_id)
+void Manager::destroyEC(size_t i)
 {
-    /// NOTE: Entity's id NOT EXISTS in map
-    if(entity_id <= 0 || !entity_instances.find(entity_id)->first)
+    if (i <= 0)
     {
         return;
     }
 
-    int id = lookup(entity_id);
+    size_t id = lookup(i);
 
-    if (id > data_.n) // invalid index
-    {
-        return;
-    }
+    unsigned last = data_.n - 1;
+    Entity e = data_.entity[id];
+    Entity last_e = data_.entity[last];
 
-    size_t last = data_.n - 1;
-    size_t last_entity_id = data_.entity[last].id;
-
-    size_t inst = data_.entity[id].id;
-
-    // TODO: it do a "hole in the array" (Useless Occupied Memory)
     data_.entity[id] = data_.entity[last];
-    data_.entity[id].mask = data_.entity[last].mask;
     data_.mass[id] = data_.mass[last];
     data_.position[id] = data_.position[last];
     data_.velocity[id] = data_.velocity[last];
     data_.acceleration[id] = data_.acceleration[last];
 
-    /// NOTE: This trick finds the updated instance_id for the given entity
-    // std::cout << "("<< entity_instances.find(last_entity_id)->second <<")" << std::endl;
-    instance_ids.erase(entity_instances.find(last_entity_id)->second);
-
-    entity_instances[last_entity_id] = (size_t) id; // update "entityID<->instanceID map" /// ?
-    entity_instances.erase(inst);
-
-    // TODO: see if it is useful to keep it or not...
-    /// NOTE: in case of "YES", be careful while dealing with this register
-    data_.reg_entities.erase(inst); // ??
-
-    data_.n--; // (used_instances - destroyed_instance);
+    entity_instances[last_e.id] = id;
+    entity_instances.erase(e.id);
 }
 
 bool Manager::isValidMask(unsigned entityMask, unsigned systemMask)
