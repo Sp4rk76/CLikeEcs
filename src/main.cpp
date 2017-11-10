@@ -28,8 +28,8 @@ int main()
 //    manager->destroyEC(2);
 //    manager->destroyEC(3);
 
+    /// NOTE: the simulation can alterate the data (saved)
     manager->simulate();
-
     manager->save();
 
 

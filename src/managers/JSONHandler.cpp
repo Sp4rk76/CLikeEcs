@@ -54,7 +54,7 @@ void JSONHandler::save(const InstanceData &data, const char *filePath, const cha
     writer.Key("entities");
     writer.StartArray();
 
-    for (size_t id = 0; id < data.n; ++id)
+    for (size_t id = 0; id < data.n; id++)
     {
         // TODO: if object is "alive" or smthg like this, then perform save, otherwise not.
         size_t e_id = data.entity[id].id;
