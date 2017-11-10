@@ -23,14 +23,16 @@ int main()
         std::cout << "System Name : " << manager->sys()->systems[i]->name() << std::endl;
     }
 
-    manager->simulate();
-
-    manager->save();
-
     // TODO: Modify destroyEC method to properly delete an entity
 //    manager->destroyEC(1);
 //    manager->destroyEC(2);
 //    manager->destroyEC(3);
+
+    manager->simulate();
+
+    manager->save();
+
+
 
 //    auto toto = entityManager->create(14);
 //    auto new_instance_id = manager->generateInstanceId();

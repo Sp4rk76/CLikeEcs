@@ -56,12 +56,14 @@ void JSONHandler::save(const InstanceData &data, const char *filePath, const cha
 
     for (size_t id = 0; id < data.n; ++id)
     {
+        // TODO: if object is "alive" or smthg like this, then perform save, otherwise not.
+        size_t e_id = data.entity[id].id;
         size_t e_mask = data.entity[id].mask;
 
         writer.StartObject();
 
         writer.Key("id");
-        writer.Uint(id + 1);
+        writer.Uint(e_id);
 //      writer.Key("name");
 //      writer.String((data.entity[id].name).c_str());
         writer.Key("mask");

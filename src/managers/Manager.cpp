@@ -385,6 +385,8 @@ void Manager::destroyEC(size_t i)
 
     entity_instances[last_e.id] = id;
     entity_instances.erase(e.id);
+
+    --data_.n;
 }
 
 bool Manager::isValidMask(unsigned entityMask, unsigned systemMask)
