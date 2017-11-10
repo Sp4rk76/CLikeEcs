@@ -13,16 +13,12 @@ Manager::Manager()
 {
     allocate(3200);
 
-    setDefaultSystem();
-
     jsonHandler_ = new JSONHandler();
 }
 
 Manager::Manager(size_t size)
 {
     allocate(size);
-
-    setDefaultSystem();
 
     jsonHandler_ = new JSONHandler();
 }
@@ -161,7 +157,6 @@ void Manager::setAcceleration(size_t instance_id, Vector3 &acceleration)
     data_.acceleration[instance_id] = acceleration;
 }
 
-// TODO: make JSON loading code safier
 size_t Manager::loadEntities(EntityManager *entityManager)
 {
     size_t loadedEntities = 0;
@@ -177,7 +172,6 @@ size_t Manager::loadEntities(EntityManager *entityManager)
     {
         Entity e = entityManager->create();
 
-        // TODO: see if mass should be referering to physics or not
         if (!entity.HasMember("id") || !entity.HasMember("mask") || !entity.HasMember("mass"))
         {
             std::cout << "Error: id|mask|mass group missing in document" << std::endl;
@@ -200,7 +194,7 @@ size_t Manager::loadEntities(EntityManager *entityManager)
             return 0;
         }
 
-        setMass(generated_id, e_mass);
+        setMass((size_t) generated_id, e_mass);
 
 ///     NOTE: can't have errors from reading, except type mismath ?
         if (!entity.HasMember("position"))
@@ -258,7 +252,6 @@ size_t Manager::loadSystems(SystemManager *systemManager)
     auto root = document.GetObject();
     auto systems = root["systems"].GetArray();
 
-    // TODO: get data from JSON
     for (auto &system : systems)
     {
         size_t sys_id = 0;
@@ -279,11 +272,6 @@ size_t Manager::loadSystems(SystemManager *systemManager)
             } else
             {
                 sys_mask = system["requiredMask"].GetUint();
-//                auto maskArray = system["requiredMask"].GetArray();
-//                for(auto maskPart = maskArray.Begin(); maskPart != maskArray.End(); maskPart++)
-//                {
-//                    sys_mask += maskMapper.get(maskPart->GetString());
-//                }
             }
 
             if (!system.HasMember("name"))
@@ -294,8 +282,7 @@ size_t Manager::loadSystems(SystemManager *systemManager)
                 sys_name = (system["name"].GetString());
             }
 
-            // ..so it is "Validated"
-
+            // TODO: can be improved ? #ugly_code
             System *s = nullptr;
             if (sys_name == "physics2D")
             {
@@ -304,11 +291,9 @@ size_t Manager::loadSystems(SystemManager *systemManager)
             }
             if (sys_name == "renderer2D")
             {
-                // TODO: test this ...
                 s = systemManager->create<Renderer2D>(&data_, sys_mask);
             } else
             {
-                // TODO: idem...
                 s = systemManager->create<DefaultSystem>(&data_, None);
             }
 
@@ -336,9 +321,9 @@ void Manager::setSystem(System *system)
 {
     system->setData(&data_);
 
-    system->start();
-
     sys_.systems[system->id()] = system;
+
+    system->start();
 
     queryRegistration(system);
 }
@@ -348,11 +333,10 @@ void Manager::simulate(float dt)
     for (auto &id : sys_.reg_systems)
     {
         // update system at each index found
-        sys_.systems[id]->simulate(1);
+        sys_.systems[id]->simulate(dt);
     }
 }
 
-///*** VIP NOTE: The parameter is considered as an INSTANCE ID, not an ENTITY ID, so to use it, a lookup has to be made first ***///
 void Manager::destroyEC(size_t i)
 {
     if (i <= 0)
@@ -364,7 +348,7 @@ void Manager::destroyEC(size_t i)
 
     unsigned last = data_.n - 1;
     Entity e = data_.entity[id];
-    Entity last_e = data_.entity[last];
+    Entity last_entity = data_.entity[last];
 
     data_.entity[id] = data_.entity[last];
     data_.mass[id] = data_.mass[last];
@@ -372,7 +356,10 @@ void Manager::destroyEC(size_t i)
     data_.velocity[id] = data_.velocity[last];
     data_.acceleration[id] = data_.acceleration[last];
 
-    entity_instances[last_e.id] = id;
+    /// NOTE: erase instance_id at "value from entity-instance-map"
+    instance_ids.erase(entity_instances[last_entity.id]);
+
+    entity_instances[last_entity.id] = id;
     entity_instances.erase(e.id);
 
     --data_.n;
@@ -393,17 +380,6 @@ void Manager::save(/* all E & S */)
     // TODO: verify data integrity ?
     jsonHandler_->querySave(sys_);
     jsonHandler_->querySave(data_);
-}
-
-void Manager::setDefaultSystem()
-{
-    // TODO: pass data pertinent ?
-    auto default_system = new DefaultSystem(&data_); // TODO: leave this to null ?
-    default_system->set_id(DEFAULT);
-    default_system->setRequiredMask(DEFAULT);
-    default_system->setName("DEFAULT");
-
-    sys_.systems[DEFAULT] = default_system;
 }
 
 InstanceData *Manager::data()

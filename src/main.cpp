@@ -18,15 +18,15 @@ int main()
     system->setName("CustomSystem");
     manager->setSystem(system);
 
-    for(int i = 0; i < manager->sys()->reg_systems.size(); i++)
+    for(auto &id : manager->sys()->reg_systems)
     {
-        std::cout << "System Name : " << manager->sys()->systems[i]->name() << std::endl;
+        std::cout << "System Name : " << manager->sys()->systems[id]->name() << std::endl;
     }
 
     // TODO: Modify destroyEC method to properly delete an entity
-//    manager->destroyEC(1);
+    manager->destroyEC(1);
 //    manager->destroyEC(2);
-//    manager->destroyEC(3);
+    manager->destroyEC(3);
 
     /// NOTE: the simulation can alterate the data (saved)
     manager->simulate();
