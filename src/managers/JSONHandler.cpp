@@ -227,8 +227,8 @@ void JSONHandler::free()
     }
 }
 
-bool JSONHandler::match(const size_t entityMask, const size_t requiredMask)
+bool JSONHandler::match(size_t entityMask, size_t requiredMask)
 {
-    return ((entityMask & requiredMask) == requiredMask);
+    return ((requiredMask & entityMask) == requiredMask);
 }
 

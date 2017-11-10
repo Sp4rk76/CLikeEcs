@@ -52,13 +52,6 @@ int main()
     }
     std::cout << std::endl;
 
-    std::cout << "reg_entities | ";
-    for(auto& op : manager->data()->reg_entities)
-    {
-        std::cout << op << " | ";
-    }
-    std::cout << std::endl;
-
     return 0;
 }
 

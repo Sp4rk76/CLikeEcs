@@ -24,8 +24,6 @@ struct InstanceData
     size_t size = 0; ///< Max instanciable instances
     void *buffer = nullptr; ///< Buffer with instance data
 
-    std::set<size_t> reg_entities;
-
     Entity *entity = nullptr;
     float *mass = nullptr;
     Vector3 *position = nullptr;

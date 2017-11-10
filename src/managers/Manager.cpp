@@ -73,9 +73,6 @@ void Manager::allocate(unsigned size)
 
 void Manager::queryRegistration(Entity &entity)
 {
-    /// NOTE: std::set has only 1 unique Key => no need for existence check
-    data_.reg_entities.insert(entity.id);
-
     for (auto &system_id : sys_.reg_systems)
     {
         auto &system = sys_.systems[system_id];
@@ -96,9 +93,9 @@ void Manager::queryRegistration(System *system)
 {
     sys_.reg_systems.insert(system->id());
 
-    for (auto &reg_id : data_.reg_entities)
+    for (size_t id = 0; id < data_.n; ++id)
     {
-        auto &entity = data_.entity[reg_id];
+        auto &entity = data_.entity[id];
 
         if (isValidMask(entity.mask, system->requiredMask()))
         {
@@ -153,7 +150,7 @@ void Manager::setEntity(int instance_id, Entity &entity)
     queryRegistration(entity);
 }
 
-void Manager::setMass(size_t instance_id, float mass)
+void Manager::setMass(size_t instance_id, float &mass)
 {
     data_.mass[instance_id] = mass;
 }
@@ -197,11 +194,12 @@ size_t Manager::loadEntities(EntityManager *entityManager)
         }
 
         e.id = entity["id"].GetUint();
+        e.mask = entity["mask"].GetUint();
         // TODO: generate an instance ID for the entity
         int generated_id = generateInstanceId();
         setEntityInstance(e.id, generated_id); // TODO: map begins at 1 / 0 ?
 
-        e.mask = entity["mask"].GetUint();
+
 
         auto e_mass = entity["mass"].GetFloat();
 
@@ -211,7 +209,7 @@ size_t Manager::loadEntities(EntityManager *entityManager)
             return 0;
         }
 
-        setMass(e.id, e_mass);
+        setMass(generated_id, e_mass);
 
 ///     NOTE: can't have errors from reading, except type mismath ?
         if (!entity.HasMember("position"))

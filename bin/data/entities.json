@@ -2,7 +2,7 @@
   "entities": [
     {
       "id": 1,
-      "mask": 2,
+      "mask": 6,
       "name": "boris",
       "mass": 10,
       "position": {
@@ -18,7 +18,7 @@
     },
     {
       "id": 2,
-      "mask": 6,
+      "mask": 14,
       "name": "swan",
       "mass": 10,
       "position": {
