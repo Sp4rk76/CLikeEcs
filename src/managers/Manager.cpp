@@ -13,10 +13,7 @@ Manager::Manager()
 {
     allocate(3200);
 
-    // TODO: solve this case ?
     setDefaultSystem();
-
-    sys_.systems = (System **) malloc(MAX_NUMBER_OF_SYSTEMS * sizeof(System *));
 
     jsonHandler_ = new JSONHandler();
 }
@@ -25,9 +22,6 @@ Manager::Manager(size_t size)
 {
     allocate(size);
 
-    sys_.systems = (System **) malloc(MAX_NUMBER_OF_SYSTEMS * sizeof(System *));
-
-    // TODO: solve this case ?
     setDefaultSystem();
 
     jsonHandler_ = new JSONHandler();
@@ -46,7 +40,6 @@ Manager::~Manager()
 
     free(data_.buffer);
 
-    // TODO: call jsonHandler_->close, which calls free itself ?
     jsonHandler_->free();
     delete jsonHandler_;
     jsonHandler_ = nullptr;
@@ -54,13 +47,14 @@ Manager::~Manager()
 
 void Manager::allocate(unsigned size)
 {
+    // System allocation & initialization
+    sys_.systems = (System **) malloc(MAX_NUMBER_OF_SYSTEMS * sizeof(System *));
+
+    // Data allocation & initialization
     data_.n = 0;
     data_.size = size;
-    std::cout << "Allocated data size: " << data_.size << std::endl;
-
     const unsigned int bytes = size * (sizeof(Entity) + sizeof(float) + (3 * sizeof(Vector3)));
     data_.buffer = malloc(bytes);
-
     data_.entity = (Entity *) (data_.buffer);
     data_.mass = (float *) (data_.entity + size);
     data_.position = (Vector3 *) (data_.mass + size);
@@ -400,17 +394,6 @@ void Manager::save(/* all E & S */)
     jsonHandler_->querySave(sys_);
     jsonHandler_->querySave(data_);
 }
-
-void Manager::setMask(size_t instance_id, size_t mask)
-{
-    data_.entity[instance_id].mask = mask;
-}
-
-size_t Manager::mask(size_t instance_id)
-{
-    return data_.entity[instance_id].mask;
-}
-
 
 void Manager::setDefaultSystem()
 {
