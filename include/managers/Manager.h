@@ -14,7 +14,6 @@
 #include "InstanceSystem.h"
 #include "EntityManager.h"
 #include <managers/SystemManager.h>
-#include "rapidjson/document.h"
 
 typedef std::map<size_t, size_t> EntityInstanceMap;
 
@@ -76,8 +75,6 @@ public:
     System *system(System *system);
 
     void setSystem(System *system);
-
-    void setDefaultSystem();
 
     InstanceData *data();
 

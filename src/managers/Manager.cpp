@@ -2,16 +2,14 @@
 // Created by Sp4rk on 03-10-17.
 //
 
-#include <fstream>
 #include <systems/Physics2D.h>
 #include <systems/DefaultSystem.h>
 #include <systems/Renderer2D.h>
 #include "managers/Manager.h"
 
-// TODO: custom allocation for systems ?
 Manager::Manager()
 {
-    allocate(3200);
+    allocate(1 << 13); // 8192
 
     jsonHandler_ = new JSONHandler();
 }
@@ -25,10 +23,10 @@ Manager::Manager(size_t size)
 
 Manager::~Manager()
 {
-    for (auto n : sys_.reg_systems)
+    for (auto id : sys_.reg_systems)
     {
-        delete sys_.systems[n];
-        sys_.systems[n] = nullptr;
+        delete sys_.systems[id];
+        sys_.systems[id] = nullptr;
     }
 
     delete sys_.systems;
@@ -64,7 +62,6 @@ void Manager::queryRegistration(Entity &entity)
     {
         auto &system = sys_.systems[system_id];
 
-        // TODO: check if the entity is already in the system to query
         if (isValidMask(entity.mask, system->requiredMask()))
         {
             // TODO: unset this (only here for debug purposes)
@@ -93,7 +90,6 @@ void Manager::queryRegistration(System *system)
             matchSystem(system, entity.id);
         }
     }
-
 }
 
 size_t Manager::lookup(size_t entity_id)
@@ -126,12 +122,13 @@ Vector3 Manager::acceleration(size_t instance_id)
     return data_.acceleration[instance_id];
 }
 
-// TODO: check for method signature validity
 /// NOTE: It is possible to SET an Entity since we have its ID and MASK
 void Manager::setEntity(int instance_id, Entity &entity)
 {
-    /// NOTE: instance id should be registered first !
+    setEntityInstance(entity.id, instance_id);
+
     data_.entity[instance_id] = entity;
+
     data_.n++; // (used_instances + created_instance);
 
     queryRegistration(entity);
@@ -180,11 +177,8 @@ size_t Manager::loadEntities(EntityManager *entityManager)
 
         e.id = entity["id"].GetUint();
         e.mask = entity["mask"].GetUint();
-        // TODO: generate an instance ID for the entity
+
         int generated_id = generateInstanceId();
-        setEntityInstance(e.id, generated_id); // TODO: map begins at 1 / 0 ?
-
-
 
         auto e_mass = entity["mass"].GetFloat();
 
