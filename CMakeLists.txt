@@ -71,7 +71,10 @@ set(SOURCE_FILES
         src/systems/Renderer2D.cpp
         include/components/Transform.h
         src/components/Vector3.cpp
-        include/utils/MaskMapper.h src/utils/MaskMapper.cpp)
+        include/utils/MaskMapper.h
+        src/utils/MaskMapper.cpp
+        src/display/Screen.cpp
+        include/display/Screen.h include/utils/Glew.h src/utils/Glew.cpp src/utils/Glew.cpp)
 
 # Executable
 add_executable(CLikeECS ${SOURCE_FILES})
