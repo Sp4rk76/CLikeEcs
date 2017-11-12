@@ -81,7 +81,6 @@ void SceneOpenGL::simulate()
         if (event_.window.event == SDL_WINDOWEVENT_CLOSE)
         {
             quit = true;
-
         }
 
         glClear(GL_COLOR_BUFFER_BIT);

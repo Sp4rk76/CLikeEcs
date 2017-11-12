@@ -5,6 +5,11 @@
 #ifndef CLIKEECS_SCENEOPENGL_H
 #define CLIKEECS_SCENEOPENGL_H
 
+// GLM
+#include <glm/glm.hpp>
+#include <glm/gtx/transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
 #include <display/Screen.h>
 #include <glew.h>
 
@@ -28,6 +33,9 @@ public:
 private:
     Screen *screen_;
     SDL_Event event_;
+
+    glm::mat4 projection; // projection matrice
+    glm::mat4 modelview; // modelview matrice
 };
 
 #endif //CLIKEECS_SCENEOPENGL_H

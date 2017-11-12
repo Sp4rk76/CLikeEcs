@@ -17,6 +17,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake-modules")
 include_directories(bin/)
 include_directories(src/)
 include_directories(include/)
+include_directories(lib/)
 
 # SDL2
 find_package(SDL2 REQUIRED)
