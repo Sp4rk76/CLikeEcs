@@ -39,7 +39,8 @@ public:
 // TODO: when setting a new Entity instance in map, check if it already exists !
 int main(int argc, char **argv)
 {
-    float vertices[6] = {-0.5,-0.5,   0.0,0.5,   0.5,-0.5};
+    float vertices[] = {0.0, 0.0,   0.5,0.0,   0.0,0.5,
+                         -0.8, -0.8,   -0.3, -0.8,   -0.8, -0.3};
 
     SDL_Event event;
     bool quit(false);
@@ -70,12 +71,10 @@ int main(int argc, char **argv)
 
         glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, vertices);
         glEnableVertexAttribArray(0);
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+        glDrawArrays(GL_TRIANGLES, 0, 6);
         glDisableVertexAttribArray(0);
 
         SDL_GL_SwapWindow(screen->getWindow());
-
-
     }
 
     SparkEngine sparkEngine;
