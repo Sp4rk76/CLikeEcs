@@ -74,7 +74,7 @@ set(SOURCE_FILES
         include/utils/MaskMapper.h
         src/utils/MaskMapper.cpp
         src/display/Screen.cpp
-        include/display/Screen.h include/utils/Glew.h src/utils/Glew.cpp src/utils/Glew.cpp)
+        include/display/Screen.h include/utils/Glew.h src/utils/Glew.cpp src/utils/Glew.cpp include/scenes/SceneOpenGL.h src/scenes/SceneOpenGL.cpp)
 
 # Executable
 add_executable(CLikeECS ${SOURCE_FILES})
