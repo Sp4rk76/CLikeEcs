@@ -14,9 +14,6 @@
 #include "InstanceSystem.h"
 #include "EntityManager.h"
 #include <managers/SystemManager.h>
-#include "rapidjson/document.h"
-
-#define INVALID_ENTITY 0
 
 typedef std::map<size_t, size_t> EntityInstanceMap;
 
@@ -41,8 +38,6 @@ public:
 
     Entity entity(size_t instance_id);
 
-    size_t mask(size_t instance_id);
-
     float mass(size_t instance_id);
 
     Vector3 position(size_t instance_id);
@@ -53,8 +48,6 @@ public:
 
     //TODO: signature validity ? viable ?
     void setEntity(int instance_id, Entity &entity);
-
-    void setMask(size_t instance_id, size_t mask);
 
     void setMass(size_t instance_id, float &mass);
 
@@ -82,8 +75,6 @@ public:
     System *system(System *system);
 
     void setSystem(System *system);
-
-    void setDefaultSystem();
 
     InstanceData *data();
 

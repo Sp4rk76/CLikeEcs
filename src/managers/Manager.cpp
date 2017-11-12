@@ -2,21 +2,14 @@
 // Created by Sp4rk on 03-10-17.
 //
 
-#include <fstream>
 #include <systems/Physics2D.h>
 #include <systems/DefaultSystem.h>
 #include <systems/Renderer2D.h>
 #include "managers/Manager.h"
 
-// TODO: custom allocation for systems ?
 Manager::Manager()
 {
-    allocate(3200);
-
-    // TODO: solve this case ?
-    setDefaultSystem();
-
-    sys_.systems = (System **) malloc(MAX_NUMBER_OF_SYSTEMS * sizeof(System *));
+    allocate(1 << 13); // 8192
 
     jsonHandler_ = new JSONHandler();
 }
@@ -25,20 +18,15 @@ Manager::Manager(size_t size)
 {
     allocate(size);
 
-    sys_.systems = (System **) malloc(MAX_NUMBER_OF_SYSTEMS * sizeof(System *));
-
-    // TODO: solve this case ?
-    setDefaultSystem();
-
     jsonHandler_ = new JSONHandler();
 }
 
 Manager::~Manager()
 {
-    for (auto n : sys_.reg_systems)
+    for (auto id : sys_.reg_systems)
     {
-        delete sys_.systems[n];
-        sys_.systems[n] = nullptr;
+        delete sys_.systems[id];
+        sys_.systems[id] = nullptr;
     }
 
     delete sys_.systems;
@@ -46,7 +34,6 @@ Manager::~Manager()
 
     free(data_.buffer);
 
-    // TODO: call jsonHandler_->close, which calls free itself ?
     jsonHandler_->free();
     delete jsonHandler_;
     jsonHandler_ = nullptr;
@@ -54,13 +41,14 @@ Manager::~Manager()
 
 void Manager::allocate(unsigned size)
 {
+    // System allocation & initialization
+    sys_.systems = (System **) malloc(MAX_NUMBER_OF_SYSTEMS * sizeof(System *));
+
+    // Data allocation & initialization
     data_.n = 0;
     data_.size = size;
-    std::cout << "Allocated data size: " << data_.size << std::endl;
-
     const unsigned int bytes = size * (sizeof(Entity) + sizeof(float) + (3 * sizeof(Vector3)));
     data_.buffer = malloc(bytes);
-
     data_.entity = (Entity *) (data_.buffer);
     data_.mass = (float *) (data_.entity + size);
     data_.position = (Vector3 *) (data_.mass + size);
@@ -74,7 +62,6 @@ void Manager::queryRegistration(Entity &entity)
     {
         auto &system = sys_.systems[system_id];
 
-        // TODO: check if the entity is already in the system to query
         if (isValidMask(entity.mask, system->requiredMask()))
         {
             // TODO: unset this (only here for debug purposes)
@@ -103,7 +90,6 @@ void Manager::queryRegistration(System *system)
             matchSystem(system, entity.id);
         }
     }
-
 }
 
 size_t Manager::lookup(size_t entity_id)
@@ -136,12 +122,13 @@ Vector3 Manager::acceleration(size_t instance_id)
     return data_.acceleration[instance_id];
 }
 
-// TODO: check for method signature validity
 /// NOTE: It is possible to SET an Entity since we have its ID and MASK
 void Manager::setEntity(int instance_id, Entity &entity)
 {
-    /// NOTE: instance id should be registered first !
+    setEntityInstance(entity.id, instance_id);
+
     data_.entity[instance_id] = entity;
+
     data_.n++; // (used_instances + created_instance);
 
     queryRegistration(entity);
@@ -167,7 +154,6 @@ void Manager::setAcceleration(size_t instance_id, Vector3 &acceleration)
     data_.acceleration[instance_id] = acceleration;
 }
 
-// TODO: make JSON loading code safier
 size_t Manager::loadEntities(EntityManager *entityManager)
 {
     size_t loadedEntities = 0;
@@ -183,7 +169,6 @@ size_t Manager::loadEntities(EntityManager *entityManager)
     {
         Entity e = entityManager->create();
 
-        // TODO: see if mass should be referering to physics or not
         if (!entity.HasMember("id") || !entity.HasMember("mask") || !entity.HasMember("mass"))
         {
             std::cout << "Error: id|mask|mass group missing in document" << std::endl;
@@ -192,11 +177,8 @@ size_t Manager::loadEntities(EntityManager *entityManager)
 
         e.id = entity["id"].GetUint();
         e.mask = entity["mask"].GetUint();
-        // TODO: generate an instance ID for the entity
+
         int generated_id = generateInstanceId();
-        setEntityInstance(e.id, generated_id); // TODO: map begins at 1 / 0 ?
-
-
 
         auto e_mass = entity["mass"].GetFloat();
 
@@ -206,7 +188,7 @@ size_t Manager::loadEntities(EntityManager *entityManager)
             return 0;
         }
 
-        setMass(generated_id, e_mass);
+        setMass((size_t) generated_id, e_mass);
 
 ///     NOTE: can't have errors from reading, except type mismath ?
         if (!entity.HasMember("position"))
@@ -264,7 +246,6 @@ size_t Manager::loadSystems(SystemManager *systemManager)
     auto root = document.GetObject();
     auto systems = root["systems"].GetArray();
 
-    // TODO: get data from JSON
     for (auto &system : systems)
     {
         size_t sys_id = 0;
@@ -285,11 +266,6 @@ size_t Manager::loadSystems(SystemManager *systemManager)
             } else
             {
                 sys_mask = system["requiredMask"].GetUint();
-//                auto maskArray = system["requiredMask"].GetArray();
-//                for(auto maskPart = maskArray.Begin(); maskPart != maskArray.End(); maskPart++)
-//                {
-//                    sys_mask += maskMapper.get(maskPart->GetString());
-//                }
             }
 
             if (!system.HasMember("name"))
@@ -300,8 +276,7 @@ size_t Manager::loadSystems(SystemManager *systemManager)
                 sys_name = (system["name"].GetString());
             }
 
-            // ..so it is "Validated"
-
+            // TODO: can be improved ? #ugly_code
             System *s = nullptr;
             if (sys_name == "physics2D")
             {
@@ -310,11 +285,9 @@ size_t Manager::loadSystems(SystemManager *systemManager)
             }
             if (sys_name == "renderer2D")
             {
-                // TODO: test this ...
                 s = systemManager->create<Renderer2D>(&data_, sys_mask);
             } else
             {
-                // TODO: idem...
                 s = systemManager->create<DefaultSystem>(&data_, None);
             }
 
@@ -342,9 +315,9 @@ void Manager::setSystem(System *system)
 {
     system->setData(&data_);
 
-    system->start();
-
     sys_.systems[system->id()] = system;
+
+    system->start();
 
     queryRegistration(system);
 }
@@ -354,11 +327,10 @@ void Manager::simulate(float dt)
     for (auto &id : sys_.reg_systems)
     {
         // update system at each index found
-        sys_.systems[id]->simulate(1);
+        sys_.systems[id]->simulate(dt);
     }
 }
 
-///*** VIP NOTE: The parameter is considered as an INSTANCE ID, not an ENTITY ID, so to use it, a lookup has to be made first ***///
 void Manager::destroyEC(size_t i)
 {
     if (i <= 0)
@@ -370,7 +342,7 @@ void Manager::destroyEC(size_t i)
 
     unsigned last = data_.n - 1;
     Entity e = data_.entity[id];
-    Entity last_e = data_.entity[last];
+    Entity last_entity = data_.entity[last];
 
     data_.entity[id] = data_.entity[last];
     data_.mass[id] = data_.mass[last];
@@ -378,7 +350,10 @@ void Manager::destroyEC(size_t i)
     data_.velocity[id] = data_.velocity[last];
     data_.acceleration[id] = data_.acceleration[last];
 
-    entity_instances[last_e.id] = id;
+    /// NOTE: erase instance_id at "value from entity-instance-map"
+    instance_ids.erase(entity_instances[last_entity.id]);
+
+    entity_instances[last_entity.id] = id;
     entity_instances.erase(e.id);
 
     --data_.n;
@@ -399,28 +374,6 @@ void Manager::save(/* all E & S */)
     // TODO: verify data integrity ?
     jsonHandler_->querySave(sys_);
     jsonHandler_->querySave(data_);
-}
-
-void Manager::setMask(size_t instance_id, size_t mask)
-{
-    data_.entity[instance_id].mask = mask;
-}
-
-size_t Manager::mask(size_t instance_id)
-{
-    return data_.entity[instance_id].mask;
-}
-
-
-void Manager::setDefaultSystem()
-{
-    // TODO: pass data pertinent ?
-    auto default_system = new DefaultSystem(&data_); // TODO: leave this to null ?
-    default_system->set_id(DEFAULT);
-    default_system->setRequiredMask(DEFAULT);
-    default_system->setName("DEFAULT");
-
-    sys_.systems[DEFAULT] = default_system;
 }
 
 InstanceData *Manager::data()

@@ -14,15 +14,14 @@ set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake-modules")
 
 # Project directories
-include_directories(bin)
-include_directories(src)
-include_directories(include)
+include_directories(bin/)
+include_directories(src/)
+include_directories(include/)
 
+# SDL2
+find_package(SDL2 REQUIRED)
+include_directories(${SDL2_INCLUDE_DIRS})
 
-## SDL2
-#find_package(SDL2 REQUIRED)
-#include_directories(${SDL2_INCLUDE_DIRS})
-#
 ## SDL2_image
 #find_package(SDL2_image REQUIRED)
 #include_directories(${SDL2_IMAGE_INCLUDE_DIRS})
@@ -31,6 +30,16 @@ include_directories(include)
 #find_package(SDL2_ttf REQUIRED)
 #include_directories(${SDL2_TTF_INCLUDE_DIRS})
 
+# OpenGL
+find_package(OpenGL REQUIRED)
+include_directories(${OPENGL_INCLUDE_DIRS})
+
+## GoogleTest & GoogleMock (Unit Testing)
+#add_subdirectory(lib/googletest-master)
+#include_directories(lib/googletest-master/googletest/include)
+#include_directories(lib/googletest-master/googlemock/include)
+
+# Source files (to compile)
 set(SOURCE_FILES
         include/entities/Entity.h
         include/utils/DebugNameComponentManager.h
@@ -62,12 +71,17 @@ set(SOURCE_FILES
         src/systems/Renderer2D.cpp
         include/components/Transform.h
         src/components/Vector3.cpp
-        include/utils/MaskMapper.h src/utils/MaskMapper.cpp)
+        include/utils/MaskMapper.h
+        src/utils/MaskMapper.cpp
+        src/display/Screen.cpp
+        include/display/Screen.h include/utils/Glew.h src/utils/Glew.cpp src/utils/Glew.cpp)
 
 # Executable
 add_executable(CLikeECS ${SOURCE_FILES})
 
 # Link libraries
-#target_link_libraries(CLikeECS ${SDL2_LIBRARIES})
+target_link_libraries(CLikeECS ${OPENGL_LIBRARIES})
+target_link_libraries(CLikeECS ${SDL2_LIBRARIES})
 #target_link_libraries(CLikeECS ${SDL2_IMAGE_LIBRARIES})
 #target_link_libraries(CLikeECS ${SDL2_TTF_LIBRARIES})
+#target_link_libraries(CLikeECS gtest gtest_main)
