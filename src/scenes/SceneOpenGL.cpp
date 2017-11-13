@@ -53,6 +53,8 @@ bool SceneOpenGL::initGL()
 
 #endif
 
+    glEnable(GL_DEPTH_TEST);
+
     return true;
 }
 
@@ -61,19 +63,48 @@ void SceneOpenGL::simulate()
     // Variables (vertices, etc...
     bool quit(false);
 
-    float vertices[] = {-0.5, 0.0, 0.0, 1.0, 0.5, 0.0,
-                        -0.5, 0.0, 0.0, -1.0, 0.5, 0.0};
-    float colors[] = {240.0 / 255.0, 210.0 / 255.0, 23.0 / 255.0,
-                      230.0 / 255.0, 0.0, 230.0 / 255.0,
-                      0.0, 1.0, 0.0,
+    float vertices[] = {-1.0, -1.0, -1.0, 1.0, -1.0, -1.0, 1.0, 1.0, -1.0,     // Face 1
+                        -1.0, -1.0, -1.0, -1.0, 1.0, -1.0, 1.0, 1.0, -1.0,     // Face 1
 
-                      240.0 / 255.0, 210.0 / 255.0, 23.0 / 255.0,
-                      0.0, 0.0, 1.0,
-                      0.0, 1.0, 0.0};
+                        1.0, -1.0, 1.0, 1.0, -1.0, -1.0, 1.0, 1.0, -1.0,       // Face 2
+                        1.0, -1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, -1.0,         // Face 2
+
+                        -1.0, -1.0, 1.0, 1.0, -1.0, 1.0, 1.0, -1.0, -1.0,      // Face 3
+                        -1.0, -1.0, 1.0, -1.0, -1.0, -1.0, 1.0, -1.0, -1.0,    // Face 3
+
+                        -1.0, -1.0, 1.0, 1.0, -1.0, 1.0, 1.0, 1.0, 1.0,        // Face 4
+                        -1.0, -1.0, 1.0, -1.0, 1.0, 1.0, 1.0, 1.0, 1.0,        // Face 4
+
+                        -1.0, -1.0, -1.0, -1.0, -1.0, 1.0, -1.0, 1.0, 1.0,     // Face 5
+                        -1.0, -1.0, -1.0, -1.0, 1.0, -1.0, -1.0, 1.0, 1.0,     // Face 5
+
+                        -1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, -1.0,         // Face 6
+                        -1.0, 1.0, 1.0, -1.0, 1.0, -1.0, 1.0, 1.0, -1.0};      // Face 6
+    float colors[] = {1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0,           // Face 1
+                      1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0,           // Face 1
+
+                      0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0,           // Face 2
+                      0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0,           // Face 2
+
+                      0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0,           // Face 3
+                      0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0,           // Face 3
+
+                      1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0,           // Face 4
+                      1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0,           // Face 4
+
+                      0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0,           // Face 5
+                      0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0,           // Face 5
+
+                      0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0,           // Face 6
+                      0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0};          // Face 6
 
     // Create a Shader
-    Shader shaderColor("shaders/couleur2D.vert", "shaders/couleur2D.frag");
+    Shader shaderColor("shaders/couleur3D.vert", "shaders/couleur3D.frag");
     shaderColor.charger();
+
+    // Initialize Matrices
+    projection = glm::perspective(70.0, (double) (screen_->getWidth() / screen_->getHeight()), 1.0, 100.0);
+    modelview = glm::mat4(1.0);
 
     while (!quit)
     {
@@ -83,21 +114,32 @@ void SceneOpenGL::simulate()
             quit = true;
         }
 
-        glClear(GL_COLOR_BUFFER_BIT);
+        // Clear screen (gl)
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        // Re-initialization: modelview
+        modelview = glm::lookAt(glm::vec3(3,3,3), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
 
         // Activate Shader
         glUseProgram(shaderColor.getProgramID());
 
         // Define / Send vertices
-        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, vertices);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, vertices);
         glEnableVertexAttribArray(0);
 
         // Define / Send colors
         glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, colors);
         glEnableVertexAttribArray(1);
 
+        // Send matrices to Shader
+        glUniformMatrix4fv(glGetUniformLocation(shaderColor.getProgramID(), "projection"), 1, GL_FALSE,
+                           glm::value_ptr(projection));
+        glUniformMatrix4fv(glGetUniformLocation(shaderColor.getProgramID(), "modelview"), 1, GL_FALSE,
+                           glm::value_ptr(modelview));
+
         // Display triangle with shader
-        glDrawArrays(GL_TRIANGLES, 0, 6);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+
 
         /// Note: deactivate array in reverse activation order !
         glDisableVertexAttribArray(1);
@@ -106,7 +148,7 @@ void SceneOpenGL::simulate()
         // Deactivate Shader
         glUseProgram(0);
 
-        SDL_GL_SwapWindow(screen_->getWindow());
+        SDL_GL_SwapWindow(SDL_GL_GetCurrentWindow());
     }
 
     close();

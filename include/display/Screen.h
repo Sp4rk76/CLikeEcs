@@ -46,9 +46,9 @@ public:
 private:
     const std::string SCREEN_TITLE = "BindingWorlds";
 
-    const int SCREEN_WIDTH = 640;
+    const int SCREEN_WIDTH = 800;
 
-    const int SCREEN_HEIGHT = 400;
+    const int SCREEN_HEIGHT = 600;
 
     const int SCREEN_FPS = 60;
 
