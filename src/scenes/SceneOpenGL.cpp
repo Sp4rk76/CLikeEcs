@@ -76,15 +76,11 @@ void SceneOpenGL::simulate()
 
     float angle(0);
 
-    while (!quit)
+    while (!input_.quit())
     {
         startTime = SDL_GetTicks();
 
-        SDL_PollEvent(&event_);
-        if (event_.window.event == SDL_WINDOWEVENT_CLOSE)
-        {
-            quit = true;
-        }
+        input_.handleEvents();
 
         // Clear screen (gl)
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

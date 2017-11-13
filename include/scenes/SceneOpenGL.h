@@ -12,6 +12,7 @@
 
 #include <display/Screen.h>
 #include <glew.h>
+#include <managers/Input.h>
 
 class SceneOpenGL
 {
@@ -32,6 +33,7 @@ public:
 
 private:
     Screen *screen_;
+    Input input_;
     SDL_Event event_;
 
     glm::mat4 projection; // projection matrice
