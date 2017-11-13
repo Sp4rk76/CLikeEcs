@@ -76,9 +76,6 @@ set(SOURCE_FILES
         src/utils/MaskMapper.cpp
         src/display/Screen.cpp
         include/display/Screen.h
-        include/utils/Glew.h
-        src/utils/Glew.cpp
-        src/utils/Glew.cpp
         include/scenes/SceneOpenGL.h
         include/effects/Shader.h
         src/scenes/SceneOpenGL.cpp

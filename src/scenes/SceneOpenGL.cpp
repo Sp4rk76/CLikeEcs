@@ -118,7 +118,7 @@ void SceneOpenGL::simulate()
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // Re-initialization: modelview
-        modelview = glm::lookAt(glm::vec3(3,3,3), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
+        modelview = glm::lookAt(glm::vec3(4,4,4), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
 
         // Activate Shader
         glUseProgram(shaderColor.getProgramID());
