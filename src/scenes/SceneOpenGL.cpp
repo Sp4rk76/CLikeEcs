@@ -3,6 +3,7 @@
 //
 
 #include <effects/Shader.h>
+#include <scenes/prefabs/Cube.h>
 #include "scenes/SceneOpenGL.h"
 
 SceneOpenGL::SceneOpenGL()
@@ -63,52 +64,23 @@ void SceneOpenGL::simulate()
     // Variables (vertices, etc...
     bool quit(false);
 
-    float vertices[] = {-1.0, -1.0, -1.0, 1.0, -1.0, -1.0, 1.0, 1.0, -1.0,     // Face 1
-                        -1.0, -1.0, -1.0, -1.0, 1.0, -1.0, 1.0, 1.0, -1.0,     // Face 1
-
-                        1.0, -1.0, 1.0, 1.0, -1.0, -1.0, 1.0, 1.0, -1.0,       // Face 2
-                        1.0, -1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, -1.0,         // Face 2
-
-                        -1.0, -1.0, 1.0, 1.0, -1.0, 1.0, 1.0, -1.0, -1.0,      // Face 3
-                        -1.0, -1.0, 1.0, -1.0, -1.0, -1.0, 1.0, -1.0, -1.0,    // Face 3
-
-                        -1.0, -1.0, 1.0, 1.0, -1.0, 1.0, 1.0, 1.0, 1.0,        // Face 4
-                        -1.0, -1.0, 1.0, -1.0, 1.0, 1.0, 1.0, 1.0, 1.0,        // Face 4
-
-                        -1.0, -1.0, -1.0, -1.0, -1.0, 1.0, -1.0, 1.0, 1.0,     // Face 5
-                        -1.0, -1.0, -1.0, -1.0, 1.0, -1.0, -1.0, 1.0, 1.0,     // Face 5
-
-                        -1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, -1.0,         // Face 6
-                        -1.0, 1.0, 1.0, -1.0, 1.0, -1.0, 1.0, 1.0, -1.0};      // Face 6
-    float colors[] = {1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0,           // Face 1
-                      1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0,           // Face 1
-
-                      0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0,           // Face 2
-                      0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0,           // Face 2
-
-                      0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0,           // Face 3
-                      0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0,           // Face 3
-
-                      1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0,           // Face 4
-                      1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0,           // Face 4
-
-                      0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0,           // Face 5
-                      0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0,           // Face 5
-
-                      0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0,           // Face 6
-                      0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0};          // Face 6
-
-    // Create a Shader
-    Shader shaderColor("shaders/couleur3D.vert", "shaders/couleur3D.frag");
-    shaderColor.charger();
+    size_t frameRate = 1000 / 60;
+    Uint32 startTime = 0, endTime = 0, elapsedTime = 0;
 
     // Initialize Matrices
     projection = glm::perspective(70.0, (double) (screen_->getWidth() / screen_->getHeight()), 1.0, 100.0);
     modelview = glm::mat4(1.0);
 
+    Cube cube(1.0, "shaders/couleur3D.vert", "shaders/couleur3D.frag");
+
+
+    float angle(0);
+
     while (!quit)
     {
-        SDL_WaitEvent(&event_);
+        startTime = SDL_GetTicks();
+
+        SDL_PollEvent(&event_);
         if (event_.window.event == SDL_WINDOWEVENT_CLOSE)
         {
             quit = true;
@@ -118,37 +90,35 @@ void SceneOpenGL::simulate()
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // Re-initialization: modelview
-        modelview = glm::lookAt(glm::vec3(4,4,4), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
+        modelview = glm::lookAt(glm::vec3(10,10,10), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
 
-        // Activate Shader
-        glUseProgram(shaderColor.getProgramID());
+        if(angle >= 360.0)
+        {
+            angle -= 360.0;
+        }
 
-        // Define / Send vertices
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, vertices);
-        glEnableVertexAttribArray(0);
+        angle += 1.0;
 
-        // Define / Send colors
-        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, colors);
-        glEnableVertexAttribArray(1);
+        // Save model view at this state
+        glm::mat4 saveModelView = modelview;
 
-        // Send matrices to Shader
-        glUniformMatrix4fv(glGetUniformLocation(shaderColor.getProgramID(), "projection"), 1, GL_FALSE,
-                           glm::value_ptr(projection));
-        glUniformMatrix4fv(glGetUniformLocation(shaderColor.getProgramID(), "modelview"), 1, GL_FALSE,
-                           glm::value_ptr(modelview));
+        modelview = glm::rotate(modelview, angle, glm::vec3(0,1,0));
+        cube.display(projection, modelview);
 
-        // Display triangle with shader
-        glDrawArrays(GL_TRIANGLES, 0, 36);
+        // Restore model view at previous state
+        modelview = saveModelView;
 
-
-        /// Note: deactivate array in reverse activation order !
-        glDisableVertexAttribArray(1);
-        glDisableVertexAttribArray(0);
-
-        // Deactivate Shader
-        glUseProgram(0);
+        modelview = glm::translate(modelview, glm::vec3(10,0,0));
+        cube.display(projection, modelview);
 
         SDL_GL_SwapWindow(SDL_GL_GetCurrentWindow());
+
+        endTime = SDL_GetTicks();
+        elapsedTime = endTime - startTime;
+        if(elapsedTime < frameRate) // elapsedTime < (1000/60);
+        {
+            SDL_Delay(frameRate - elapsedTime); // wait rest of time
+        }
     }
 
     close();

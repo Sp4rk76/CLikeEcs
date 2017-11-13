@@ -13,6 +13,7 @@
 #include "components/Transform.h"
 #include <set>
 #include <components/Matrix4x4.h>
+#include <glm/glm.hpp>
 
 struct InstanceData
 {
@@ -26,8 +27,8 @@ struct InstanceData
     Vector3 *velocity = nullptr;
     Vector3 *acceleration = nullptr;
 
-    Matrix4x4 *local = nullptr;
-    Matrix4x4 *world = nullptr;
+    glm::mat4 *local = nullptr;
+    glm::mat4 *world = nullptr;
     size_t *parent = nullptr;
     size_t *first_child = nullptr;
     size_t *next_sibling = nullptr;

@@ -7,6 +7,8 @@
 
 #include "System.h"
 
+#include <iostream>
+
 class TransformComponent : public System
 {
 public:
@@ -22,7 +24,7 @@ public:
         return matrix4x4;
     }
 
-    void setLocal(size_t id, const Matrix4x4 &matrix)
+    void setLocal(size_t id, const glm::mat4 &matrix)
     {
         data_->local[id] = matrix;
 
@@ -32,11 +34,29 @@ public:
     }
 
     /// CHILDworld = PARENTworld * CHILDlocal
-    void transform(const Matrix4x4 &parent, size_t id)
+    void transform(const glm::mat4 &parent, size_t id)
     {
         data_->world[id] = data_->local * parent; /// not sure about this line
+
+        size_t child = data_->first_child[id];
+
+        while (isValid(child))
+        {
+            transform(data_->world[id], child);
+            child = data_->next_sibling[child];
+            std::cout << "hello it's gregou" << std::endl;
+        }
     }
 
+//    Possible Solution:
+//    // Move element at A (and references to it) to size.
+//    [size] <--- [A]
+//
+//    //Now nothing refers to A, so we can safely move element at B (and references to it) to A.
+//    [A] <--- [B]
+//
+//    //And finally move the element at size to B.
+//    [B] <-- [size]
 
 };
 
