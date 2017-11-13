@@ -79,7 +79,7 @@ set(SOURCE_FILES
         include/scenes/SceneOpenGL.h
         include/effects/Shader.h
         src/scenes/SceneOpenGL.cpp
-        src/effects/Shader.cpp)
+        src/effects/Shader.cpp include/components/Matrix4x4.h)
 
 # Executable
 add_executable(CLikeECS ${SOURCE_FILES})

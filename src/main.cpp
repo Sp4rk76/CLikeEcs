@@ -39,8 +39,8 @@ public:
 
 int main(int argc, char **argv)
 {
-    SceneOpenGL* sceneOpenGL = new SceneOpenGL(); // Can customize params !
-    sceneOpenGL->init();
+//    SceneOpenGL* sceneOpenGL = new SceneOpenGL(); // Can customize params !
+//    sceneOpenGL->init();
 
     SparkEngine sparkEngine;
     sparkEngine.init();

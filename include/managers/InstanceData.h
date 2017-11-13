@@ -12,6 +12,7 @@
 #include "components/Sprite.h"
 #include "components/Transform.h"
 #include <set>
+#include <components/Matrix4x4.h>
 
 struct InstanceData
 {
@@ -25,10 +26,12 @@ struct InstanceData
     Vector3 *velocity = nullptr;
     Vector3 *acceleration = nullptr;
 
-//    Matrix4x4 *local;
-
-//    Transforms *transform = nullptr;
-//    Sprite2D *sprite = nullptr;
+    Matrix4x4 *local = nullptr;
+    Matrix4x4 *world = nullptr;
+    size_t *parent = nullptr;
+    size_t *first_child = nullptr;
+    size_t *next_sibling = nullptr;
+    size_t *prev_sibling = nullptr;
 };
 
 #endif //CLIKEECS_INSTANCEDATA_H
