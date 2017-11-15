@@ -6,12 +6,100 @@
 
 Input::Input()
 {
-    mouseX_ = 0;
-    mouseY_ = 0;
-    pointerRelativeX_ = 0;
-    pointerRelativeY_ = 0;
+    x_ = 0;
+    y_ = 0;
+    xRel_ = 0;
+    yRel_ = 0;
     quit_ = false;
 
+    resetKeys();
+}
+
+Input::~Input()
+{
+    resetKeys();
+}
+
+void Input::handleEvents()
+{
+    // (Re-)init relative positions
+    xRel_ = 0;
+    yRel_ = 0;
+
+    while (SDL_PollEvent(&event_))
+    {
+        if (event_.type == SDL_KEYDOWN)
+        {
+            keyboardKeys_[event_.key.keysym.scancode] = true;
+        } else if (event_.type == SDL_KEYUP)
+        {
+            keyboardKeys_[event_.key.keysym.scancode] = false;
+        } else if (event_.type == SDL_MOUSEBUTTONDOWN)
+        {
+            mouseKeys_[event_.button.button] = true;
+        } else if (event_.type == SDL_MOUSEBUTTONUP)
+        {
+            mouseKeys_[event_.button.button] = false;
+        } else if (event_.type == SDL_MOUSEMOTION)
+        {
+            x_ = event_.motion.x;
+            y_ = event_.motion.y;
+            xRel_ = event_.motion.xrel;
+            yRel_ = event_.motion.yrel;
+        } else if (event_.type == SDL_WINDOWEVENT)
+        {
+            if (event_.window.event == SDL_WINDOWEVENT_CLOSE)
+            {
+                quit_ = true;
+            }
+        }
+    }
+}
+
+bool Input::getKey(const SDL_Scancode key) const
+{
+    return keyboardKeys_[key];
+}
+
+bool Input::getMouseKey(const Uint8 key) const
+{
+    return mouseKeys_[key];
+}
+
+bool Input::mouseMovement() const
+{
+    return !(xRel_ == 0 && yRel_ == 0);
+}
+
+void Input::displayCursor(bool display) const
+{
+    if (display)
+    {
+        SDL_ShowCursor(SDL_ENABLE);
+    } else
+    {
+        SDL_ShowCursor(SDL_DISABLE);
+    }
+}
+
+void Input::captureCursor(bool capture) const
+{
+    if (capture)
+    {
+        SDL_SetRelativeMouseMode(SDL_TRUE);
+    } else
+    {
+        SDL_SetRelativeMouseMode(SDL_FALSE);
+    }
+}
+
+bool Input::quit() const
+{
+    return quit_;
+}
+
+void Input::resetKeys()
+{
     // Init keyboard keys
     for (int key_id = 0; key_id < SDL_NUM_SCANCODES; ++key_id)
     {
@@ -25,48 +113,44 @@ Input::Input()
     }
 }
 
-Input::~Input()
+int Input::x() const
 {
-
+    return x_;
 }
 
-void Input::handleEvents()
+int Input::y() const
 {
-    // (Re-)init relative positions
-    pointerRelativeX_ = 0;
-    pointerRelativeY_ = 0;
-
-    while (SDL_PollEvent(&event_))
-    {
-        if (event_.type == SDL_KEYDOWN)
-        {
-            keyboardKeys_[event_.key.keysym.scancode] = true;
-        } else if (event_.type == SDL_KEYUP)
-        {
-            keyboardKeys_[event_.key.keysym.scancode] = false;
-        } else if (event_.type == SDL_MOUSEBUTTONDOWN)
-        {
-            mouseKeys_[event_.key.keysym.scancode] = true;
-        } else if (event_.type == SDL_MOUSEBUTTONUP)
-        {
-            mouseKeys_[event_.key.keysym.scancode] = false;
-        } else if (event_.type == SDL_MOUSEMOTION)
-        {
-            mouseX_ = event_.motion.x;
-            mouseY_ = event_.motion.y;
-            pointerRelativeX_ = event_.motion.xrel;
-            pointerRelativeY_ = event_.motion.yrel;
-        } else if (event_.type == SDL_WINDOWEVENT)
-        {
-            if (event_.window.event == SDL_WINDOWEVENT_CLOSE)
-            {
-                quit_ = true;
-            }
-        }
-    }
+    return y_;
 }
 
-bool Input::quit()
+int Input::xRel() const
 {
-    return quit_;
+    return xRel_;
 }
+
+int Input::yRel() const
+{
+    return yRel_;
+}
+
+void Input::setX(int x)
+{
+    x_ = x;
+}
+
+void Input::setY(int y)
+{
+    y_ = y;
+}
+
+void Input::setXRel(int xRel)
+{
+    xRel_ = xRel;
+}
+
+void Input::setYRel(int yRel)
+{
+    yRel_ = yRel;
+}
+
+

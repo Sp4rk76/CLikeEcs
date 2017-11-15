@@ -74,7 +74,7 @@ void SceneOpenGL::simulate()
     Cube cube(1.0, "shaders/couleur3D.vert", "shaders/couleur3D.frag");
 
 
-    float angle(0);
+    float xAngle(0), yAngle(0);
 
     while (!input_.quit())
     {
@@ -82,29 +82,35 @@ void SceneOpenGL::simulate()
 
         input_.handleEvents();
 
+        if(input_.getKey(SDL_SCANCODE_ESCAPE))
+        {
+            break;
+        }
+
+        if(input_.getKey(SDL_SCANCODE_UP)) { xAngle += -5; }
+        if(input_.getKey(SDL_SCANCODE_DOWN)) { xAngle += 5; }
+        if(input_.getKey(SDL_SCANCODE_LEFT)) { yAngle += -5; }
+        if(input_.getKey(SDL_SCANCODE_RIGHT)) { yAngle += 5; }
+
         // Clear screen (gl)
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // Re-initialization: modelview
-        modelview = glm::lookAt(glm::vec3(10,10,10), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
-
-        if(angle >= 360.0)
-        {
-            angle -= 360.0;
-        }
-
-        angle += 1.0;
+        modelview = glm::lookAt(glm::vec3(8,8,10), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
 
         // Save model view at this state
         glm::mat4 saveModelView = modelview;
 
-        modelview = glm::rotate(modelview, angle, glm::vec3(0,1,0));
+        // 2 angles: rotate_x and rotate_y
+        modelview = glm::rotate(modelview, xAngle, glm::vec3(1,0,0));
+        modelview = glm::rotate(modelview, yAngle, glm::vec3(0,1,0));
+        // Display cube
         cube.display(projection, modelview);
 
         // Restore model view at previous state
         modelview = saveModelView;
 
-        modelview = glm::translate(modelview, glm::vec3(10,0,0));
+        modelview = glm::translate(modelview, glm::vec3(6,0,0));
         cube.display(projection, modelview);
 
         SDL_GL_SwapWindow(SDL_GL_GetCurrentWindow());
