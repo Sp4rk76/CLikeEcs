@@ -359,6 +359,14 @@ void Manager::destroyEC(size_t i)
     --data_.n;
 }
 
+/// TODO: id >= 0 check ?
+void Manager::destroyS(size_t id)
+{
+    sys_.reg_systems.erase(id);
+
+    sys_.systems[id] = nullptr;
+}
+
 bool Manager::isValidMask(unsigned entityMask, unsigned systemMask)
 {
     return ((entityMask & systemMask) == systemMask);

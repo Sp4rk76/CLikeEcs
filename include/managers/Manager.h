@@ -68,6 +68,8 @@ public:
 
     void destroyEC(unsigned id);
 
+    void destroyS(size_t id);
+
     bool isValidMask(unsigned entityMask, unsigned systemMask);
 
     void matchSystem(System *sys, std::size_t id);
@@ -80,7 +82,7 @@ public:
 
     InstanceSystem *sys();
 
-    EntityInstanceMap entity_instances = EntityInstanceMap();
+    EntityInstanceMap entity_instances;
 
     void setEntityInstance(size_t entity_id, int instance_id);
 

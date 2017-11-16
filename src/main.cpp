@@ -70,6 +70,10 @@ void SparkEngine::init()
         std::cout << "System Name : " << manager->sys()->systems[id]->name() << std::endl;
     }
 
+//    manager->destroyS(0);
+//    manager->destroyS(4);
+//    manager->destroyS(4);
+
     // TODO: Modify destroyEC method to properly delete an entity
 //    manager->destroyEC(1);
 //    manager->destroyEC(2);
