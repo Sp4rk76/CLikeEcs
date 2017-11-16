@@ -19,21 +19,22 @@
 #include <iostream>
 #include <string>
 
+#define UNLOCK 0
+
 class Texture
 {
 public:
-    Texture(std::string path);
+    Texture();
+    Texture(const std::string &path);
     ~Texture();
-    size_t load();
+    bool load();
+    GLuint getID() const;
+    void setPath(const std::string &path);
+    SDL_Surface *revertPixels(SDL_Surface *imageSource_) const;
 
 private:
     GLuint id_;
     std::string path_;
 };
-
-Texture::Texture(std::string path)
-{
-    path_ = path;
-}
 
 #endif //CLIKEECS_TEXTURE_H
