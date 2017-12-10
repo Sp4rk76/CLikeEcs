@@ -19,7 +19,11 @@
         "x": 2,
         "y": 2,
         "z": 0
-      }
+      },
+      "parent": -1,
+      "first-child": 2,
+      "next-sibling": -1,
+      "previous-sibling": -1
     },
     {
       "id": 2,
@@ -40,7 +44,11 @@
         "x": 2,
         "y": 2,
         "z": 0
-      }
+      },
+      "parent": 1,
+      "first-child": 3,
+      "next-sibling": -1,
+      "previous-sibling": -1
     },
     {
       "id": 3,
@@ -61,7 +69,11 @@
         "x": 2,
         "y": 2,
         "z": 0
-      }
+      },
+      "parent": 2,
+      "first-child": -1,
+      "next-sibling": 4,
+      "previous-sibling": -1
     },
     {
       "id": 4,
@@ -82,7 +94,11 @@
         "x": 2,
         "y": 2,
         "z": 0
-      }
+      },
+      "parent": 2,
+      "first-child": -1,
+      "next-sibling": -1,
+      "previous-sibling": 3
     },
     {
       "id": 5,
@@ -103,7 +119,11 @@
         "x": 2,
         "y": 2,
         "z": 0
-      }
+      },
+      "parent": -1,
+      "first-child": -1,
+      "next-sibling": -1,
+      "previous-sibling": -1
     }
   ]
 }

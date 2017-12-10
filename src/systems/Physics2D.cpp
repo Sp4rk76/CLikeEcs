@@ -35,7 +35,7 @@ void Physics2D::setLocal(size_t instance_id, const glm::mat4 &matrix)
 
 void Physics2D::transform(const glm::mat4 &parent, int instance_id)
 {
-    data_->world[instance_id] = (data_->local[instance_id] * parent);
+    data_->world[instance_id] = (data_->local[instance_id]) * parent;
 
     // Get First Child for the given instance_id
     int child = data_->first_child[instance_id];
