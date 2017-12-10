@@ -23,7 +23,7 @@
       "parent": -1,
       "first-child": 2,
       "next-sibling": -1,
-      "previous-sibling": -1
+      "prev-sibling": -1
     },
     {
       "id": 2,
@@ -48,7 +48,7 @@
       "parent": 1,
       "first-child": 3,
       "next-sibling": -1,
-      "previous-sibling": -1
+      "prev-sibling": -1
     },
     {
       "id": 3,
@@ -73,7 +73,7 @@
       "parent": 2,
       "first-child": -1,
       "next-sibling": 4,
-      "previous-sibling": -1
+      "prev-sibling": -1
     },
     {
       "id": 4,
@@ -98,7 +98,7 @@
       "parent": 2,
       "first-child": -1,
       "next-sibling": -1,
-      "previous-sibling": 3
+      "prev-sibling": 3
     },
     {
       "id": 5,
@@ -123,7 +123,7 @@
       "parent": -1,
       "first-child": -1,
       "next-sibling": -1,
-      "previous-sibling": -1
+      "prev-sibling": -1
     }
   ]
 }

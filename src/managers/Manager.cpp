@@ -61,8 +61,10 @@ void Manager::allocate(unsigned size)
     data_.acceleration = data_.velocity + size;
     data_.local = (glm::mat4 *) (data_.acceleration + size);
     data_.world = data_.local + size;
-//    data_.parent = (size_t *) (data_.acceleration + size);
-//    data_.= (size_t *) (data_.parent + size);
+    data_.parent = (int *) (data_.local + size);
+    data_.first_child = data_.parent + size;
+    data_.next_sibling = data_.first_child + size;
+    data_.prev_sibling = data_.next_sibling + size;
 }
 
 void Manager::queryRegistration(Entity &entity)
@@ -236,6 +238,42 @@ size_t Manager::loadEntities(EntityManager *entityManager)
             data_.acceleration[generated_id].x = entity["acceleration"]["x"].GetFloat();
             data_.acceleration[generated_id].y = entity["acceleration"]["y"].GetFloat();
             data_.acceleration[generated_id].z = entity["acceleration"]["z"].GetFloat();
+        }
+
+        if (!entity.HasMember("parent"))
+        {
+            std::cout << "Error: missing parent value in document on entity with id (instance) = " << generated_id
+                      << std::endl;
+        } else
+        {
+            data_.parent[generated_id] = entity["parent"].GetInt();
+        }
+
+        if (!entity.HasMember("first-child"))
+        {
+            std::cout << "Error: missing first-child value in document on entity with id (instance) = " << generated_id
+                      << std::endl;
+        } else
+        {
+            data_.first_child[generated_id] = entity["first-child"].GetInt();
+        }
+
+        if (!entity.HasMember("next-sibling"))
+        {
+            std::cout << "Error: missing next-sibling value in document on entity with id (instance) = " << generated_id
+                      << std::endl;
+        } else
+        {
+            data_.next_sibling[generated_id] = entity["next-sibling"].GetInt();
+        }
+
+        if (!entity.HasMember("prev-sibling"))
+        {
+            std::cout << "Error: missing prev-sibling value in document on entity with id (instance) = " << generated_id
+                      << std::endl;
+        } else
+        {
+            data_.prev_sibling[generated_id] = entity["prev-sibling"].GetInt();
         }
 
         setEntity(generated_id, e);
