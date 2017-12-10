@@ -3,7 +3,9 @@
 #include <windows.h>
 #include <cstdio> // stdio.h deprecated ?
 #include <tchar.h>
+
 #define GLEW_BUILD
+
 #include <glew.h>
 
 #endif
@@ -48,6 +50,7 @@ int main(int argc, char **argv)
 
     return 0;
 }
+
 void SparkEngine::init()
 {
 
@@ -62,7 +65,7 @@ void SparkEngine::init()
     std::cout << "Loaded Systems: " << loaded_systems << std::endl;
 
     /// TEST Systems
-    auto system = systemManager->create<Physics2D>(manager->data(), Position); // id & mask defined in
+    auto system = systemManager->create<Physics2D>(manager->data(), Transform|Velocity|Acceleration); // id & mask defined in
     system->setName("CustomSystem");
     manager->setSystem(system);
 
@@ -78,23 +81,23 @@ void SparkEngine::init()
     // TODO: Modify destroyEC method to properly delete an entity
 
 //    manager->destroyEC(1);
-    manager->destroyEC(2);
+//    manager->destroyEC(2);
 //    manager->destroyEC(3);
 //    manager->destroyEC(4);
 //    manager->destroyEC(5);
-    manager->destroyEC(6);
-    manager->destroyEC(5);
+//    manager->destroyEC(6);
+//    manager->destroyEC(5);
 
     manager->simulate();
     manager->save();
 
-    for(auto& x : manager->entity_instances)
+    for (auto &x : manager->entity_instances)
     {
         std::cout << "E = " << x.first << " ; " << " I = " << x.second << std::endl;
     }
 
     std::cout << "Instance_IDs | ";
-    for(auto& op : manager->instance_ids)
+    for (auto &op : manager->instance_ids)
     {
         std::cout << op << " | ";
     }

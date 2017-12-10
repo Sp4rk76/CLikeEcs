@@ -3,7 +3,7 @@
         {
             "id": 1,
             "name": "CustomSystem",
-            "requiredMask": 2
+            "requiredMask": 13
         }
     ]
 }
