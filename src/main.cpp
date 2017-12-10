@@ -1,12 +1,8 @@
 #ifdef _WIN32
 
 #include <windows.h>
-#include <cstdio> // stdio.h deprecated ?
-#include <tchar.h>
 
 #define GLEW_BUILD
-
-#include <glew.h>
 
 #endif
 
@@ -21,16 +17,12 @@
 #endif
 
 /// SDL & STL headers
-#include <SDL.h>
-#include <iostream>
 
 /// OpenGL Headers
 
 /// Core Headers
 #include <managers/Manager.h>
 #include <systems/Physics2D.h>
-#include <scenes/SceneOpenGL.h>
-#include <managers/TransformManager.h>
 
 // TODO: when setting a new Entity instance in map, check if it already exists !
 // TODO: as i want to make it a kin of API, this class only exists in a debug/test context
@@ -56,7 +48,7 @@ void SparkEngine::init()
 
     auto entityManager = new EntityManager();
     auto systemManager = new SystemManager();
-    auto manager = new Manager(10);
+    auto manager = new Manager(1000);
 
     size_t loaded_entities = manager->loadEntities(entityManager);
     std::cout << "Loaded Entities: " << loaded_entities << std::endl;

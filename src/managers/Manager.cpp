@@ -47,14 +47,20 @@ void Manager::allocate(unsigned size)
     // Data allocation & initialization
     data_.n = 0;
     data_.size = size;
-    const unsigned int bytes =
-            (size * (sizeof(Entity) + sizeof(float) + (3 * sizeof(Vector3)))) + (2 * sizeof(size_t));
+    const unsigned int bytes = (size * (sizeof(Entity)
+                                        + sizeof(float)
+                                        + (3 * sizeof(Vector3))
+                                        + (2 * sizeof(glm::mat4))
+                                        + (4 * sizeof(int))))
+                               + (2 * sizeof(size_t));
     data_.buffer = malloc(bytes);
     data_.entity = (Entity *) (data_.buffer);
     data_.mass = (float *) (data_.entity + size);
     data_.position = (Vector3 *) (data_.mass + size);
     data_.velocity = data_.position + size; // still Vector3
     data_.acceleration = data_.velocity + size;
+    data_.local = (glm::mat4 *) (data_.acceleration + size);
+    data_.world = data_.local + size;
 //    data_.parent = (size_t *) (data_.acceleration + size);
 //    data_.= (size_t *) (data_.parent + size);
 }
@@ -374,8 +380,7 @@ void Manager::destroyEC(size_t entity_id)
         {
             /// Replaced entity does not match system mask (instance is not KEEPED in system "matches_" list)
             system->unsetEntityMatch(id);
-        }
-        else
+        } else
         {
             system->setEntityMatch(id);
         }
