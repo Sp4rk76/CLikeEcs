@@ -16,7 +16,7 @@ public:
 
     void setLocal(size_t instance_id, const glm::mat4 &matrix);
 
-    void transform(const glm::mat4 &parent, size_t instance_id);
+    void transform(const glm::mat4 &parent, int instance_id);
 
     bool isValid(int instance_id);
 

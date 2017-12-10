@@ -33,9 +33,17 @@ void Physics2D::setLocal(size_t instance_id, const glm::mat4 &matrix)
     glm::mat4 parent_transform = isValid(parent) ? data_->world[instance_id] : matrix4x4Identity();
 }
 
-void Physics2D::transform(const glm::mat4 &parent, size_t instance_id)
+void Physics2D::transform(const glm::mat4 &parent, int instance_id)
 {
+    data_->world[instance_id] = (data_->local[instance_id] * parent);
 
+    // Get First Child for the given instance_id
+    int child = data_->first_child[instance_id];
+    while(isValid(child))
+    {
+        transform(data_->world[instance_id], child);
+        child = data_->next_sibling[child];
+    }
 }
 
 Physics2D::~Physics2D()
