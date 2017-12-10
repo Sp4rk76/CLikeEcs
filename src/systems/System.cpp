@@ -47,7 +47,8 @@ unsigned int System::entityMatch(std::size_t id)
 
 void System::setEntityMatch(std::size_t id)
 {
-    if (id <= DEFAULT)
+    /// ??? < or <=
+    if (id < DEFAULT)
     {
         std::cout << "Error: Trying to set (register) an invalid entity to a system (invalid id)" << std::endl;
         return;
@@ -115,4 +116,13 @@ void System::stop()
 bool System::running()
 {
     return running_;
+}
+
+bool System::has(size_t instance_id) const
+{
+    /// can be implemented in two ways:
+    /// == instance_id
+    /// or
+    /// != matches_.size()
+    return *matches_.find(instance_id) == instance_id;
 }

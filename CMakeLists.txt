@@ -17,14 +17,15 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake-modules")
 include_directories(bin/)
 include_directories(src/)
 include_directories(include/)
+include_directories(lib/)
 
 # SDL2
 find_package(SDL2 REQUIRED)
 include_directories(${SDL2_INCLUDE_DIRS})
 
-## SDL2_image
-#find_package(SDL2_image REQUIRED)
-#include_directories(${SDL2_IMAGE_INCLUDE_DIRS})
+# SDL2_image
+find_package(SDL2_image REQUIRED)
+include_directories(${SDL2_IMAGE_INCLUDE_DIRS})
 #
 ## SDL2_ttf
 #find_package(SDL2_ttf REQUIRED)
@@ -74,7 +75,11 @@ set(SOURCE_FILES
         include/utils/MaskMapper.h
         src/utils/MaskMapper.cpp
         src/display/Screen.cpp
-        include/display/Screen.h include/utils/Glew.h src/utils/Glew.cpp src/utils/Glew.cpp)
+        include/display/Screen.h
+        include/scenes/SceneOpenGL.h
+        include/effects/Shader.h
+        src/scenes/SceneOpenGL.cpp
+        src/effects/Shader.cpp include/components/Matrix4x4.h include/managers/TransformManager.h include/scenes/prefabs/Cube.h src/scenes/prefabs/Cube.cpp include/managers/Input.h src/managers/Input.cpp include/components/Texture.h src/components/Texture.cpp src/managers/TransformManager.cpp)
 
 # Executable
 add_executable(CLikeECS ${SOURCE_FILES})
@@ -82,6 +87,6 @@ add_executable(CLikeECS ${SOURCE_FILES})
 # Link libraries
 target_link_libraries(CLikeECS ${OPENGL_LIBRARIES})
 target_link_libraries(CLikeECS ${SDL2_LIBRARIES})
-#target_link_libraries(CLikeECS ${SDL2_IMAGE_LIBRARIES})
+target_link_libraries(CLikeECS ${SDL2_IMAGE_LIBRARIES})
 #target_link_libraries(CLikeECS ${SDL2_TTF_LIBRARIES})
 #target_link_libraries(CLikeECS gtest gtest_main)

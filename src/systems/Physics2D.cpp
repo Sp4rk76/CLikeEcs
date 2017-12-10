@@ -8,22 +8,22 @@ Physics2D::Physics2D(InstanceData *data) : System(data) { }
 
 void Physics2D::simulate(float dt)
 {
-    // For each entity match
+    // Get ENTITY_ID
     for (auto &entity : matches_)
     {
-        std::cout << "PHYSICS simulation for system (id: " << id_ << ")" << std::endl;
-
         position = &data_->position[entity];
         velocity = &data_->velocity[entity];
         acceleration = &data_->acceleration[entity];
 
-        velocity->x += 500;
-        position->x += (velocity->x + acceleration->x);
-
-        std::cout << "simulate entity => " << entity << std::endl;
+        std::cout << "simulate entity's position.x => " << position->x << std::endl;
     }
 
-    std::cout << "Simulate this system !" << std::endl;
+    std::cout << "\nDEBUG system matches (Physics 2D)" << std::endl;
+    for(auto& x : matches_)
+    {
+        std::cout << "E = " << data_->entity[x].id << " ; " << " I = " << x << std::endl;
+    }
+    std::cout << "---------------------------------" << std::endl;
 }
 
 Physics2D::~Physics2D()

@@ -47,13 +47,16 @@ void Manager::allocate(unsigned size)
     // Data allocation & initialization
     data_.n = 0;
     data_.size = size;
-    const unsigned int bytes = size * (sizeof(Entity) + sizeof(float) + (3 * sizeof(Vector3)));
+    const unsigned int bytes =
+            (size * (sizeof(Entity) + sizeof(float) + (3 * sizeof(Vector3)))) + (2 * sizeof(size_t));
     data_.buffer = malloc(bytes);
     data_.entity = (Entity *) (data_.buffer);
     data_.mass = (float *) (data_.entity + size);
     data_.position = (Vector3 *) (data_.mass + size);
     data_.velocity = data_.position + size; // still Vector3
     data_.acceleration = data_.velocity + size;
+//    data_.parent = (size_t *) (data_.acceleration + size);
+//    data_.= (size_t *) (data_.parent + size);
 }
 
 void Manager::queryRegistration(Entity &entity)
@@ -68,7 +71,9 @@ void Manager::queryRegistration(Entity &entity)
             std::cout << "Register entity " << entity.id << "(" << entity.mask << ")" << " to System '"
                       << system->name() << "'(" << system->requiredMask() << ")"
                       << std::endl;
-            matchSystem(system, entity.id);
+
+            /// IMPORTANT: registered id is not entity_i, but INSTANCE_ID for the concerned entity
+            system->setEntityMatch(lookup(entity.id));
         }
     }
 }
@@ -77,9 +82,9 @@ void Manager::queryRegistration(System *system)
 {
     sys_.reg_systems.insert(system->id());
 
-    for (size_t id = 0; id < data_.n; ++id)
+    for (size_t instance_id = 0; instance_id < data_.n; ++instance_id)
     {
-        auto &entity = data_.entity[id];
+        auto &entity = data_.entity[instance_id];
 
         if (isValidMask(entity.mask, system->requiredMask()))
         {
@@ -87,11 +92,14 @@ void Manager::queryRegistration(System *system)
             std::cout << "Register entity " << entity.id << "(" << entity.mask << ")" << " to System '"
                       << system->name() << "'(" << system->requiredMask() << ")"
                       << std::endl;
-            matchSystem(system, entity.id);
+
+            /// IMPORTANT: register instance_id !!!
+            system->setEntityMatch(instance_id);
         }
     }
 }
 
+// Get instance(id) for a given entity(id)
 size_t Manager::lookup(size_t entity_id)
 {
     return entity_instances[entity_id];
@@ -331,14 +339,15 @@ void Manager::simulate(float dt)
     }
 }
 
-void Manager::destroyEC(size_t i)
+void Manager::destroyEC(size_t entity_id)
 {
-    if (i <= 0)
+    if (entity_id <= 0)
     {
         return;
     }
 
-    size_t id = lookup(i);
+    // Get instance_id
+    size_t id = lookup(entity_id);
 
     unsigned last = data_.n - 1;
     Entity e = data_.entity[id];
@@ -350,8 +359,30 @@ void Manager::destroyEC(size_t i)
     data_.velocity[id] = data_.velocity[last];
     data_.acceleration[id] = data_.acceleration[last];
 
-    /// NOTE: erase instance_id at "value from entity-instance-map"
+    /// NOTE: erase entity (instance id) which has been moved to the end of the array
     instance_ids.erase(entity_instances[last_entity.id]);
+
+    // TODO: put this into a function ??
+    // check if replacement entity (instance) is compatible with system
+    for (auto &system_id : sys_.reg_systems)
+    {
+        auto &system = sys_.systems[system_id];
+
+        std::cout << "DESTROY : for E = " << entity_id << " we have (replaced) I = " << id << std::endl;
+
+        if (!isValidMask(data_.entity[id].mask, system->requiredMask()))
+        {
+            /// Replaced entity does not match system mask (instance is not KEEPED in system "matches_" list)
+            system->unsetEntityMatch(id);
+        }
+        else
+        {
+            system->setEntityMatch(id);
+        }
+
+        /// UnRegister destroyed Entity (instance) from all potential systems
+        system->unsetEntityMatch(entity_instances[last_entity.id]);
+    }
 
     entity_instances[last_entity.id] = id;
     entity_instances.erase(e.id);
@@ -359,14 +390,18 @@ void Manager::destroyEC(size_t i)
     --data_.n;
 }
 
+/// TODO: id >= 0 check ?
+void Manager::destroyS(size_t id) // System id or system instance id ?
+{
+    sys_.reg_systems.erase(id);
+
+    /// No need to unRegister entities first.
+    sys_.systems[id] = nullptr;
+}
+
 bool Manager::isValidMask(unsigned entityMask, unsigned systemMask)
 {
     return ((entityMask & systemMask) == systemMask);
-}
-
-void Manager::matchSystem(System *system, std::size_t id)
-{
-    system->setEntityMatch(id);
 }
 
 void Manager::save(/* all E & S */)
@@ -386,6 +421,7 @@ InstanceSystem *Manager::sys()
     return &sys_;
 }
 
+// TODO: remake this method (too slow because of "n² complexity")
 int Manager::generateInstanceId()
 {
     int instance_ids_size = instance_ids.size();
@@ -396,6 +432,9 @@ int Manager::generateInstanceId()
         {
             instance_ids.insert(i);
             return i;
+        } else
+        {
+            std::cout << "Info: Could not generate instance id (already exists)" << std::endl;
         }
     }
 

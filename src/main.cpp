@@ -14,68 +14,34 @@
 #include <stdio.h>
 #include <string.h>
 // TODO: include this file (& link ?)
+#define GL3_PROTOTYPES 1
 #include <gl3.h>
 #endif
 
-/// SDL Headers
+/// SDL & STL headers
 #include <SDL.h>
 #include <iostream>
 
 /// OpenGL Headers
-#include <GL.h>
-#include <GLU.h>
 
-// Core Headers
+/// Core Headers
 #include <managers/Manager.h>
 #include <systems/Physics2D.h>
-#include <display/Screen.h>
+#include <scenes/SceneOpenGL.h>
+#include <managers/TransformManager.h>
 
+// TODO: when setting a new Entity instance in map, check if it already exists !
+// TODO: as i want to make it a kin of API, this class only exists in a debug/test context
 class SparkEngine
 {
 public:
     void init();
 };
 
-// TODO: when setting a new Entity instance in map, check if it already exists !
 int main(int argc, char **argv)
 {
-    float vertices[] = {0.0, 0.0,   0.5,0.0,   0.0,0.5,
-                         -0.8, -0.8,   -0.3, -0.8,   -0.8, -0.3};
-
-    SDL_Event event;
-    bool quit(false);
-    auto screen = new Screen();
-
-    screen->init();
-
-    GLenum initialisationGlew(glewInit());
-    // Si l'initialisation a échouée :
-
-    if(initialisationGlew != GLEW_OK)
-    {
-        // On affiche l'erreur grâce à la fonction : glewGetErrorString(GLenum code)
-
-        std::cout << "Erreur d'initialisation de GLEW : " << glewGetErrorString(initialisationGlew) << std::endl;
-    }
-
-    while(!quit)
-    {
-        SDL_WaitEvent(&event);
-        if(event.window.event == SDL_WINDOWEVENT_CLOSE)
-        {
-            quit = true;
-            screen->close();
-        }
-
-        glClear(GL_COLOR_BUFFER_BIT);
-
-        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, vertices);
-        glEnableVertexAttribArray(0);
-        glDrawArrays(GL_TRIANGLES, 0, 6);
-        glDisableVertexAttribArray(0);
-
-        SDL_GL_SwapWindow(screen->getWindow());
-    }
+//    SceneOpenGL* sceneOpenGL = new SceneOpenGL(); // Can customize params !
+//    sceneOpenGL->init();
 
     SparkEngine sparkEngine;
     sparkEngine.init();
@@ -105,25 +71,33 @@ void SparkEngine::init()
         std::cout << "System Name : " << manager->sys()->systems[id]->name() << std::endl;
     }
 
-    // TODO: Modify destroyEC method to properly delete an entity
-//    manager->destroyEC(1);
-//    manager->destroyEC(2);
-//    manager->destroyEC(3);
+//    manager->destroyS(0);
+//    manager->destroyS(4);
+//    manager->destroyS(4);
 
-    /// NOTE: the simulation can alterate the data (saved)
+    // TODO: Modify destroyEC method to properly delete an entity
+
+//    manager->destroyEC(1);
+    manager->destroyEC(2);
+//    manager->destroyEC(3);
+//    manager->destroyEC(4);
+//    manager->destroyEC(5);
+    manager->destroyEC(6);
+    manager->destroyEC(5);
+
     manager->simulate();
     manager->save();
 
-//    for(auto& x : manager->entity_instances)
-//    {
-//        std::cout << "E = " << x.first << " ; " << " I = " << x.second << std::endl;
-//    }
-//
-//    std::cout << "Instance_IDs | ";
-//    for(auto& op : manager->instance_ids)
-//    {
-//        std::cout << op << " | ";
-//    }
-//    std::cout << std::endl;
+    for(auto& x : manager->entity_instances)
+    {
+        std::cout << "E = " << x.first << " ; " << " I = " << x.second << std::endl;
+    }
+
+    std::cout << "Instance_IDs | ";
+    for(auto& op : manager->instance_ids)
+    {
+        std::cout << op << " | ";
+    }
+    std::cout << std::endl;
 
 }

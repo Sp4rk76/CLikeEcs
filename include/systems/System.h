@@ -48,6 +48,8 @@ public:
 
     unsigned int entityMatch(unsigned int matchingEntity);
 
+    bool has(size_t instance_id) const;
+
     void setEntityMatch(std::size_t id);
 
     void unsetEntityMatch(std::size_t id);
