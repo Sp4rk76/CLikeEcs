@@ -4,7 +4,7 @@
       "id": 1,
       "mask": 6,
       "name": "boris",
-      "mass": 10,
+      "mass": 1,
       "position": {
         "x": 11,
         "y": 50,
@@ -14,13 +14,18 @@
         "x": 11,
         "y": 1,
         "z": 0
+      },
+      "acceleration": {
+        "x": 2,
+        "y": 2,
+        "z": 0
       }
     },
     {
       "id": 2,
       "mask": 14,
       "name": "swan",
-      "mass": 10,
+      "mass": 2,
       "position": {
         "x": 22,
         "y": 50,
@@ -39,9 +44,9 @@
     },
     {
       "id": 3,
-      "mask": 14,
+      "mask": 3,
       "name": "elli",
-      "mass": 10,
+      "mass": 3,
       "position": {
         "x": 33,
         "y": 50,
@@ -55,6 +60,64 @@
       "acceleration": {
         "x": 2,
         "y": 2,
+        "z": 0
+      }
+    },
+    {
+      "id": 4,
+      "mask": 6,
+      "name": "CHILD",
+      "mass": 4,
+      "position": {
+        "x": 44,
+        "y": 50,
+        "z": 0
+      },
+      "velocity": {
+        "x": 11,
+        "y": 1,
+        "z": 0
+      },
+      "acceleration": {
+        "x": 2,
+        "y": 2,
+        "z": 0
+      }
+    },
+    {
+      "id": 5,
+      "mask": 14,
+      "name": "CHILD",
+      "mass": 5,
+      "position": {
+        "x": 55,
+        "y": 50,
+        "z": 0
+      },
+      "velocity": {
+        "x": 11,
+        "y": 1,
+        "z": 0
+      },
+      "acceleration": {
+        "x": 2,
+        "y": 2,
+        "z": 0
+      }
+    },
+    {
+      "id": 6,
+      "mask": 1,
+      "name": "CHILD",
+      "mass": 6,
+      "position": {
+        "x": 66,
+        "y": 50,
+        "z": 0
+      },
+      "velocity": {
+        "x": 11,
+        "y": 1,
         "z": 0
       }
     }

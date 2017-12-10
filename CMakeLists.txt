@@ -79,7 +79,7 @@ set(SOURCE_FILES
         include/scenes/SceneOpenGL.h
         include/effects/Shader.h
         src/scenes/SceneOpenGL.cpp
-        src/effects/Shader.cpp include/components/Matrix4x4.h include/systems/TransformComponent.h include/scenes/prefabs/Cube.h src/scenes/prefabs/Cube.cpp include/managers/Input.h src/managers/Input.cpp include/components/Texture.h src/components/Texture.cpp)
+        src/effects/Shader.cpp include/components/Matrix4x4.h include/managers/TransformManager.h include/scenes/prefabs/Cube.h src/scenes/prefabs/Cube.cpp include/managers/Input.h src/managers/Input.cpp include/components/Texture.h src/components/Texture.cpp src/managers/TransformManager.cpp)
 
 # Executable
 add_executable(CLikeECS ${SOURCE_FILES})

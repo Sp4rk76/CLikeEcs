@@ -104,41 +104,45 @@ void SceneOpenGL::simulate()
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // Re-initialization: modelview
-        modelview = glm::lookAt(glm::vec3(0,0,6), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
+        modelview = glm::lookAt(glm::vec3(0,0,0), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
 
-        glUseProgram(shaderTexture.getProgramID());
+        modelview = glm::rotate(xAngle, glm::vec3(1,0,0));
+        modelview = glm::rotate(yAngle, glm::vec3(0,1,0));
+        cube.display(projection, modelview);
 
-
-        // Envoi des vertices
-
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, vertices);
-        glEnableVertexAttribArray(0);
-
-
-        // Envoi des coordonnées de texture
-
-        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, coordTexture);
-        glEnableVertexAttribArray(2);
-
-        // Envoi des matrices
-        glUniformMatrix4fv(glGetUniformLocation(shaderTexture.getProgramID(), "projection"), 1, GL_FALSE, glm::value_ptr(projection));
-        glUniformMatrix4fv(glGetUniformLocation(shaderTexture.getProgramID(), "modelview"), 1, GL_FALSE, glm::value_ptr(modelview));
-
-        // Verrouillage de la texture
-        glBindTexture(GL_TEXTURE_2D, texture.getID());
-
-        // Rendu
-        glDrawArrays(GL_TRIANGLES, 0, 6);
-
-        // Déverrouillage de la texture
-        glBindTexture(GL_TEXTURE_2D, 0);
-
-        // Désactivation des tableaux
-        glDisableVertexAttribArray(2);
-        glDisableVertexAttribArray(0);
-
-        // Désactivation du shader
-        glUseProgram(0);
+//        glUseProgram(shaderTexture.getProgramID());
+//
+//
+//        // Envoi des vertices
+//
+//        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, vertices);
+//        glEnableVertexAttribArray(0);
+//
+//
+//        // Envoi des coordonnées de texture
+//
+//        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, coordTexture);
+//        glEnableVertexAttribArray(2);
+//
+//        // Envoi des matrices
+//        glUniformMatrix4fv(glGetUniformLocation(shaderTexture.getProgramID(), "projection"), 1, GL_FALSE, glm::value_ptr(projection));
+//        glUniformMatrix4fv(glGetUniformLocation(shaderTexture.getProgramID(), "modelview"), 1, GL_FALSE, glm::value_ptr(modelview));
+//
+//        // Verrouillage de la texture
+//        glBindTexture(GL_TEXTURE_2D, texture.getID());
+//
+//        // Rendu
+//        glDrawArrays(GL_TRIANGLES, 0, 6);
+//
+//        // Déverrouillage de la texture
+//        glBindTexture(GL_TEXTURE_2D, 0);
+//
+//        // Désactivation des tableaux
+//        glDisableVertexAttribArray(2);
+//        glDisableVertexAttribArray(0);
+//
+//        // Désactivation du shader
+//        glUseProgram(0);
 
         SDL_GL_SwapWindow(SDL_GL_GetCurrentWindow());
 
@@ -152,8 +156,6 @@ void SceneOpenGL::simulate()
         glDisableVertexAttribArray(2);
         glDisableVertexAttribArray(0);
     }
-
-
 
     close();
 }

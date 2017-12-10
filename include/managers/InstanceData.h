@@ -26,13 +26,14 @@ struct InstanceData
     Vector3 *position = nullptr;
     Vector3 *velocity = nullptr;
     Vector3 *acceleration = nullptr;
-
-    glm::mat4 *local = nullptr;
-    glm::mat4 *world = nullptr;
-    size_t *parent = nullptr;
-    size_t *first_child = nullptr;
-    size_t *next_sibling = nullptr;
-    size_t *prev_sibling = nullptr;
+//
+//    glm::mat4 *local = nullptr;
+//    glm::mat4 *world = nullptr;
+//    size_t *parent = nullptr;
+//    size_t *first_child = nullptr;
+//    size_t *next_sibling = nullptr;
+//    size_t *prev_sibling = nullptr;
+//    bool *dirty = nullptr;
 };
 
 #endif //CLIKEECS_INSTANCEDATA_H

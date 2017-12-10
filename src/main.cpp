@@ -28,6 +28,7 @@
 #include <managers/Manager.h>
 #include <systems/Physics2D.h>
 #include <scenes/SceneOpenGL.h>
+#include <managers/TransformManager.h>
 
 // TODO: when setting a new Entity instance in map, check if it already exists !
 // TODO: as i want to make it a kin of API, this class only exists in a debug/test context
@@ -39,8 +40,8 @@ public:
 
 int main(int argc, char **argv)
 {
-    SceneOpenGL* sceneOpenGL = new SceneOpenGL(); // Can customize params !
-    sceneOpenGL->init();
+//    SceneOpenGL* sceneOpenGL = new SceneOpenGL(); // Can customize params !
+//    sceneOpenGL->init();
 
     SparkEngine sparkEngine;
     sparkEngine.init();
@@ -75,24 +76,28 @@ void SparkEngine::init()
 //    manager->destroyS(4);
 
     // TODO: Modify destroyEC method to properly delete an entity
-//    manager->destroyEC(1);
-//    manager->destroyEC(2);
-//    manager->destroyEC(3);
 
-    /// NOTE: the simulation can alterate the data (saved)
+//    manager->destroyEC(1);
+    manager->destroyEC(2);
+//    manager->destroyEC(3);
+//    manager->destroyEC(4);
+//    manager->destroyEC(5);
+    manager->destroyEC(6);
+    manager->destroyEC(5);
+
     manager->simulate();
     manager->save();
 
-//    for(auto& x : manager->entity_instances)
-//    {
-//        std::cout << "E = " << x.first << " ; " << " I = " << x.second << std::endl;
-//    }
-//
-//    std::cout << "Instance_IDs | ";
-//    for(auto& op : manager->instance_ids)
-//    {
-//        std::cout << op << " | ";
-//    }
-//    std::cout << std::endl;
+    for(auto& x : manager->entity_instances)
+    {
+        std::cout << "E = " << x.first << " ; " << " I = " << x.second << std::endl;
+    }
+
+    std::cout << "Instance_IDs | ";
+    for(auto& op : manager->instance_ids)
+    {
+        std::cout << op << " | ";
+    }
+    std::cout << std::endl;
 
 }

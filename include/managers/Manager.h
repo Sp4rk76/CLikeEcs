@@ -57,7 +57,7 @@ public:
 
     void setAcceleration(size_t instance_id, Vector3 &acceleration);
 
-    // TODO: Create a validation function => check JSON file validity according (once !) before loading all entities/components
+    // TODO: Create a validation function => check JSON file validity (once !) before loading all entities/components
     size_t loadEntities(EntityManager *entityManager);
 
     size_t loadSystems(SystemManager *systemManager);
@@ -72,8 +72,6 @@ public:
 
     bool isValidMask(unsigned entityMask, unsigned systemMask);
 
-    void matchSystem(System *sys, std::size_t id);
-
     System *system(System *system);
 
     void setSystem(System *system);
@@ -82,6 +80,8 @@ public:
 
     InstanceSystem *sys();
 
+    /// For a given Entity(id), returns the given Instance(id)
+    /// ex: give an entity id to get its "real" instance id;
     EntityInstanceMap entity_instances;
 
     void setEntityInstance(size_t entity_id, int instance_id);
