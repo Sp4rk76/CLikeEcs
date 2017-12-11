@@ -9,8 +9,22 @@
 Physics2D::Physics2D(InstanceData *data) : System(data)
 {}
 
+
+// TODO: there are problems because of ENTITY LOOKUP (which is MISSING !);
 void Physics2D::simulate(float dt)
 {
+    data_->world[0] = matrix4x4Identity();
+    data_->world[1] = matrix4x4Identity();
+    data_->world[2] = matrix4x4Identity();
+    data_->world[3] = matrix4x4Identity();
+    data_->world[4] = matrix4x4Identity();
+
+    data_->local[0] = matrix4x4Identity();
+    data_->local[1] = matrix4x4Identity();
+    data_->local[2] = matrix4x4Identity();
+    data_->local[3] = matrix4x4Identity();
+    data_->local[4] = matrix4x4Identity();
+
     for (auto &entity : matches_)
     {
 //        position = &data_->position[entity];
@@ -22,7 +36,6 @@ void Physics2D::simulate(float dt)
         if(car == 1)
         {
             // should init local to identity mat4
-            data_->local[1] = matrix4x4Identity();
 
             // Set (translate) car and all car's children entities to 2000.0f (for x,y and z);
             setLocal(entity, glm::translate(matrix4x4Identity(), glm::vec3(2000.0f, 2000.0f, 2000.0f)));
@@ -31,7 +44,7 @@ void Physics2D::simulate(float dt)
 
     std::cout << "Body debug!" << std::endl;
     double dArray[16] = {0.0};
-    const float *pSource = (const float*)glm::value_ptr(data_->local[1]);
+    const float *pSource = (const float*)glm::value_ptr(data_->world[2]);
     for (int i = 0; i < 16; ++i){
         if((i % 4) == 0)
         {
