@@ -58,7 +58,7 @@ void SparkEngine::init()
 
     /// TEST Systems
     auto system = systemManager->create<Physics2D>(manager->data(), Transform|Velocity|Acceleration); // id & mask defined in
-    system->setName("CustomSystem");
+    system->setName("CustomPhysics2D");
     manager->setSystem(system);
 
     for (auto &id : manager->sys()->reg_systems)

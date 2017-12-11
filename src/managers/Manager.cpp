@@ -244,6 +244,7 @@ size_t Manager::loadEntities(EntityManager *entityManager)
         {
             std::cout << "Error: missing parent value in document on entity with id (instance) = " << generated_id
                       << std::endl;
+            data_.parent[generated_id] = -1;
         } else
         {
             data_.parent[generated_id] = entity["parent"].GetInt();
@@ -253,6 +254,7 @@ size_t Manager::loadEntities(EntityManager *entityManager)
         {
             std::cout << "Error: missing first-child value in document on entity with id (instance) = " << generated_id
                       << std::endl;
+            data_.first_child[generated_id] = -1;
         } else
         {
             data_.first_child[generated_id] = entity["first-child"].GetInt();
@@ -262,6 +264,7 @@ size_t Manager::loadEntities(EntityManager *entityManager)
         {
             std::cout << "Error: missing next-sibling value in document on entity with id (instance) = " << generated_id
                       << std::endl;
+            data_.next_sibling[generated_id] = -1;
         } else
         {
             data_.next_sibling[generated_id] = entity["next-sibling"].GetInt();
@@ -271,6 +274,7 @@ size_t Manager::loadEntities(EntityManager *entityManager)
         {
             std::cout << "Error: missing prev-sibling value in document on entity with id (instance) = " << generated_id
                       << std::endl;
+            data_.prev_sibling[generated_id] = -1;
         } else
         {
             data_.prev_sibling[generated_id] = entity["prev-sibling"].GetInt();
@@ -434,6 +438,7 @@ void Manager::destroyEC(size_t entity_id)
 }
 
 /// TODO: id >= 0 check ?
+/// TODO: clear everithing in systems first ?
 void Manager::destroyS(size_t id) // System id or system instance id ?
 {
     sys_.reg_systems.erase(id);
