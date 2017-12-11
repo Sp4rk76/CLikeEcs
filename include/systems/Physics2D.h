@@ -14,8 +14,10 @@ public:
 
     void simulate(float dt) override;
 
+    /// NOTE: Update local object position with new matrix
     void setLocal(size_t instance_id, const glm::mat4 &matrix);
 
+    /// NOTE: Update instance's transform & Update child(ren)'s transformations (relative to parent)
     void transform(const glm::mat4 &parent, int instance_id);
 
     bool isValid(int instance_id);

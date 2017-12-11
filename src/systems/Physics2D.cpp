@@ -13,18 +13,6 @@ Physics2D::Physics2D(InstanceData *data) : System(data)
 // TODO: there are problems because of ENTITY LOOKUP (which is MISSING !);
 void Physics2D::simulate(float dt)
 {
-    data_->world[0] = matrix4x4Identity();
-    data_->world[1] = matrix4x4Identity();
-    data_->world[2] = matrix4x4Identity();
-    data_->world[3] = matrix4x4Identity();
-    data_->world[4] = matrix4x4Identity();
-
-    data_->local[0] = matrix4x4Identity();
-    data_->local[1] = matrix4x4Identity();
-    data_->local[2] = matrix4x4Identity();
-    data_->local[3] = matrix4x4Identity();
-    data_->local[4] = matrix4x4Identity();
-
     for (auto &entity : matches_)
     {
 //        position = &data_->position[entity];

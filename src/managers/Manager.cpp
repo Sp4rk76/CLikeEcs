@@ -280,6 +280,10 @@ size_t Manager::loadEntities(EntityManager *entityManager)
             data_.prev_sibling[generated_id] = entity["prev-sibling"].GetInt();
         }
 
+        // TODO: better way to initialize it ?
+        data_.world[generated_id] = glm::mat4(1.0f);
+        data_.local[generated_id] = glm::mat4(1.0f);
+
         setEntity(generated_id, e);
 
         loadedEntities++;
