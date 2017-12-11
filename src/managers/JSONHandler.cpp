@@ -113,6 +113,15 @@ void JSONHandler::save(const InstanceData &data, const char *filePath, const cha
             writer.EndObject();
         }
 
+        writer.Key("parent");
+        writer.Int(data.parent[id]);
+        writer.Key("first-child");
+        writer.Int(data.first_child[id]);
+        writer.Key("next-sibling");
+        writer.Int(data.next_sibling[id]);
+        writer.Key("prev-sibling");
+        writer.Int(data.prev_sibling[id]);
+
         writer.EndObject();
     }
 

@@ -61,7 +61,7 @@ void Manager::allocate(unsigned size)
     data_.acceleration = data_.velocity + size;
     data_.local = (glm::mat4 *) (data_.acceleration + size);
     data_.world = data_.local + size;
-    data_.parent = (int *) (data_.local + size);
+    data_.parent = (int *) (data_.world + size);
     data_.first_child = data_.parent + size;
     data_.next_sibling = data_.first_child + size;
     data_.prev_sibling = data_.next_sibling + size;

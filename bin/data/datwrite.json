@@ -13,7 +13,11 @@
                 "x": 2.0,
                 "y": 2.0,
                 "z": 0.0
-            }
+            },
+            "parent": -1,
+            "first-child": 2,
+            "next-sibling": -1,
+            "prev-sibling": -1
         },
         {
             "id": 2,
@@ -28,7 +32,11 @@
                 "x": 2.0,
                 "y": 2.0,
                 "z": 0.0
-            }
+            },
+            "parent": 1,
+            "first-child": 3,
+            "next-sibling": -1,
+            "prev-sibling": -1
         },
         {
             "id": 3,
@@ -43,7 +51,11 @@
                 "x": 2.0,
                 "y": 2.0,
                 "z": 0.0
-            }
+            },
+            "parent": 2,
+            "first-child": -1,
+            "next-sibling": 4,
+            "prev-sibling": -1
         },
         {
             "id": 4,
@@ -58,7 +70,11 @@
                 "x": 2.0,
                 "y": 2.0,
                 "z": 0.0
-            }
+            },
+            "parent": 2,
+            "first-child": -1,
+            "next-sibling": -1,
+            "prev-sibling": 3
         },
         {
             "id": 5,
@@ -73,7 +89,11 @@
                 "x": 2.0,
                 "y": 2.0,
                 "z": 0.0
-            }
+            },
+            "parent": -1,
+            "first-child": -1,
+            "next-sibling": -1,
+            "prev-sibling": -1
         }
     ]
 }

@@ -2,6 +2,8 @@
 // Created by Sp4rk on 12-10-17.
 //
 
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 #include "systems/Physics2D.h"
 
 Physics2D::Physics2D(InstanceData *data) : System(data)
@@ -16,7 +18,28 @@ void Physics2D::simulate(float dt)
 //        acceleration = &data_->acceleration[entity];
 //        std::cout << "simulate entity's position.x => " << position->x << std::endl;
 
+        auto car = data_->entity[entity].id;
+        if(car == 1)
+        {
+            // should init local to identity mat4
+            data_->local[1] = matrix4x4Identity();
+
+            // Set (translate) car and all car's children entities to 2000.0f (for x,y and z);
+            setLocal(entity, glm::translate(matrix4x4Identity(), glm::vec3(2000.0f, 2000.0f, 2000.0f)));
+        }
     }
+
+    std::cout << "Body debug!" << std::endl;
+    double dArray[16] = {0.0};
+    const float *pSource = (const float*)glm::value_ptr(data_->local[1]);
+    for (int i = 0; i < 16; ++i){
+        if((i % 4) == 0)
+        {
+            std::cout << std::endl;
+        }
+        std::cout << (dArray[i] = pSource[i]);
+    }
+    std::cout << "Body debug!" << std::endl;
 
     std::cout << "\nDEBUG system matches (Physics 2D)" << std::endl;
     for (auto &x : matches_)
@@ -31,6 +54,7 @@ void Physics2D::setLocal(size_t instance_id, const glm::mat4 &matrix)
     data_->local[instance_id] = matrix;
     int parent = data_->parent[instance_id];
     glm::mat4 parent_transform = isValid(parent) ? data_->world[instance_id] : matrix4x4Identity();
+    transform(parent_transform, instance_id);
 }
 
 void Physics2D::transform(const glm::mat4 &parent, int instance_id)
