@@ -138,6 +138,36 @@ Vector3 Manager::acceleration(size_t instance_id)
     return data_.acceleration[instance_id];
 }
 
+glm::mat4 Manager::local(int instance_id)
+{
+    return data_.local[instance_id];
+}
+
+glm::mat4 Manager::world(int instance_id)
+{
+    return data_.world[instance_id];
+}
+
+int Manager::parent(int instance_id)
+{
+    return data_.parent[instance_id];
+}
+
+int Manager::firstChild(int instance_id)
+{
+    return data_.first_child[instance_id];
+}
+
+int Manager::nextSibling(int instance_id)
+{
+    return data_.next_sibling[instance_id];
+}
+
+int Manager::prevSibling(int instance_id)
+{
+    return data_.prev_sibling[instance_id];
+}
+
 /// NOTE: It is possible to SET an Entity since we have its ID and MASK
 void Manager::setEntity(int instance_id, Entity &entity)
 {
@@ -168,6 +198,36 @@ void Manager::setVelocity(size_t instance_id, Vector3 &velocity)
 void Manager::setAcceleration(size_t instance_id, Vector3 &acceleration)
 {
     data_.acceleration[instance_id] = acceleration;
+}
+
+void Manager::setLocal(size_t instance_id, glm::mat4 &local)
+{
+    data_.local[instance_id] = local;
+}
+
+void Manager::setWorld(size_t instance_id, glm::mat4 &world)
+{
+    data_.world[instance_id] = world;
+}
+
+void Manager::setParent(size_t instance_id, size_t parent)
+{
+    data_.parent[instance_id] = parent;
+}
+
+void Manager::setFirstChild(size_t instance_id, size_t first_child)
+{
+    data_.first_child[instance_id] = first_child;
+}
+
+void Manager::setNextSibling(size_t instance_id, size_t next_sibling)
+{
+    data_.next_sibling[instance_id] = next_sibling;
+}
+
+void Manager::setPrevSibling(size_t instance_id, size_t prev_sibling)
+{
+    data_.prev_sibling[instance_id] = prev_sibling;
 }
 
 size_t Manager::loadEntities(EntityManager *entityManager)
@@ -441,10 +501,11 @@ void Manager::destroyEC(size_t entity_id)
     --data_.n;
 }
 
-/// TODO: id >= 0 check ?
 /// TODO: clear everithing in systems first ?
 void Manager::destroyS(size_t id) // System id or system instance id ?
 {
+    //assert(id >= 0);
+
     sys_.reg_systems.erase(id);
 
     /// No need to unRegister entities first.

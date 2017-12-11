@@ -46,6 +46,18 @@ public:
 
     Vector3 acceleration(size_t instance_id);
 
+    glm::mat4 local(int instance_id);
+
+    glm::mat4 world(int instance_id);
+
+    int parent(int instance_id);
+
+    int firstChild(int instance_id);
+
+    int nextSibling(int instance_id);
+
+    int prevSibling(int instance_id);
+
     //TODO: signature validity ? viable ?
     void setEntity(int instance_id, Entity &entity);
 
@@ -56,6 +68,18 @@ public:
     void setVelocity(size_t instance_id, Vector3 &velocity);
 
     void setAcceleration(size_t instance_id, Vector3 &acceleration);
+
+    void setLocal(size_t instance_id, glm::mat4 &local);
+
+    void setWorld(size_t instance_id, glm::mat4 &world);
+
+    void setParent(size_t instance_id, size_t parent);
+
+    void setFirstChild(size_t instance_id, size_t first_child);
+
+    void setNextSibling(size_t instance_id, size_t next_sibling);
+
+    void setPrevSibling(size_t instance_id, size_t prev_sibling);
 
     // TODO: Create a validation function => check JSON file validity (once !) before loading all entities/components
     size_t loadEntities(EntityManager *entityManager);
