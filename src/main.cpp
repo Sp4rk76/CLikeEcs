@@ -53,6 +53,9 @@ void SparkEngine::init()
     size_t loaded_entities = manager->loadEntities(entityManager);
     std::cout << "Loaded Entities: " << loaded_entities << std::endl;
 
+//    size_t car_instance = manager->lookup(manager->data()->entity[0].id);
+//    manager->setLocal(car_instance);
+
     size_t loaded_systems = manager->loadSystems(systemManager);
     std::cout << "Loaded Systems: " << loaded_systems << std::endl;
 
@@ -81,7 +84,7 @@ void SparkEngine::init()
 //    manager->destroyEC(5);
 
     manager->simulate();
-    manager->save();
+    manager->OnSave();
 
     for (auto &x : manager->entity_instances)
     {

@@ -5,6 +5,7 @@
 #include <systems/Physics2D.h>
 #include <systems/DefaultSystem.h>
 #include <systems/Renderer2D.h>
+#include <unordered_set>
 #include "managers/Manager.h"
 
 Manager::Manager()
@@ -200,32 +201,32 @@ void Manager::setAcceleration(size_t instance_id, Vector3 &acceleration)
     data_.acceleration[instance_id] = acceleration;
 }
 
-void Manager::setLocal(size_t instance_id, glm::mat4 &local)
+void Manager::setLocal(int instance_id, glm::mat4 local)
 {
     data_.local[instance_id] = local;
 }
 
-void Manager::setWorld(size_t instance_id, glm::mat4 &world)
+void Manager::setWorld(int instance_id, glm::mat4 world)
 {
     data_.world[instance_id] = world;
 }
 
-void Manager::setParent(size_t instance_id, size_t parent)
+void Manager::setParent(size_t instance_id, int parent)
 {
     data_.parent[instance_id] = parent;
 }
 
-void Manager::setFirstChild(size_t instance_id, size_t first_child)
+void Manager::setFirstChild(size_t instance_id, int first_child)
 {
     data_.first_child[instance_id] = first_child;
 }
 
-void Manager::setNextSibling(size_t instance_id, size_t next_sibling)
+void Manager::setNextSibling(size_t instance_id, int next_sibling)
 {
     data_.next_sibling[instance_id] = next_sibling;
 }
 
-void Manager::setPrevSibling(size_t instance_id, size_t prev_sibling)
+void Manager::setPrevSibling(size_t instance_id, int prev_sibling)
 {
     data_.prev_sibling[instance_id] = prev_sibling;
 }
@@ -233,6 +234,9 @@ void Manager::setPrevSibling(size_t instance_id, size_t prev_sibling)
 size_t Manager::loadEntities(EntityManager *entityManager)
 {
     size_t loadedEntities = 0;
+    std::unordered_set<int> local_instance_ids;
+    size_t generated_id;
+    float entity_mass;
 
     rapidjson::Document document = jsonHandler_->read("data/entities.json");
 
@@ -254,17 +258,17 @@ size_t Manager::loadEntities(EntityManager *entityManager)
         e.id = entity["id"].GetUint();
         e.mask = entity["mask"].GetUint();
 
-        int generated_id = generateInstanceId();
+        generated_id = generateInstanceId();
 
-        auto e_mass = entity["mass"].GetFloat();
+        entity_mass = entity["mass"].GetFloat();
 
-        if (e.id <= 0 || e.mask <= None || e_mass < 0)
+        if (e.id <= 0 || e.mask <= None || entity_mass < 0)
         {
             std::cout << "Error: the document has invalid values" << std::endl;
             return 0;
         }
 
-        setMass((size_t) generated_id, e_mass);
+        setMass((size_t) generated_id, entity_mass);
 
 ///     NOTE: can't have errors from reading, except type mismath ?
         if (!entity.HasMember("position"))
@@ -304,7 +308,7 @@ size_t Manager::loadEntities(EntityManager *entityManager)
         {
             std::cout << "Error: missing parent value in document on entity with id (instance) = " << generated_id
                       << std::endl;
-            data_.parent[generated_id] = -1;
+            setParent(generated_id, -1);
         } else
         {
             data_.parent[generated_id] = entity["parent"].GetInt();
@@ -340,13 +344,43 @@ size_t Manager::loadEntities(EntityManager *entityManager)
             data_.prev_sibling[generated_id] = entity["prev-sibling"].GetInt();
         }
 
-        // TODO: better way to initialize it ?
-        data_.world[generated_id] = glm::mat4(1.0f);
-        data_.local[generated_id] = glm::mat4(1.0f);
+        // TODO: mat4 identity method ?
+        setLocal(generated_id, glm::mat4(1.0f));
+        setWorld(generated_id, glm::mat4(1.0f));
 
         setEntity(generated_id, e);
 
+        // Register generated id for further (data) processing
+        local_instance_ids.insert(generated_id);
+
         loadedEntities++;
+    }
+
+    for (auto &local_instance_id : local_instance_ids)
+    {// Set Transformations (initialization)
+        int entity_parent = -1, entity_first_child = -1, entity_next_sibling = -1, entity_prev_sibling = -1;
+
+        entity_parent = parent(local_instance_id);
+        entity_first_child = firstChild(local_instance_id);
+        entity_next_sibling = nextSibling(local_instance_id);
+        entity_prev_sibling = prevSibling(local_instance_id);
+
+        if (entity_parent != -1)
+        {
+            setParent(local_instance_id, lookup((size_t) entity_parent));
+        }
+        if (entity_first_child != -1)
+        {
+            setFirstChild(local_instance_id, lookup((size_t) entity_first_child));
+        }
+        if (entity_next_sibling != -1)
+        {
+            setNextSibling(local_instance_id, lookup((size_t) entity_next_sibling));
+        }
+        if (entity_prev_sibling != -1)
+        {
+            setPrevSibling(local_instance_id, lookup((size_t) entity_prev_sibling));
+        }
     }
 
     jsonHandler_->close();
@@ -504,8 +538,6 @@ void Manager::destroyEC(size_t entity_id)
 /// TODO: clear everithing in systems first ?
 void Manager::destroyS(size_t id) // System id or system instance id ?
 {
-    //assert(id >= 0);
-
     sys_.reg_systems.erase(id);
 
     /// No need to unRegister entities first.
@@ -517,7 +549,7 @@ bool Manager::isValidMask(unsigned entityMask, unsigned systemMask)
     return ((entityMask & systemMask) == systemMask);
 }
 
-void Manager::save(/* all E & S */)
+void Manager::OnSave(/* all E & S */)
 {
     // TODO: verify data integrity ?
     jsonHandler_->querySave(sys_);
@@ -535,11 +567,11 @@ InstanceSystem *Manager::sys()
 }
 
 // TODO: remake this method (too slow because of "n² complexity")
-int Manager::generateInstanceId()
+size_t Manager::generateInstanceId()
 {
-    int instance_ids_size = instance_ids.size();
+    size_t instance_ids_size = instance_ids.size();
 
-    for (int i = 0; i < instance_ids_size; i++)
+    for (size_t i = 0; i < instance_ids_size; i++)
     {
         if (!instance_ids.count(i))
         {
@@ -561,5 +593,19 @@ void Manager::setEntityInstance(size_t entity_id, int instance_id)
 {
     entity_instances[entity_id] = (size_t) instance_id;
     // TODO: track instance IDs
-    instance_ids.insert(instance_id);
+    instance_ids.insert((size_t)instance_id);
+}
+
+size_t Manager::loadEntityTransformations(InstanceData *data, size_t generated_id)
+{
+    // TODO: (size_t < 0) verification ?
+    if (data == nullptr || generated_id < 0)
+    {
+        return 0;
+    }
+
+    size_t loadedEntityTransformations = 0;
+
+
+    return (loadedEntityTransformations < 0) ? 0 : loadedEntityTransformations;
 }

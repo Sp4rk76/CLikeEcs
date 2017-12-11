@@ -15,8 +15,8 @@ void Physics2D::simulate(float dt)
 {
     for (auto &entity : matches_)
     {
-//        position = &data_->position[entity];
-//        velocity = &data_->velocity[entity];
+        position = &data_->position[entity];
+        velocity = &data_->velocity[entity];
 //        acceleration = &data_->acceleration[entity];
 //        std::cout << "simulate entity's position.x => " << position->x << std::endl;
 
@@ -25,14 +25,15 @@ void Physics2D::simulate(float dt)
         {
             // should init local to identity mat4
 
+            // TODO: replace position by transform ?
             // Set (translate) car and all car's children entities to 2000.0f (for x,y and z);
-            setLocal(entity, glm::translate(matrix4x4Identity(), glm::vec3(2000.0f, 2000.0f, 2000.0f)));
+            setLocal(entity, glm::translate(matrix4x4Identity(), glm::vec3(position->x, position->y, position->z)));
         }
     }
 
     std::cout << "Body debug!" << std::endl;
     double dArray[16] = {0.0};
-    const float *pSource = (const float*)glm::value_ptr(data_->world[2]);
+    const float *pSource = (const float*)glm::value_ptr(data_->world[3g]);
     for (int i = 0; i < 16; ++i){
         if((i % 4) == 0)
         {

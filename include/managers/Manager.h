@@ -69,24 +69,26 @@ public:
 
     void setAcceleration(size_t instance_id, Vector3 &acceleration);
 
-    void setLocal(size_t instance_id, glm::mat4 &local);
+    void setLocal(int instance_id, glm::mat4 local);
 
-    void setWorld(size_t instance_id, glm::mat4 &world);
+    void setWorld(int instance_id, glm::mat4 world);
 
-    void setParent(size_t instance_id, size_t parent);
+    void setParent(size_t instance_id, int parent);
 
-    void setFirstChild(size_t instance_id, size_t first_child);
+    void setFirstChild(size_t instance_id, int first_child);
 
-    void setNextSibling(size_t instance_id, size_t next_sibling);
+    void setNextSibling(size_t instance_id, int next_sibling);
 
-    void setPrevSibling(size_t instance_id, size_t prev_sibling);
+    void setPrevSibling(size_t instance_id, int prev_sibling);
 
     // TODO: Create a validation function => check JSON file validity (once !) before loading all entities/components
     size_t loadEntities(EntityManager *entityManager);
 
     size_t loadSystems(SystemManager *systemManager);
 
-    void save(/* all E & S */);
+    size_t loadEntityTransformations(InstanceData *data, size_t generated_id);
+
+    void OnSave(/* all E & S */);
 
     void simulate(float dt = 1);
 
@@ -110,9 +112,9 @@ public:
 
     void setEntityInstance(size_t entity_id, int instance_id);
 
-    int generateInstanceId();
+    size_t generateInstanceId();
 
-    std::set<int> instance_ids;
+    std::set<size_t> instance_ids;
 
 private:
     InstanceData data_;
